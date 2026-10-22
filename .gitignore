@@ -2,3 +2,4 @@ contenido/
 *.local.json
 .wrangler/
 node_modules/
+__pycache__/
