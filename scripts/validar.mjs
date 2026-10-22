@@ -16,7 +16,8 @@ for (const a of marco.porQueLeer?.areas || []) for (const x of a.beneficios) for
 for (const f of marco.porQueLeer?.fuentes || []) if (!f.doi && !f.nota) errores.push(`Fuente ${f.id}: sin DOI ni nota «por verificar».`);
 if (/gimnasia cerebral|brain gym/i.test(JSON.stringify(marco))) errores.push('El marco menciona «gimnasia cerebral» (neuromito).');
 for (const m of medios.mural || []) if (/\d{7,}|@/.test(`${m.firma} ${m.texto}`)) errores.push(`Mural «${m.titulo}»: parece tener teléfono o correo (Ley 1581).`);
-if (existsSync(new URL('../public/data/cuentos.json', import.meta.url))) errores.push('public/data/cuentos.json no debe existir: el texto del libro va en D1, no en public/.');
+if (!existsSync(new URL('../src/libro.cifrado.txt', import.meta.url))) errores.push('Falta src/libro.cifrado.txt (libro cifrado).');
+if (existsSync(new URL('../public/data/cuentos.json', import.meta.url))) errores.push('public/data/cuentos.json no debe existir: el texto del libro va cifrado, no en public/.');
 
 let resumen = 'marco válido';
 const ruta = new URL('../contenido/libro.json', import.meta.url);

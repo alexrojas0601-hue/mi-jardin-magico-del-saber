@@ -17,9 +17,9 @@ Las semillas del Árbol del Saber y los cuentos de cada niño se guardan solo en
 | `public/data/marco.json` | Competencias, «Por qué leer», Dado de la imaginación. |
 | `public/data/medios.json` | Videoclips, voces grabadas y mural. |
 | `src/worker.js` | Worker: sirve la app, el libro protegido (`/api/libro`) y el Guardián (`/api/guardian`). |
-| `scripts/armar_libro.py`, `scripts/sql_libro.py` | Arman el libro y lo preparan para la base D1. |
+| `scripts/armar_libro.py`, `scripts/cifrar_libro.py` | Arman el libro y lo cifran (`src/libro.cifrado.txt`); la llave está en D1. |
 | `scripts/validar.mjs` | Revisión automática antes de publicar. |
-| `docs/CONTENIDO.md` | **Dónde vive el texto del libro (D1, no GitHub) y cómo se actualiza.** |
+| `docs/CONTENIDO.md` | **Dónde vive el texto del libro (cifrado; llave en D1) y cómo se actualiza.** |
 
 ## Publicar
 Cloudflare despliega desde GitHub (rama `main`). Para el Guardián en sabicentec.com hace falta el secreto `ANTHROPIC_API_KEY` en el Worker.

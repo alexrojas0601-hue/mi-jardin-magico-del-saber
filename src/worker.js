@@ -1,10 +1,13 @@
 // Worker de Cloudflare: sirve la aplicación (carpeta public/), el libro protegido (/api/libro/…)
 // y el Guardián (/api/guardian).
 //
-// El TEXTO DEL LIBRO no está en GitHub ni en public/: vive en la base D1 «jardin-magico-libro»
-// (binding LIBRO). Se entrega una página a la vez, codificada, solo a la propia página del libro.
+// El TEXTO DEL LIBRO no está legible en GitHub ni en public/: viaja cifrado dentro del Worker y la llave
+// vive en la base D1 «jardin-magico-libro» (binding LIBRO). Se entrega una página a la vez, codificada,
+// solo a la propia página del libro.
 // © Editorial Pluma de Oro S.A.S. Lectura en pantalla, sin descarga.
 import { construirPrompt } from '../public/js/guardian.js';
+// Libro cifrado (AES-256-GCM sobre gzip). La llave NO está en el repositorio: vive en D1 (meta.clave_libro).
+import CIFRADO from './libro.cifrado.txt';
 
 const GRADOS = ['Transición', '1.°', '2.°', '3.°'];
 const SAL = 'JardinMagico-CENTEC-lectura-en-pantalla';
@@ -33,23 +36,37 @@ function codificar(obj) {
   return { n: nonce, d: btoa(bin) };
 }
 
-async function indice(env) {
-  const [pags, unidades] = await Promise.all([
-    env.LIBRO.prepare('SELECT orden, id, unidad, tipo, titulo FROM paginas ORDER BY orden').all(),
-    env.LIBRO.prepare("SELECT valor FROM meta WHERE clave = 'unidades'").first('valor'),
-  ]);
-  return { unidades: JSON.parse(unidades || '[]'), paginas: pags.results };
+let cargando = null;
+async function abrirLibro(env) {
+  if (!cargando) {
+    cargando = (async () => {
+      const clave = await env.LIBRO.prepare("SELECT valor FROM meta WHERE clave = 'clave_libro'").first('valor');
+      if (!clave) throw new Error('sin clave');
+      const llave = await crypto.subtle.importKey('raw', Uint8Array.from(atob(clave), (c) => c.charCodeAt(0)), 'AES-GCM', false, ['decrypt']);
+      const todo = Uint8Array.from(atob(CIFRADO.trim()), (c) => c.charCodeAt(0));
+      const gz = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: todo.slice(0, 12), additionalData: new TextEncoder().encode('jardin-magico-del-saber') }, llave, todo.slice(12));
+      const texto = await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+      const libro = JSON.parse(texto);
+      return {
+        indice: { unidades: libro.unidades, paginas: libro.paginas.map(({ orden, id, unidad, tipo, titulo }) => ({ orden, id, unidad, tipo, titulo })) },
+        paginas: new Map(libro.paginas.map((p) => [p.id, p])),
+      };
+    })().catch((e) => { cargando = null; throw e; });
+  }
+  return cargando;
 }
 
 async function libro(request, env, ruta) {
   if (!env.LIBRO) return json({ code: 'sin_libro' }, 503);
   if (!permitido(request)) return json({ code: 'solo_lectura_en_pantalla' }, 403);
-  if (ruta === 'indice') return json(codificar(await indice(env)));
+  let L;
+  try { L = await abrirLibro(env); } catch { return json({ code: 'sin_libro' }, 503); }
+  if (ruta === 'indice') return json(codificar(L.indice));
   const m = /^pagina\/([a-z0-9-]{1,80})$/.exec(ruta);
   if (!m) return json({ code: 'invalid_request' }, 404);
-  const fila = await env.LIBRO.prepare('SELECT datos FROM paginas WHERE id = ?').bind(m[1]).first('datos');
-  if (!fila) return json({ code: 'no_existe' }, 404);
-  return json(codificar(JSON.parse(fila)));
+  const p = L.paginas.get(m[1]);
+  if (!p) return json({ code: 'no_existe' }, 404);
+  return json(codificar(p));
 }
 
 async function guardian(request, env) {
@@ -65,10 +82,9 @@ async function guardian(request, env) {
   const respuesta = String(body.respuesta || '').slice(0, 2000);
   if (tarea === 'comentario' && respuesta.trim().length < 3) return json({ code: 'invalid_request' }, 400);
 
-  const id = String(body.cuentoId || '');
-  const fila = env.LIBRO && /^[a-z0-9-]{1,80}$/.test(id) ? await env.LIBRO.prepare('SELECT datos FROM paginas WHERE id = ?').bind(id).first('datos') : null;
-  if (!fila) return json({ code: 'invalid_request' }, 404);
-  const p = JSON.parse(fila);
+  let p = null;
+  try { p = (await abrirLibro(env)).paginas.get(String(body.cuentoId || '')); } catch { /* sin libro */ }
+  if (!p) return json({ code: 'invalid_request' }, 404);
   const cuento = { titulo: p.titulo, texto: (p.parrafos || []).map((x) => x.replace(/\*\*/g, '')) };
 
   const { prompt, json: esJson } = construirPrompt({ tarea, cuento, grado, consigna: String(body.consigna || ''), respuesta });
