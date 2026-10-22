@@ -8,6 +8,8 @@ const errores = [];
 const ids = new Set();
 const NIVELES_ABIERTOS = 2;
 
+const compIds = new Set((libro.competencias?.lista || []).map((k) => k.id));
+for (const k of libro.competencias?.lista || []) for (const g of libro.grados) if (!k.semillas?.[g]) errores.push(`Competencia ${k.nombre}: falta la semilla de ${g}.`);
 if (!libro.revision?.estado) errores.push('Falta revision.estado (todo contenido nuevo nace «en revisión»).');
 for (const c of libro.cuentos) {
   const donde = `«${c.titulo}» (${c.id})`;
@@ -34,6 +36,15 @@ for (const c of libro.cuentos) {
     if (q.tipo === 'abierta' && !q.pista) errores.push(`${q.id}: pregunta abierta sin pista.`);
   }
   if (!c.reinventar?.length) errores.push(`${donde}: faltan retos para reinventar.`);
+  const b = c.brujula;
+  if (!b) errores.push(`${donde}: falta «brujula» (pestaña Crecer).`);
+  else {
+    if (!b.emocion?.nombre || !b.emocion?.estrategia) errores.push(`${donde}: Crecer sin emoción y estrategia.`);
+    if (!b.valor?.nombre || !b.valor?.proposito) errores.push(`${donde}: Crecer sin valor con propósito.`);
+    for (const k of ['disciplina', 'innovar']) if (!b[k]) errores.push(`${donde}: Crecer sin ${k}.`);
+    if (!b.conecta?.area || !b.conecta?.actividad) errores.push(`${donde}: Crecer sin conexión entre áreas.`);
+    for (const id of b.competencias || []) if (!compIds.has(id)) errores.push(`${donde}: competencia desconocida «${id}».`);
+  }
   for (const k of ['proposito', 'competencias', 'actividad', 'errorFrecuente']) if (!c.guiaDocente?.[k]) errores.push(`${donde}: guía docente sin ${k}.`);
 }
 for (const m of medios.mural || []) {

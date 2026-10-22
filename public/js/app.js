@@ -133,6 +133,7 @@ function rutear() {
   const c = libro.cuentos.find((x) => x.id === h);
   if (c) { if (vista.cuento?.id !== c.id) Object.assign(vista, { cuento: c, tab: 'leer', q: 0, intento: 0, consigna: 0 }); pintarCuento(); }
   else if (h === 'arbol') { vista.cuento = null; pintarArbol(); }
+  else if (h === 'competencias') { vista.cuento = null; pintarCompetencias(); }
   else if (h === 'mural') { vista.cuento = null; pintarInicio('mural'); }
   else { vista.cuento = null; pintarInicio(); }
 }
@@ -159,6 +160,11 @@ function pintarInicio(ancla) {
         <button class="btn" id="dado" type="button">Lanzar el dado</button>
       </aside>
     </section>
+    <a class="compass-banner" href="#competencias">
+      <span class="compass-ico" aria-hidden="true">🧭</span>
+      <span><b>Leer para crecer</b>Pensamiento crítico, palabras precisas, imaginación, emociones, valores y disciplina: mira qué siembra cada cuento en ${esc(yo.grado)}.</span>
+      <span class="btn small">Ver competencias</span>
+    </a>
     <div class="section-title"><h2>Los cuentos</h2><span class="chip">${libro.cuentos.length} cuentos · Transición a 3.°</span></div>
     <div class="shelf">
       ${libro.cuentos.map((c, i) => {
@@ -212,7 +218,7 @@ function pintarArbol() {
 }
 
 /* ---------- Cuento ---------- */
-const TABS = [['leer', 'Leer'], ['jugar', 'Jugar'], ['pensar', 'Pensar'], ['reinventar', 'Reinventar'], ['video', 'Videoclip']];
+const TABS = [['leer', 'Leer'], ['jugar', 'Jugar'], ['pensar', 'Pensar'], ['crecer', 'Crecer'], ['reinventar', 'Reinventar'], ['video', 'Videoclip']];
 function pintarCuento() {
   const c = vista.cuento; const i = libro.cuentos.indexOf(c);
   $('#app').innerHTML = `
@@ -225,7 +231,7 @@ function pintarCuento() {
     <div class="layout"><div id="panel" role="tabpanel" style="min-width:0"></div><aside class="side" id="guia"></aside></div>`;
   $('#volver').onclick = () => { location.hash = ''; };
   $('.tabs').onclick = (e) => { const b = e.target.closest('[data-tab]'); if (!b) return; vista.tab = b.dataset.tab; pararVoz(); pintarCuento(); };
-  ({ leer: pLeer, jugar: pJugar, pensar: pPensar, reinventar: pReinventar, video: pVideo })[vista.tab](c);
+  ({ leer: pLeer, jugar: pJugar, pensar: pPensar, crecer: pCrecer, reinventar: pReinventar, video: pVideo })[vista.tab](c);
   pGuia(c);
 }
 
@@ -236,6 +242,7 @@ function pGuia(c) {
     g.innerHTML = `<div class="card"><h3>Guía docente</h3>${rev ? '<span class="chip rev">En revisión pedagógica</span>' : ''}
       <p style="margin-top:10px"><b>Propósito:</b> ${esc(d.proposito)}</p>
       <p><b>Competencias:</b></p><ul>${d.competencias.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      ${chipsCompetencias(c)}
       <p style="margin-top:8px"><b>Actividad de aula:</b> ${esc(d.actividad)}</p>
       <p><b>Error frecuente:</b> ${esc(d.errorFrecuente)}</p>
       <p class="hint">DBA: por verificar con el docente de Lenguaje del grado.</p></div>${ruta(c)}`;
@@ -379,6 +386,64 @@ async function comentar(btn, box, c, consigna, respuesta) {
   btn.disabled = false;
 }
 
+/* Crecer: emoción, valor, disciplina, innovación y conexión entre áreas */
+const compPorId = (id) => libro.competencias?.lista.find((x) => x.id === id);
+function chipsCompetencias(c) {
+  const ids = c.brujula?.competencias || [];
+  if (!ids.length) return '';
+  return `<p style="margin-top:10px"><b>Siembra en ${esc(yo.grado)}:</b></p><ul class="seeds">${ids.map(compPorId).filter(Boolean)
+    .map((k) => `<li><b>${esc(k.nombre)}.</b> ${esc(k.semillas[yo.grado] || '')}</li>`).join('')}</ul>`;
+}
+function pCrecer(c) {
+  const b = c.brujula; if (!b) { $('#panel').innerHTML = '<div class="empty">Pronto.</div>'; return; }
+  const hecho = (k) => !!yo.hechas[`crecer-${k}-${c.id}`];
+  const accion = (k, txt) => `<button class="btn small ${hecho(k) ? 'ghost' : ''}" type="button" data-hecho="${k}" ${hecho(k) ? 'disabled' : ''}>${hecho(k) ? 'Practicado ✓' : txt}</button>`;
+  $('#panel').innerHTML = `<div class="grow">
+    <div class="card g-emo"><div class="qlevel">Mi corazón · Inteligencia emocional</div><h3>${esc(b.emocion.nombre)}</h3><p>${esc(b.emocion.estrategia)}</p>
+      <label class="hint" for="sentir">¿Cuándo has sentido algo así?</label>
+      <textarea id="sentir" style="min-height:80px;margin-top:6px" placeholder="${yo.grado === 'Transición' ? 'Cuéntalo o dibújalo; un adulto puede escribir.' : 'Escribe con tus palabras…'}">${esc(yo.respuestas['sentir-' + c.id] || '')}</textarea>
+      <div class="row" style="margin-top:10px">${accion('emocion', 'Guardar y nombrar mi emoción')}</div></div>
+    <div class="card g-val"><div class="qlevel">Valor con propósito</div><h3>${esc(b.valor.nombre)}</h3><p>${esc(b.valor.proposito)}</p>
+      <div class="row">${accion('valor', 'Lo practiqué esta semana')}</div></div>
+    <div class="card g-dis"><div class="qlevel">Disciplina</div><p>${esc(b.disciplina)}</p>
+      <div class="row">${accion('disciplina', 'Cumplí mi hábito')}</div></div>
+    <div class="card g-inn"><div class="qlevel">Imaginar, crear, innovar</div><p>${esc(b.innovar)}</p>
+      <p class="hint" style="margin:0">Dibújalo o constrúyelo y cuéntaselo a tu familia o a tu profe.</p></div>
+    <div class="card g-con"><div class="qlevel">Conecta con · ${esc(b.conecta.area)}</div><p style="margin:0">${esc(b.conecta.actividad)}</p></div>
+    <div class="card"><h3>Lo que este cuento siembra en ti</h3>${chipsCompetencias(c)}<a class="btn ghost small" href="#competencias" style="margin-top:8px">Ver todas las competencias</a></div>
+  </div>`;
+  $('#panel').onclick = (e) => {
+    const k = e.target.dataset?.hecho; if (!k) return;
+    if (k === 'emocion') {
+      const txt = $('#sentir').value.trim();
+      if (txt.length < 3) { aviso('Cuéntanos un poquito 🙂'); return; }
+      yo.respuestas['sentir-' + c.id] = txt; guardar();
+    }
+    sumar(2, `crecer-${k}-${c.id}`); pCrecer(c);
+  };
+}
+
+/* Mapa de competencias */
+function pintarCompetencias() {
+  const M = libro.competencias; const g = yo.grado;
+  const enCuentos = (id) => libro.cuentos.filter((c) => c.brujula?.competencias.includes(id));
+  $('#app').innerHTML = `
+    <button class="back" type="button" id="volver">← Volver a los cuentos</button>
+    <div class="section-title"><h2>${esc(M.titulo)}</h2><span class="chip rev">En revisión</span></div>
+    <p class="lead">El objetivo es que cada niño se enamore de leer y llegue a ser un lector experto. ${esc(M.nota)}</p>
+    <div class="row" style="margin:16px 0 4px"><span class="hint" style="margin:0">Mostrando las semillas de <b>${esc(g)}</b>. Cambia el grado arriba.</span></div>
+    ${M.familias.map((f) => `<div class="section-title"><h2 style="font-size:1.3rem">${f.icono} ${esc(f.nombre)}</h2></div>
+      <div class="comp-grid">${M.lista.filter((k) => k.familia === f.id).map((k) => `<article class="card comp">
+        <h3>${esc(k.nombre)}</h3>
+        <p class="hint" style="margin:0 0 8px">Meta del lector experto: ${esc(k.meta)}</p>
+        <p class="seed"><span>Semilla en ${esc(g)}</span>${esc(k.semillas[g])}</p>
+        <p style="margin:8px 0 6px;font-size:.92rem"><b>Cómo la siembra el libro:</b> ${esc(k.comoLoSiembra)}</p>
+        <div class="row">${enCuentos(k.id).map((c) => `<a class="chip link" href="#${c.id}">${libro.cuentos.indexOf(c) + 1}. ${esc(c.titulo)}</a>`).join('')}</div>
+      </article>`).join('')}</div>`).join('')}`;
+  $('#volver').onclick = () => { location.hash = ''; };
+  window.scrollTo(0, 0);
+}
+
 /* Reinventar */
 function pReinventar(c) {
   const mias = yo.versiones.filter((v) => v.cuentoId === c.id);
@@ -414,7 +479,7 @@ function pReinventar(c) {
   };
 }
 function textoCompartir(c, v) {
-  return `Cuento reinventado · Mi Jardín Mágico del Saber\nCuento: ${c.titulo}\nReto: ${v.consigna}\n\n${v.texto}\n\nFirma (solo nombre y grado): `;
+  return `Cuento reinventado · El Jardín Mágico del Saber\nCuento: ${c.titulo}\nReto: ${v.consigna}\n\n${v.texto}\n\nFirma (solo nombre y grado): `;
 }
 function waLink(c, v) { return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(textoCompartir(c, v))}`; }
 

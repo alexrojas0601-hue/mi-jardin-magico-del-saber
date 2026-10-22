@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mi Jardín Mágico del Saber</title>
+<title>El Jardín Mágico del Saber</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Libro interactivo de cuentos de CENTEC para Transición, 1.°, 2.° y 3.°: leer, jugar, pensar y reinventar.">
+<meta name="description" content="El Jardín Mágico del Saber: libro interactivo de cuentos de CENTEC para Transición a 3.°. Leer, pensar, sentir, crear y crecer.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Baloo+2:wght@600;800&display=swap">
@@ -183,6 +183,27 @@ textarea{width:100%;min-height:120px;border:1.5px solid var(--line);border-radiu
 .t-ground{fill:var(--ground)} .t-trunk{fill:var(--trunk)} .t-leaf{fill:var(--leaf)} .t-flower{fill:var(--orange)} .t-star{fill:var(--gold)} .t-seed{fill:var(--trunk)}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:20;max-width:calc(100% - 32px)}
+/* Crecer y competencias */
+.compass-banner{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:28px;padding:16px 18px;border-radius:var(--r);background:var(--surface);border:1.5px solid var(--gold);color:var(--ink);text-decoration:none}
+.compass-banner:hover{border-color:var(--orange)}
+.compass-banner>span:nth-child(2){flex:1 1 260px;color:var(--muted)}
+.compass-banner b{display:block;font-family:var(--display);font-size:1.25rem;color:var(--ink)}
+.compass-ico{font-size:2rem;line-height:1}
+.grow{display:grid;gap:16px;max-width:70ch}
+.grow .card h3{margin:4px 0 6px}
+.grow .card p{margin:0 0 10px}
+.g-emo{border-left:5px solid var(--orange)}.g-val{border-left:5px solid var(--gold)}.g-dis{border-left:5px solid var(--navy)}
+:root[data-theme="dark"] .g-dis{border-left-color:#6E82E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .g-dis{border-left-color:#6E82E0}}
+.g-inn{border-left:5px solid var(--leaf)}.g-con{border-left:5px solid var(--muted)}
+.seeds{margin:0;padding-left:1.1em;font-size:.93rem}.seeds li{margin:5px 0}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.comp h3{font-size:1.12rem;margin-bottom:6px}
+.seed{margin:0;padding:10px 12px;border-radius:10px;background:var(--surface-2)}
+.seed span{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent-ink);margin-bottom:2px}
+.chip.link{text-decoration:none;text-transform:none;letter-spacing:0;font-size:.78rem}
+.chip.link:hover{color:var(--accent-ink)}
+
 footer{border-top:1px solid var(--line);padding-block:22px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
 .loading{padding:60px 0;text-align:center;color:var(--muted)}
@@ -195,7 +216,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-betw
     <div class="brand">
       <div>
         <div class="eyebrow">SABI CENTEC · Libro interactivo</div>
-        <h1>Mi Jardín <span>Mágico</span> del Saber</h1>
+        <h1>El Jardín <span>Mágico</span> del Saber</h1>
       </div>
     </div>
     <div class="controls">

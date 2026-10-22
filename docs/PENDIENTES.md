@@ -1,5 +1,6 @@
 # Pendientes
 
+- [ ] Equipo de Lenguaje y psicología: revisar el mapa de 16 competencias (semillas por grado) y la pestaña «Crecer» de cada cuento (emoción, valor, disciplina, innovación, conexión entre áreas).
 - [ ] Equipo de Lenguaje: revisar y aprobar las 42 preguntas, retos y guías (hoy «en revisión»).
 - [ ] Verificar y asignar los DBA de Lenguaje (número y redacción oficial) por grado.
 - [ ] Conectar el repositorio en Cloudflare (Workers & Pages → Importar repositorio) y asignar el dominio `jardin.sabicentec.com`.

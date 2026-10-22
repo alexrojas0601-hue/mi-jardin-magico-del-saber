@@ -1,6 +1,6 @@
 # Instrucciones para Claude en este repositorio
 
-Aplicación: **Mi Jardín Mágico del Saber**, libro interactivo de cuentos (Transición a 3.°). Hace parte del ecosistema SABI CENTEC del Colegio CENTEC Córdoba (Comuna 15, Cali).
+Aplicación: **El Jardín Mágico del Saber**, libro interactivo de cuentos (Transición a 3.°). Hace parte del ecosistema SABI CENTEC del Colegio CENTEC Córdoba (Comuna 15, Cali).
 
 Estructura: el contenido vive en `public/data/cuentos.json` (cuentos, preguntas, retos, guías) y `public/data/medios.json` (videoclips y mural). La app es `public/index.html` + `public/js/app.js`; el Worker `src/worker.js` sirve todo y el Guardián (`/api/guardian`). Antes de cualquier commit: `node scripts/validar.mjs`. Los Dots siguen `docs/AGENTES.md` y trabajan por pull request, nunca directo a `main`.
 

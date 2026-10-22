@@ -1,4 +1,4 @@
-# Mi Jardín Mágico del Saber
+# El Jardín Mágico del Saber
 
 Libro interactivo de cuentos del ecosistema SABI CENTEC (Colegio CENTEC Córdoba, Cali) para Transición, 1.°, 2.° y 3.°. Cada cuento tiene cinco momentos:
 
