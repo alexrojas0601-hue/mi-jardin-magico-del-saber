@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mi Jardín Mágico del Saber</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Libro interactivo de cuentos de CENTEC para Transición, 1.°, 2.° y 3.°: leer, jugar, pensar y reinventar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout: una banda azul SABI arriba (identidad + árbol de semillas), estante de cuentos en cuadrícula,
+   y una vista de lectura de una columna (~65 caracteres) con pestañas Leer · Jugar · Pensar · Reinventar · Videoclip. */
+:root{
+  --navy:#1A2D7A; --orange:#F47C20; --gold:#F5C518;
+  --bg:#F5F6FB; --surface:#FFFFFF; --surface-2:#ECEFFA; --ink:#141D45; --muted:#545E8C;
+  --line:#D6DBF0; --accent-ink:#B9520A; --ok:#1E7F4F; --ok-bg:#E3F4EA; --err-bg:#FFF1E6;
+  --band:#1A2D7A; --band-ink:#FFFFFF; --band-muted:#C9D1F5;
+  --leaf:#3E9B5F; --trunk:#8A5A2B; --ground:#C9D9B8;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px; --read:1.15rem;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1330; --surface:#141D45; --surface-2:#1C2758; --ink:#EEF1FF; --muted:#A9B2DC;
+  --line:#2C3870; --accent-ink:#FFA35C; --ok:#6FD39A; --ok-bg:#123A2A; --err-bg:#3A2412;
+  --band:#101A47; --band-ink:#FFFFFF; --band-muted:#A9B2DC; --leaf:#5CC17F; --trunk:#B88049; --ground:#2E4A33;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1330; --surface:#141D45; --surface-2:#1C2758; --ink:#EEF1FF; --muted:#A9B2DC;
+  --line:#2C3870; --accent-ink:#FFA35C; --ok:#6FD39A; --ok-bg:#123A2A; --err-bg:#3A2412;
+  --band:#101A47; --band-ink:#FFFFFF; --band-muted:#A9B2DC; --leaf:#5CC17F; --trunk:#B88049; --ground:#2E4A33;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.55 var(--body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+button,select,textarea,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:6px}
+a{color:var(--accent-ink)}
+
+/* Banda superior */
+.band{background:var(--band);color:var(--band-ink)}
+.band .wrap{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;justify-content:space-between;padding-block:22px 20px}
+.brand{display:flex;gap:14px;align-items:center;min-width:0}
+.brand h1{font-size:clamp(1.6rem,4.6vw,2.4rem);font-weight:800;letter-spacing:.2px}
+.brand h1 span{color:var(--gold)}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--band-muted);font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;background:rgba(255,255,255,.1);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;color:var(--band-ink);padding:6px 12px;border-radius:999px;cursor:pointer;font-weight:700;font-size:.9rem}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#1A2D7A}
+.band select{background:rgba(255,255,255,.1);color:var(--band-ink);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 12px;font-weight:700}
+.band select option{color:#141D45}
+.tree-chip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border-radius:16px;padding:6px 14px 6px 6px;border:0;color:var(--band-ink);cursor:pointer;text-align:left}
+.tree-chip svg{width:52px;height:52px;flex:none}
+.tree-chip b{font-family:var(--display);font-size:1.25rem;color:var(--gold);display:block;line-height:1}
+.tree-chip small{color:var(--band-muted);font-size:.78rem}
+
+main{padding-block:28px 64px}
+.lead{max-width:65ch;color:var(--muted);font-size:1.05rem;margin:8px 0 0}
+.section-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:36px 0 14px}
+.section-title h2{font-size:1.6rem}
+.chip{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.chip.rev{background:var(--err-bg);color:var(--accent-ink)}
+
+/* Estante */
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.book{display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;cursor:pointer;min-width:0;transition:transform .15s ease,border-color .15s ease}
+.book:hover{transform:translateY(-2px);border-color:var(--orange)}
+.book .num{font-family:var(--display);font-weight:800;font-size:2.2rem;line-height:1;color:var(--orange)}
+.book h3{font-size:1.25rem}
+.book p{margin:0;color:var(--muted);font-size:.95rem}
+.book .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;font-size:.8rem;color:var(--muted)}
+.dot{display:inline-flex;gap:4px;align-items:center}
+.dot i{width:9px;height:9px;border-radius:50%;background:var(--line);display:inline-block}
+.dot i.on{background:var(--gold)}
+
+/* Intro capítulo */
+.chapter{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:760px){.chapter{grid-template-columns:1fr}}
+.chapter .intro p{margin:0 0 10px;max-width:65ch}
+.dice{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.dice h3{font-size:1.2rem;margin-bottom:6px}
+.dice-out{font-size:1.05rem;margin:10px 0 12px;min-height:3.2em}
+.dice-out b{color:var(--accent-ink)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;background:var(--gold);color:#1A2D7A;text-decoration:none}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.navy{background:var(--navy);color:#fff}
+:root[data-theme="dark"] .btn.navy{background:#3A4FB0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.navy{background:#3A4FB0}}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.small{padding:6px 12px;font-size:.88rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* Vista de cuento */
+.back{background:none;border:0;color:var(--accent-ink);font-weight:700;cursor:pointer;padding:4px 0}
+.story-head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;margin:10px 0 18px}
+.story-head h2{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800}
+.story-head .num{font-family:var(--display);color:var(--orange);font-weight:800}
+.tabs{display:flex;gap:6px;overflow-x:auto;border-bottom:2px solid var(--line);margin-bottom:22px;scrollbar-width:thin}
+.tabs button{flex:none;border:0;background:none;padding:10px 14px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--orange)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+.reading{max-width:65ch}
+.reading p{font-size:var(--read);line-height:1.75;margin:0 0 1em}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.words{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0}
+.word{background:var(--surface-2);border-radius:10px;padding:8px 12px;font-size:.95rem}
+.word b{font-family:var(--display);color:var(--accent-ink);font-size:1.05rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.card h3{font-size:1.15rem;margin-bottom:8px}
+.card ul{margin:0;padding-left:1.2em}
+.card li{margin:4px 0}
+.side{display:flex;flex-direction:column;gap:16px}
+.side .card p{margin:0 0 8px}
+.ruta h4{font-family:var(--display);font-size:1rem;margin:10px 0 4px;color:var(--accent-ink)}
+.ruta h4:first-child{margin-top:0}
+
+/* Jugar */
+.quiz{max-width:65ch}
+.qprog{display:flex;gap:6px;margin-bottom:14px}
+.qprog i{flex:1;height:8px;border-radius:999px;background:var(--line)}
+.qprog i.done{background:var(--gold)}
+.qprog i.now{background:var(--orange)}
+.qlevel{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent-ink)}
+.qtext{font-family:var(--display);font-size:1.5rem;font-weight:600;margin:6px 0 16px;line-height:1.25}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;cursor:pointer;font-size:1.05rem}
+.opt:hover:not(:disabled){border-color:var(--navy)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--orange);background:var(--err-bg)}
+.fb{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--surface-2)}
+.fb.ok{background:var(--ok-bg)}
+.fb.err{background:var(--err-bg)}
+.fb q{display:block;font-style:italic;margin-top:6px;quotes:"«" "»"}
+.done-box{text-align:center;padding:28px 18px}
+.done-box b{font-family:var(--display);font-size:2.2rem;color:var(--accent-ink);display:block}
+
+/* Pensar / Reinventar */
+.open{display:grid;gap:18px;max-width:70ch}
+.open .card .q{font-size:1.1rem;font-weight:700;margin:4px 0 6px}
+.hint{color:var(--muted);font-size:.92rem;margin:0 0 10px}
+textarea{width:100%;min-height:120px;border:1.5px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);resize:vertical;font-size:1.02rem;line-height:1.5}
+.ai{margin-top:12px;padding:12px 14px;border-left:4px solid var(--gold);background:var(--surface-2);border-radius:0 12px 12px 0;white-space:pre-wrap}
+.ai-label{font-family:var(--display);font-weight:800;color:var(--accent-ink);display:block;margin-bottom:2px}
+.prompts{display:grid;gap:8px;margin:8px 0 14px}
+.prompt{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;cursor:pointer}
+.prompt[aria-pressed="true"]{border-color:var(--orange);background:var(--err-bg)}
+.versions{display:grid;gap:12px;margin-top:8px}
+.version{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.version small{color:var(--muted)}
+.version p{white-space:pre-wrap;margin:6px 0 10px}
+.wa{font-size:.9rem;color:var(--muted)}
+.wa code{font-family:var(--body);font-weight:700;color:var(--ink);user-select:all}
+
+/* Video */
+.video-box{max-width:720px}
+.video-box video{width:100%;max-width:100%;border-radius:var(--r);background:#000}
+.empty{border:2px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted)}
+
+/* Mural */
+.mural{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.mural article{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.mural article h3{font-size:1.15rem}
+.mural article p{white-space:pre-wrap;margin:8px 0}
+.mural article small{color:var(--muted)}
+
+/* Árbol */
+.tree-panel{display:grid;grid-template-columns:160px minmax(0,1fr);gap:20px;align-items:center}
+@media (max-width:520px){.tree-panel{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.tree-panel svg{width:160px;height:160px}
+.stages{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.stages span{font-size:.8rem;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.stages span.on{background:var(--gold);color:#1A2D7A;font-weight:700}
+.t-ground{fill:var(--ground)} .t-trunk{fill:var(--trunk)} .t-leaf{fill:var(--leaf)} .t-flower{fill:var(--orange)} .t-star{fill:var(--gold)} .t-seed{fill:var(--trunk)}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:20;max-width:calc(100% - 32px)}
+footer{border-top:1px solid var(--line);padding-block:22px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="band gutter">
+  <div class="wrap">
+    <div class="brand">
+      <div>
+        <div class="eyebrow">SABI CENTEC · Libro interactivo</div>
+        <h1>Mi Jardín <span>Mágico</span> del Saber</h1>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="¿Quién lee?" id="roles"></div>
+      <label class="sr" for="grado" style="position:absolute;left:-9999px">Grado</label>
+      <select id="grado" aria-label="Grado"></select>
+      <button class="tree-chip" id="treeChip" type="button" aria-label="Ver mi árbol de semillas"></button>
+    </div>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"><div class="loading">Abriendo el Jardín…</div></div></main>
+<footer class="gutter">
+  <div class="wrap">
+    <span>Colegio CENTEC Córdoba · Cali · <a href="https://www.sabicentec.com" target="_blank" rel="noopener">sabicentec.com</a></span>
+    <span>«El error no nos detiene: nos enseña, nos fortalece y nos hace crecer».</span>
+  </div>
+</footer>
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>

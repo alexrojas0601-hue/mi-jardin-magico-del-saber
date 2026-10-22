@@ -1,0 +1,13 @@
+{
+  "nota": "Videoclips y mural del libro. Para agregar un videoclip, pon su enlace (YouTube, Drive o R2 de Cloudflare) en el cuento que corresponde. En el mural solo van cuentos aprobados por CENTEC, firmados con nombre de pila y grado (Ley 1581 de 2012).",
+  "videos": {
+    "cuento-1": "",
+    "cuento-2": "",
+    "cuento-3": "",
+    "cuento-4": "",
+    "cuento-5": "",
+    "cuento-6": "",
+    "cuento-7": ""
+  },
+  "mural": []
+}
