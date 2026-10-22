@@ -134,6 +134,7 @@ function rutear() {
   if (c) { if (vista.cuento?.id !== c.id) Object.assign(vista, { cuento: c, tab: 'leer', q: 0, intento: 0, consigna: 0 }); pintarCuento(); }
   else if (h === 'arbol') { vista.cuento = null; pintarArbol(); }
   else if (h === 'competencias') { vista.cuento = null; pintarCompetencias(); }
+  else if (h === 'por-que-leer') { vista.cuento = null; pintarPorQueLeer(); }
   else if (h === 'mural') { vista.cuento = null; pintarInicio('mural'); }
   else { vista.cuento = null; pintarInicio(); }
 }
@@ -164,6 +165,11 @@ function pintarInicio(ancla) {
       <span class="compass-ico" aria-hidden="true">🧭</span>
       <span><b>Leer para crecer</b>Pensamiento crítico, palabras precisas, imaginación, emociones, valores y disciplina: mira qué siembra cada cuento en ${esc(yo.grado)}.</span>
       <span class="btn small">Ver competencias</span>
+    </a>
+    <a class="compass-banner invest" href="#por-que-leer">
+      <span class="compass-ico" aria-hidden="true">📈</span>
+      <span><b>Leer es la mejor inversión</b>Para familias y docentes: lo que gana un niño que lee todos los días, con la evidencia, y el plan de 15 minutos diarios.</span>
+      <span class="btn small navy">Por qué leer</span>
     </a>
     <div class="section-title"><h2>Los cuentos</h2><span class="chip">${libro.cuentos.length} cuentos · Transición a 3.°</span></div>
     <div class="shelf">
@@ -441,6 +447,30 @@ function pintarCompetencias() {
         <div class="row">${enCuentos(k.id).map((c) => `<a class="chip link" href="#${c.id}">${libro.cuentos.indexOf(c) + 1}. ${esc(c.titulo)}</a>`).join('')}</div>
       </article>`).join('')}</div>`).join('')}`;
   $('#volver').onclick = () => { location.hash = ''; };
+  window.scrollTo(0, 0);
+}
+
+/* Por qué leer: la cuota inicial */
+function pintarPorQueLeer() {
+  const P = libro.porQueLeer; const F = Object.fromEntries(P.fuentes.map((f, i) => [f.id, { ...f, n: i + 1 }]));
+  const refs = (ids = []) => ids.map((id) => `<a class="ref" href="#fuente-${id}" data-ref="${id}">[${F[id].n}]</a>`).join('');
+  $('#app').innerHTML = `
+    <button class="back" type="button" id="volver">← Volver a los cuentos</button>
+    <div class="section-title"><h2>${esc(P.titulo)}</h2></div>
+    ${P.intro.map((p) => `<p class="lead">${esc(p)}</p>`).join('')}
+    ${P.areas.map((a) => `<div class="section-title"><h2 style="font-size:1.3rem">${a.icono} ${esc(a.nombre)}</h2></div>
+      <div class="comp-grid">${a.beneficios.map((x) => `<article class="card comp">
+        <h3>${esc(x.titulo)}</h3>
+        <p style="margin:0 0 8px">${esc(x.adulto)} ${refs(x.fuente)}</p>
+        <p class="seed"><span>Cómo empieza en el Jardín</span>${esc(x.nino)}</p>
+        <p class="hint" style="margin:8px 0 0;font-size:.85rem">Evidencia: ${esc(x.evidencia)}</p>
+      </article>`).join('')}</div>`).join('')}
+    <div class="section-title"><h2 style="font-size:1.3rem">${esc(P.habito.titulo)}</h2></div>
+    <div class="card"><ol class="plan">${P.habito.pasos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></div>
+    <div class="section-title"><h2 style="font-size:1.1rem">Fuentes</h2></div>
+    <ol class="fuentes">${P.fuentes.map((f) => `<li id="fuente-${f.id}">${esc(f.cita)} ${f.doi ? `<a href="https://doi.org/${esc(f.doi)}" target="_blank" rel="noopener">doi:${esc(f.doi)}</a>` : `<span class="hint">(${esc(f.nota || 'DOI por verificar')})</span>`}</li>`).join('')}</ol>`;
+  $('#volver').onclick = () => { location.hash = ''; };
+  $('#app').onclick = (e) => { const r = e.target.closest('[data-ref]'); if (!r) return; e.preventDefault(); document.getElementById('fuente-' + r.dataset.ref)?.scrollIntoView({ behavior: 'smooth' }); };
   window.scrollTo(0, 0);
 }
 

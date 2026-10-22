@@ -10,6 +10,10 @@ const NIVELES_ABIERTOS = 2;
 
 const compIds = new Set((libro.competencias?.lista || []).map((k) => k.id));
 for (const k of libro.competencias?.lista || []) for (const g of libro.grados) if (!k.semillas?.[g]) errores.push(`Competencia ${k.nombre}: falta la semilla de ${g}.`);
+const fuentes = new Set((libro.porQueLeer?.fuentes || []).map((f) => f.id));
+for (const a of libro.porQueLeer?.areas || []) for (const x of a.beneficios) for (const id of x.fuente || []) if (!fuentes.has(id)) errores.push(`Por qué leer «${x.titulo}»: fuente desconocida ${id}.`);
+for (const f of libro.porQueLeer?.fuentes || []) if (!f.doi && !f.nota) errores.push(`Fuente ${f.id}: sin DOI ni nota «por verificar».`);
+if (/gimnasia cerebral|brain gym/i.test(JSON.stringify(libro))) errores.push('El libro menciona «gimnasia cerebral» (neuromito).');
 if (!libro.revision?.estado) errores.push('Falta revision.estado (todo contenido nuevo nace «en revisión»).');
 for (const c of libro.cuentos) {
   const donde = `«${c.titulo}» (${c.id})`;

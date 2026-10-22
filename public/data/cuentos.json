@@ -1330,5 +1330,181 @@
         }
       }
     ]
+  },
+  "porQueLeer": {
+    "titulo": "Leer es la mejor inversión: la cuota inicial empieza hoy",
+    "intro": [
+      "La disciplina constante de la lectura transforma la mente, la vida académica y profesional y el bienestar emocional de una persona. Es una de las inversiones más rentables que existen: sus beneficios se acumulan y se multiplican con el tiempo, como el ahorro.",
+      "La niñez es la etapa más importante para empezar. Quien lee de niño lee mejor, y quien lee mejor disfruta más y lee más: es una espiral que crece sola. El Jardín Mágico del Saber, con historias verdaderas de familias CENTEC y un poco de magia, es la cuota inicial para formar estudiantes lectores."
+    ],
+    "areas": [
+      {
+        "id": "intelectual",
+        "icono": "🧠",
+        "nombre": "Desarrollo intelectual y cognitivo",
+        "beneficios": [
+          {
+            "titulo": "Ejercicio mental que cambia el cerebro",
+            "adulto": "Aprender a leer reorganiza las redes del cerebro para la visión y el lenguaje. En adultos mayores, una vida de lectura y escritura se asocia con un deterioro de la memoria más lento.",
+            "nino": "Cada cuento leído en voz alta con un adulto, cada palabra mágica y cada pregunta ponen a trabajar esas redes desde Transición.",
+            "evidencia": "Estudio de imágenes cerebrales en personas que aprendieron a leer a distintas edades; y seguimiento de 294 personas hasta su muerte (asociación, no prueba de causa).",
+            "fuente": [
+              "dehaene2010",
+              "wilson2013"
+            ]
+          },
+          {
+            "titulo": "Enfoque y atención profunda",
+            "adulto": "En la era de la distracción digital, sostener la atención en un texto es una ventaja. Leer en papel da mejor comprensión que leer en pantalla, sobre todo cuando hay prisa.",
+            "nino": "Sesiones cortas y completas (10 a 15 minutos), sin interrupciones, y preferir el libro impreso para la lectura larga; la app es para jugar, pensar y crear.",
+            "evidencia": "Metaanálisis de 54 comparaciones entre papel y pantalla.",
+            "fuente": [
+              "delgado2018"
+            ]
+          },
+          {
+            "titulo": "Memoria que se ejercita",
+            "adulto": "Seguir tramas, personajes y argumentos obliga a recordar y relacionar.",
+            "nino": "Volver a contar el cuento con sus palabras, responder preguntas literales y buscar «dónde lo dice el cuento».",
+            "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
+          }
+        ]
+      },
+      {
+        "id": "academico",
+        "icono": "💼",
+        "nombre": "Ventajas académicas y profesionales",
+        "beneficios": [
+          {
+            "titulo": "Ventaja que se acumula",
+            "adulto": "Leer por gusto en la niñez predice más progreso entre los 10 y los 16 años en vocabulario, ortografía y matemáticas, incluso más que el nivel educativo de los padres en vocabulario. Leer permite aprender en horas lo que a otros les tomó años descubrir.",
+            "nino": "Que el niño elija y disfrute: leer por gusto, no por obligación, es lo que más pesa.",
+            "evidencia": "Cohorte británica de 1970, miles de niños seguidos durante años.",
+            "fuente": [
+              "sullivan2015"
+            ]
+          },
+          {
+            "titulo": "Decisiones con criterio",
+            "adulto": "Conocer muchas perspectivas y marcos de referencia ayuda a resolver problemas complejos con mejor juicio.",
+            "nino": "Las preguntas críticas de «Pensar» piden opinar con razones y escuchar otra opinión.",
+            "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
+          },
+          {
+            "titulo": "Comunicación de alto nivel",
+            "adulto": "Quienes leen más tienen mejor lenguaje oral y escrito. Esa relación crece con los años: explica cerca del 12 % de las diferencias en lenguaje oral en preescolar y cerca del 34 % en la universidad.",
+            "nino": "Palabras mágicas, lectura en voz alta y escribir la propia versión de cada cuento.",
+            "evidencia": "Metaanálisis de 99 estudios, desde el preescolar hasta la universidad.",
+            "fuente": [
+              "mol2011"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "emocional",
+        "icono": "🌱",
+        "nombre": "Crecimiento personal y emocional",
+        "beneficios": [
+          {
+            "titulo": "Un momento de calma",
+            "adulto": "Leer con tranquilidad puede ser una pausa que relaja. Ojo: la cifra que circula («6 minutos bajan el estrés un 68 %») viene de un estudio comercial sin revisión de pares; no la usamos.",
+            "nino": "El cuento antes de dormir, sin pantallas, en voz suave y en brazos de alguien que quiere al niño.",
+            "evidencia": "Sin evidencia sólida citada aquí sobre cortisol o estrés."
+          },
+          {
+            "titulo": "Inteligencia emocional y empatía",
+            "adulto": "Vivir la vida de otros personajes mejora un poco la capacidad de entender lo que otros piensan y sienten. El efecto es pequeño, pero real, y se suma con los años.",
+            "nino": "La pestaña «Crecer» nombra una emoción por cuento y propone contar la historia desde los ojos de otro personaje.",
+            "evidencia": "Metaanálisis de 14 estudios (efecto pequeño, g ≈ 0,15).",
+            "fuente": [
+              "dodell2018"
+            ]
+          },
+          {
+            "titulo": "Autoconocimiento",
+            "adulto": "Los libros son espejos: ayudan a poner en palabras pensamientos, miedos y sueños que uno no lograba decir.",
+            "nino": "«¿Cuándo has sentido algo así?» en cada cuento, y la Ruta Lectora en familia.",
+            "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
+          }
+        ]
+      },
+      {
+        "id": "realidad",
+        "icono": "🌍",
+        "nombre": "Expansión de la realidad",
+        "beneficios": [
+          {
+            "titulo": "Viajes sin fronteras ni presupuesto",
+            "adulto": "Leer abre la puerta a otras épocas, culturas y mundos imaginarios desde un sillón.",
+            "nino": "El Dado de la imaginación lleva a Luciana y Paulina al fondo del mar, a una nave espacial o a una biblioteca gigante.",
+            "evidencia": "Idea pedagógica."
+          },
+          {
+            "titulo": "Criterio propio",
+            "adulto": "Quien lee mucho y lee bien tiene más herramientas para no dejarse llevar por opiniones superficiales y formar su propio criterio.",
+            "nino": "Desde ya: distinguir lo que dice el texto de lo que imaginamos, y preguntar siempre «¿dónde lo dice?» y «¿por qué piensas eso?».",
+            "evidencia": "Idea pedagógica: es una meta de formación, no un resultado medido."
+          },
+          {
+            "titulo": "Una inversión para toda la vida",
+            "adulto": "En adultos de 50 años o más, leer libros se asoció con vivir casi dos años más que quienes no leían, aun leyendo apenas media hora al día.",
+            "nino": "Formar el hábito ahora es la cuota inicial de esa inversión.",
+            "evidencia": "Estudio de adultos de 50 años o más seguidos hasta 12 años (asociación, no prueba de causa).",
+            "fuente": [
+              "bavishi2016"
+            ]
+          }
+        ]
+      }
+    ],
+    "habito": {
+      "titulo": "El plan de la cuota inicial: 15 minutos diarios en familia",
+      "pasos": [
+        "Misma hora todos los días (por ejemplo, antes de dormir). La constancia vale más que la duración.",
+        "Un adulto lee en voz alta, aunque el niño ya sepa leer: escuchar también es leer.",
+        "Al terminar, una sola pregunta: «¿qué sentiste?» o «¿qué pasaría si…?». Escuchar sin corregir.",
+        "Pegar una estrella en el calendario. Siete estrellas: celebrar en familia, sin premios de dinero ni pantallas.",
+        "Una vez por semana, que el niño le lea o le cuente el cuento a alguien más pequeño."
+      ]
+    },
+    "fuentes": [
+      {
+        "id": "dehaene2010",
+        "cita": "Dehaene, S., Pegado, F., Braga, L. W., et al. (2010). How learning to read changes the cortical networks for vision and language. Science, 330(6009), 1359–1364.",
+        "doi": "10.1126/science.1194140"
+      },
+      {
+        "id": "wilson2013",
+        "cita": "Wilson, R. S., Boyle, P. A., Yu, L., Barnes, L. L., Schneider, J. A., & Bennett, D. A. (2013). Life-span cognitive activity, neuropathologic burden, and cognitive aging. Neurology.",
+        "doi": "10.1212/WNL.0b013e31829c5e8a"
+      },
+      {
+        "id": "delgado2018",
+        "cita": "Delgado, P., Vargas, C., Ackerman, R., & Salmerón, L. (2018). Don't throw away your printed books: A meta-analysis on the effects of reading media on reading comprehension. Educational Research Review, 25, 23–38.",
+        "doi": "10.1016/j.edurev.2018.09.003"
+      },
+      {
+        "id": "sullivan2015",
+        "cita": "Sullivan, A., & Brown, M. (2015). Reading for pleasure and progress in vocabulary and mathematics. British Educational Research Journal, 41(6), 971–991.",
+        "doi": "10.1002/berj.3180"
+      },
+      {
+        "id": "mol2011",
+        "cita": "Mol, S. E., & Bus, A. G. (2011). To read or not to read: A meta-analysis of print exposure from infancy to early adulthood. Psychological Bulletin, 137(2), 267–296.",
+        "doi": "",
+        "nota": "DOI por verificar"
+      },
+      {
+        "id": "dodell2018",
+        "cita": "Dodell-Feder, D., & Tamir, D. I. (2018). Fiction reading has a small positive impact on social cognition: A meta-analysis. Journal of Experimental Psychology: General, 147(11), 1713–1727.",
+        "doi": "10.1037/xge0000395"
+      },
+      {
+        "id": "bavishi2016",
+        "cita": "Bavishi, A., Slade, M. D., & Levy, B. R. (2016). A chapter a day: Association of book reading with longevity. Social Science & Medicine, 164, 44–48.",
+        "doi": "10.1016/j.socscimed.2016.07.014"
+      }
+    ]
   }
 }

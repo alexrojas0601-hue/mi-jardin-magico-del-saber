@@ -204,6 +204,13 @@ textarea{width:100%;min-height:120px;border:1.5px solid var(--line);border-radiu
 .chip.link{text-decoration:none;text-transform:none;letter-spacing:0;font-size:.78rem}
 .chip.link:hover{color:var(--accent-ink)}
 
+.compass-banner.invest{margin-top:12px;border-color:var(--navy)}
+:root[data-theme="dark"] .compass-banner.invest{border-color:#6E82E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .compass-banner.invest{border-color:#6E82E0}}
+.ref{font-size:.8rem;font-weight:700;text-decoration:none;margin-left:2px}
+.plan{margin:0;padding-left:1.3em}.plan li{margin:8px 0}
+.fuentes{font-size:.88rem;color:var(--muted);padding-left:1.3em;max-width:90ch}.fuentes li{margin:6px 0;overflow-wrap:anywhere}
+
 footer{border-top:1px solid var(--line);padding-block:22px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
 .loading{padding:60px 0;text-align:center;color:var(--muted)}
