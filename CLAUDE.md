@@ -2,7 +2,7 @@
 
 Aplicación: **El Jardín Mágico del Saber**, libro interactivo de cuentos (Transición a 3.°). Hace parte del ecosistema SABI CENTEC del Colegio CENTEC Córdoba (Comuna 15, Cali).
 
-Estructura: el contenido vive en `public/data/cuentos.json` (cuentos, preguntas, retos, guías) y `public/data/medios.json` (videoclips y mural). La app es `public/index.html` + `public/js/app.js`; el Worker `src/worker.js` sirve todo y el Guardián (`/api/guardian`). Antes de cualquier commit: `node scripts/validar.mjs`. Los Dots siguen `docs/AGENTES.md` y trabajan por pull request, nunca directo a `main`.
+Estructura: **el texto del libro NO va en este repositorio público** (© Editorial Pluma de Oro S.A.S.): vive en la base D1 `jardin-magico-libro` y se entrega por `/api/libro` una página a la vez (ver `docs/CONTENIDO.md`). En el repositorio: `public/data/marco.json` (competencias, por qué leer, dado), `public/data/medios.json` (videoclips, voces grabadas, mural), la app `public/index.html` + `public/js/app.js` y el Worker `src/worker.js`. Antes de cualquier commit: `node scripts/validar.mjs`. Nunca subir `contenido/` ni pegar texto de los cuentos en archivos del repositorio, issues o pull requests. Los Dots siguen `docs/AGENTES.md` y trabajan por pull request, nunca directo a `main`.
 
 ## Regla principal
 Toda tarea en este repositorio sigue `docs/PROMPT-MAESTRO-SABI.md`, la gobernanza común del ecosistema. Incluye los Dots investigadores, auditores y de mejora; los tutores por área; la instrucción maestra visual; los comandos didácticos (`/worksheet` `/escape` `/detective` `/boardgame` `/stations` `/manipulative` `/comic` `/lapbook` `/puzzle` `/minibook` y demás) y los comandos de pensamiento (`/ultrathink` `/stepback` `/firstprinciples` … `/selfcheck`).

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>El Jardín Mágico del Saber</title>
+<meta name="robots" content="noindex">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="El Jardín Mágico del Saber: libro interactivo de cuentos de CENTEC para Transición a 3.°. Leer, pensar, sentir, crear y crecer.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -248,13 +249,126 @@ textarea{width:100%;min-height:120px;border:1.5px solid var(--line);border-radiu
 .toc li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dotted var(--line)}
 .toc a{font-weight:700;text-decoration:none}.toc span{color:var(--muted);flex:none;font-size:.9rem}
 
+/* ===== Libro digital: hojas, vuelta de página, ambientes ===== */
+body{background:linear-gradient(160deg,color-mix(in srgb,var(--tema-a,#EAF7E8) 70%,var(--bg)),color-mix(in srgb,var(--tema-b,#FFF4E6) 70%,var(--bg)));background-attachment:fixed;min-height:100vh}
+main{background-image:var(--tema-patron);background-size:260px 260px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:linear-gradient(160deg,color-mix(in srgb,var(--tema-a,#EAF7E8) 10%,var(--bg)),color-mix(in srgb,var(--tema-b,#FFF4E6) 8%,var(--bg)))}}
+.modo-libro main{padding-block:14px 30px}
+.libro{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;max-width:900px;margin:0 auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.stage{position:relative;flex:1;max-width:780px;perspective:2200px;touch-action:pan-y}
+.leaf{position:absolute;inset:0;background:var(--paper);border-radius:4px 18px 18px 4px;border:1px solid var(--line);box-shadow:inset 18px 0 22px -16px rgba(26,45,122,.28),6px 8px 0 -3px var(--paper),6px 8px 0 -2px var(--line),12px 16px 30px -18px rgba(26,45,122,.5);overflow:hidden;transform-origin:left center;backface-visibility:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.leaf.medir{position:absolute;left:-10000px;top:0;visibility:hidden;inset:auto}
+.leaf-in{position:absolute;inset:0;padding:clamp(22px,4vw,40px) clamp(20px,5vw,52px) 44px clamp(26px,5.5vw,58px);overflow:hidden;z-index:1}
+.leaf-in.scroll{overflow:auto;-webkit-overflow-scrolling:touch}
+.leaf .deco{position:absolute;inset:0;pointer-events:none;z-index:0}
+.leaf .motivo{position:absolute;opacity:.2}
+:root[data-theme="dark"] .leaf .motivo{opacity:.14}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .leaf .motivo{opacity:.14}}
+.leaf .folio{position:absolute;left:0;right:0;bottom:0;padding:14px 0 10px;background:linear-gradient(transparent,var(--paper) 45%);text-align:center;font-size:.78rem;color:var(--muted);z-index:2;font-family:var(--display)}
+.leaf.pasa{z-index:3;animation:pasa .75s cubic-bezier(.45,.05,.35,1) forwards}
+.leaf.vuelve{z-index:3;animation:vuelve .75s cubic-bezier(.45,.05,.35,1)}
+.leaf.pasa::after,.leaf.vuelve::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(26,45,122,.22));animation:sombra .75s ease forwards;z-index:4}
+@keyframes pasa{0%{transform:rotateY(0)}100%{transform:rotateY(-178deg)}}
+@keyframes vuelve{0%{transform:rotateY(-178deg)}100%{transform:rotateY(0)}}
+@keyframes sombra{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+.flecha{flex:none;width:44px;height:64px;border:0;border-radius:14px;background:color-mix(in srgb,var(--surface) 80%,transparent);color:var(--navy-ink);font-size:2.2rem;line-height:1;cursor:pointer;box-shadow:0 2px 10px -4px rgba(26,45,122,.4)}
+.flecha:disabled{opacity:.25;cursor:default}
+@media (max-width:640px){.flecha{display:none}}
+.barra{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:780px;margin:12px auto 0}
+.barra .donde{text-align:center;min-width:0;flex:1}
+.barra .donde b{display:block;font-family:var(--display);font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barra .donde small{color:var(--muted);font-size:.78rem}
+.herramientas{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px auto 0;max-width:780px}
+.legal{font-size:.72rem;color:var(--muted);text-align:center;margin:10px 0 0}
+.hoja-cabeza{margin-bottom:10px}
+.row.centro{justify-content:center}
+.leaf .page-title{margin:4px 0 12px}
+.leaf p{font-size:var(--read);line-height:1.75;margin:0 0 .85em}
+.leaf p.li{padding-left:1.1em;text-indent:-.9em}
+.leaf p.li::before{content:"• ";color:var(--orange);font-weight:700}
+.s{border-radius:6px;transition:background-color .2s}
+.s.leyendo{background:color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 55%,transparent)}
+.ruta-libro{margin-top:10px;padding:12px 16px;border-radius:14px;border:2px dashed var(--gold);background:color-mix(in srgb,var(--surface) 88%,transparent)}
+.ruta-libro.cont{margin-top:8px}
+.ruta-libro h3{font-size:1.15rem;margin:0 0 2px}
+.ruta-libro h4{font-family:var(--display);font-size:1rem;margin:6px 0 2px;color:var(--accent-ink)}
+.ruta-libro ul{margin:0;padding-left:1.1em}.ruta-libro li,.ruta-libro p{margin:3px 0;font-size:1rem;line-height:1.5}
+.oir{border:0;background:var(--surface-2);border-radius:999px;padding:2px 8px;margin-left:4px;cursor:pointer;font-size:.9rem;line-height:1.4;vertical-align:middle;color:var(--ink)}
+.oir:hover{background:var(--gold);color:#1A2D7A}
+.burbuja{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:min(560px,calc(100% - 32px));background:var(--surface);border:2px solid var(--gold);border-radius:18px;padding:10px 16px;box-shadow:0 10px 30px -10px rgba(26,45,122,.5);z-index:15;font-size:1.02rem}
+.burbuja-quien{display:block;font-family:var(--display);font-weight:800;color:var(--accent-ink);font-size:.82rem}
+.cover{text-align:center;position:relative}
+.autores{font-size:.9rem;color:var(--muted);margin:10px 0 0}
+.pista-pasar{font-size:.88rem;color:var(--muted);margin:16px auto 0;max-width:46ch}
+.unidad-cover{padding-top:10px}
+.arte-unidad{position:absolute;inset:-20px -30px;pointer-events:none}
+.arte-unidad .motivo{position:absolute;opacity:.55}
+.unidad-titulo{font-size:clamp(1.7rem,5vw,2.6rem);margin-top:34px}
+.unidad-cover .toc li{padding:5px 0;font-size:.95rem}
+.unidad-cover .toc{position:relative;background:color-mix(in srgb,var(--paper) 86%,transparent);border-radius:12px;padding:12px 14px;border-top:0}
+.aprende-hoja .page-title{font-size:clamp(1.4rem,4vw,2rem)}
+.grid-aprende{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 14px}
+.tarjeta-aprende{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.tarjeta-aprende:hover{border-color:var(--orange)}
+.tarjeta-aprende.hecha{border-color:var(--ok)}
+.tarjeta-aprende .ic{font-size:1.7rem;line-height:1}
+.tarjeta-aprende b{font-family:var(--display);font-size:1.15rem}
+.tarjeta-aprende small{color:var(--muted);font-size:.84rem;line-height:1.3}
+.guia-rol{background:color-mix(in srgb,var(--surface-2) 85%,transparent);border-radius:14px;padding:12px 14px}
+.guia-rol h3{font-size:1.1rem;margin-bottom:6px}
+.guia-rol p{font-size:1rem;line-height:1.55;margin:0 0 6px}
+.pasos{margin:0;padding-left:1.3em}.pasos li{margin:8px 0;font-size:1.05rem}
+.modal{position:fixed;inset:0;background:rgba(10,16,48,.55);z-index:30;display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.modal[hidden]{display:none}
+@media (min-width:700px){.modal{align-items:center}}
+.modal-card{position:relative;width:min(720px,100%);max-height:calc(100vh - 24px);overflow:auto;background:var(--bg);border-radius:20px;padding:20px 18px 24px;box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
+.modal-card .cerrar{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:0;background:var(--surface-2);font-size:1.1rem;cursor:pointer;color:var(--ink)}
+.modal-card .tabs{margin:6px 0 16px}
+.modal-card .kicker{text-align:left;padding-right:44px}
+body.con-modal{overflow:hidden}
+.opt-fila{display:flex;gap:6px;align-items:center}.opt-fila>.opt,.opt-fila>.prompt{flex:1}
+.unidades{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.unidad-card{position:relative;overflow:hidden;background:linear-gradient(150deg,color-mix(in srgb,var(--ua) 75%,var(--surface)),var(--surface) 70%)}
+.unidad-card h3{font-size:1.2rem;margin:2px 0 8px;padding-right:50px}
+.unidad-arte{position:absolute;inset:0;pointer-events:none}.unidad-arte .motivo{position:absolute;opacity:.45}
+.lista-indice{margin:0;padding-left:1.2em;position:relative}.lista-indice li{margin:5px 0}.lista-indice a{font-weight:700;text-decoration:none}
+.ok{color:var(--ok);font-weight:800}
+.dice-out{font-size:1.05rem;margin:10px 0 12px;min-height:3.2em}
+.modo-libro .band .wrap{padding-block:8px;gap:6px 18px}
+.modo-libro .eyebrow{display:none}
+.modo-libro .brand h1{font-size:clamp(1.15rem,2.6vw,1.5rem)}
+.modo-libro .tree-chip{padding:2px 12px 2px 4px}.modo-libro .tree-chip svg{width:36px;height:36px}
+.modo-libro .topnav a{padding:8px 12px}
+.modo-libro footer{display:none}
+.modo-libro .toast{bottom:auto;top:calc(12px + env(safe-area-inset-top,0px))}
+@media (max-width:640px){
+  .modo-libro .band .wrap{flex-wrap:nowrap;flex-direction:column;align-items:stretch;gap:6px}
+  .modo-libro .controls{flex-wrap:nowrap;gap:6px}
+  .modo-libro .seg button{padding:4px 7px;font-size:.78rem}
+  .modo-libro .band select{padding:4px 6px;font-size:.8rem;max-width:96px}
+  .modo-libro .tree-chip{padding:0 8px 0 2px;gap:4px}.modo-libro .tree-chip svg{width:28px;height:28px}
+  .modo-libro .tree-chip small{display:none}.modo-libro .tree-chip b{font-size:1rem}
+  .modo-libro .topnav a{padding:7px 10px;font-size:.92rem}
+  .barra .donde small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media print{body *{display:none!important}body::after{content:"El Jardín Mágico del Saber es un libro de lectura en pantalla. © 2025 Editorial Pluma de Oro S.A.S. Prohibida su impresión.";display:block;padding:40px;font:18px/1.5 sans-serif}}
+@media (max-width:640px){
+  .band .wrap{padding-block:12px 10px;gap:8px 12px}
+  .eyebrow{display:none}
+  .brand h1{font-size:1.35rem}
+  .tree-chip svg{width:38px;height:38px}
+  .seg button{padding:5px 9px;font-size:.84rem}
+  .grid-aprende{grid-template-columns:1fr 1fr}
+  .barra .btn{padding:8px 12px}
+}
+
 footer{border-top:1px solid var(--line);padding-block:22px;color:var(--muted);font-size:.9rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
 .loading{padding:60px 0;text-align:center;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
-<body>
+<body oncontextmenu="return false">
 <header class="band gutter">
   <div class="wrap">
     <div class="brand">

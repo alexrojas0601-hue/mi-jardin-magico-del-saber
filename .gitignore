@@ -1,0 +1,4 @@
+contenido/
+*.local.json
+.wrangler/
+node_modules/

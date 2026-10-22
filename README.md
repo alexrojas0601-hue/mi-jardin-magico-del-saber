@@ -13,13 +13,13 @@ Las semillas del Árbol del Saber y los cuentos de cada niño se guardan solo en
 ## Dónde está cada cosa
 | Archivo | Para qué |
 | --- | --- |
-| `public/data/cuentos.json` | Texto del libro, preguntas, retos y guías. Es lo que actualizan los Dots. |
-| `public/data/medios.json` | Enlaces de videoclips y cuentos del mural. |
-| `public/index.html`, `public/js/app.js` | La aplicación. |
-| `public/js/guardian.js` | Instrucciones del Guardián (las comparten la página y el Worker). |
-| `src/worker.js` | Worker de Cloudflare: sirve el libro y `/api/guardian`. |
-| `scripts/validar.mjs` | Revisión automática del libro: `node scripts/validar.mjs`. |
-| `docs/AGENTES.md` | Cómo trabajan los Dots que actualizan el contenido. |
+| `public/index.html`, `public/js/app.js` | El lector: hojas que se pasan como un libro, voz del Guardián, aprendizaje guiado por rol. |
+| `public/data/marco.json` | Competencias, «Por qué leer», Dado de la imaginación. |
+| `public/data/medios.json` | Videoclips, voces grabadas y mural. |
+| `src/worker.js` | Worker: sirve la app, el libro protegido (`/api/libro`) y el Guardián (`/api/guardian`). |
+| `scripts/armar_libro.py`, `scripts/sql_libro.py` | Arman el libro y lo preparan para la base D1. |
+| `scripts/validar.mjs` | Revisión automática antes de publicar. |
+| `docs/CONTENIDO.md` | **Dónde vive el texto del libro (D1, no GitHub) y cómo se actualiza.** |
 
 ## Publicar
 Cloudflare despliega desde GitHub (rama `main`). Para el Guardián en sabicentec.com hace falta el secreto `ANTHROPIC_API_KEY` en el Worker.

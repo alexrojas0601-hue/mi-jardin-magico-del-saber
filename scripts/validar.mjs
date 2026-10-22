@@ -1,59 +1,61 @@
 // Valida el libro antes de publicar: node scripts/validar.mjs
-// Los agentes (Dots) deben correrlo antes de abrir un pull request.
-import { readFileSync } from 'node:fs';
+// 1) public/data/marco.json (competencias, «Por qué leer», dado): está en el repositorio.
+// 2) contenido/libro.json (texto del libro + material de aprendizaje): NO está en git; se valida si existe.
+import { readFileSync, existsSync } from 'node:fs';
 
-const libro = JSON.parse(readFileSync(new URL('../public/data/cuentos.json', import.meta.url), 'utf8'));
-const medios = JSON.parse(readFileSync(new URL('../public/data/medios.json', import.meta.url), 'utf8'));
 const errores = [];
-const ids = new Set();
-const NIVELES_ABIERTOS = 2;
+const leer = (r) => JSON.parse(readFileSync(new URL(r, import.meta.url), 'utf8'));
+const marco = leer('../public/data/marco.json');
+const medios = leer('../public/data/medios.json');
 
-const compIds = new Set((libro.competencias?.lista || []).map((k) => k.id));
-for (const k of libro.competencias?.lista || []) for (const g of libro.grados) if (!k.semillas?.[g]) errores.push(`Competencia ${k.nombre}: falta la semilla de ${g}.`);
-const fuentes = new Set((libro.porQueLeer?.fuentes || []).map((f) => f.id));
-for (const a of libro.porQueLeer?.areas || []) for (const x of a.beneficios) for (const id of x.fuente || []) if (!fuentes.has(id)) errores.push(`Por qué leer «${x.titulo}»: fuente desconocida ${id}.`);
-for (const f of libro.porQueLeer?.fuentes || []) if (!f.doi && !f.nota) errores.push(`Fuente ${f.id}: sin DOI ni nota «por verificar».`);
-if (/gimnasia cerebral|brain gym/i.test(JSON.stringify(libro))) errores.push('El libro menciona «gimnasia cerebral» (neuromito).');
-if (!libro.revision?.estado) errores.push('Falta revision.estado (todo contenido nuevo nace «en revisión»).');
-for (const c of libro.cuentos) {
-  const donde = `«${c.titulo}» (${c.id})`;
-  if (!Array.isArray(c.texto) || c.texto.length < 3) errores.push(`${donde}: texto muy corto o ausente.`);
-  if (!c.vocabulario?.length) errores.push(`${donde}: falta vocabulario.`);
-  for (const k of ['literal', 'inferencial', 'critico']) if (!c.rutaLectora?.[k]?.length) errores.push(`${donde}: Ruta Lectora sin ${k}.`);
-  const ops = c.preguntas.filter((q) => q.tipo === 'opcion');
-  const abiertas = c.preguntas.filter((q) => q.tipo === 'abierta');
-  if (ops.length < 3) errores.push(`${donde}: necesita al menos 3 preguntas de opción.`);
-  if (abiertas.length < NIVELES_ABIERTOS) errores.push(`${donde}: necesita al menos ${NIVELES_ABIERTOS} preguntas abiertas.`);
-  for (const q of c.preguntas) {
-    if (ids.has(q.id)) errores.push(`${donde}: id repetido ${q.id}.`);
-    ids.add(q.id);
-    if (q.tipo === 'opcion') {
-      if (!(q.correcta >= 0 && q.correcta < q.opciones.length)) errores.push(`${q.id}: «correcta» fuera de rango.`);
-      if (new Set(q.opciones).size !== q.opciones.length) errores.push(`${q.id}: opciones repetidas.`);
-      if (!q.dondeLoDice && !q.porque) errores.push(`${q.id}: falta «dondeLoDice» o «porque».`);
-      if (q.dondeLoDice) {
-        const plano = (s) => s.replace(/[\p{Extended_Pictographic}️‍]/gu, '').replace(/\s+/g, ' ').trim();
-        const frag = plano(q.dondeLoDice).replace(/^—/, '').slice(0, 40);
-        if (!plano(c.texto.join(' ')).includes(frag)) errores.push(`${q.id}: «dondeLoDice» no aparece en el texto del cuento.`);
-      }
+if (!marco.revision?.estado) errores.push('Falta revision.estado (todo contenido nuevo nace «en revisión»).');
+const compIds = new Set((marco.competencias?.lista || []).map((k) => k.id));
+for (const k of marco.competencias?.lista || []) for (const g of marco.grados) if (!k.semillas?.[g]) errores.push(`Competencia ${k.nombre}: falta la semilla de ${g}.`);
+const fuentes = new Set((marco.porQueLeer?.fuentes || []).map((f) => f.id));
+for (const a of marco.porQueLeer?.areas || []) for (const x of a.beneficios) for (const id of x.fuente || []) if (!fuentes.has(id)) errores.push(`Por qué leer «${x.titulo}»: fuente desconocida ${id}.`);
+for (const f of marco.porQueLeer?.fuentes || []) if (!f.doi && !f.nota) errores.push(`Fuente ${f.id}: sin DOI ni nota «por verificar».`);
+if (/gimnasia cerebral|brain gym/i.test(JSON.stringify(marco))) errores.push('El marco menciona «gimnasia cerebral» (neuromito).');
+for (const m of medios.mural || []) if (/\d{7,}|@/.test(`${m.firma} ${m.texto}`)) errores.push(`Mural «${m.titulo}»: parece tener teléfono o correo (Ley 1581).`);
+if (existsSync(new URL('../public/data/cuentos.json', import.meta.url))) errores.push('public/data/cuentos.json no debe existir: el texto del libro va en D1, no en public/.');
+
+let resumen = 'marco válido';
+const ruta = new URL('../contenido/libro.json', import.meta.url);
+if (existsSync(ruta)) {
+  const libro = JSON.parse(readFileSync(ruta, 'utf8'));
+  const plano = (s) => String(s).replace(/\*\*/g, '').replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu, '').replace(/[  ]/g, ' ').replace(/\s+/g, ' ').replace(/\s+([.,;:!?»)])/g, '$1').trim();
+  const ids = new Set(); let n = 0;
+  if (/gimnasia cerebral|brain gym/i.test(JSON.stringify(libro.paginas.map(({ parrafos, ...r }) => r)))) errores.push('El material de aprendizaje menciona «gimnasia cerebral» (neuromito).');
+  for (const p of libro.paginas) {
+    const donde = `«${p.titulo}» (${p.id})`;
+    if (ids.has(p.id)) errores.push(`${donde}: id repetido.`); ids.add(p.id);
+    if (!/^[a-z0-9-]{1,80}$/.test(p.id)) errores.push(`${donde}: id con caracteres no válidos.`);
+    if (!p.parrafos?.length) errores.push(`${donde}: sin texto.`);
+    if (p.tipo !== 'cuento' && p.tipo !== 'lectura') continue;
+    n++;
+    for (const k of ['palabras', 'literal', 'inferencial', 'critico', 'reto']) if (!p.ruta?.[k]?.length) errores.push(`${donde}: Ruta Lectora sin ${k}.`);
+    const ops = (p.preguntas || []).filter((q) => q.tipo === 'opcion');
+    const abiertas = (p.preguntas || []).filter((q) => q.tipo === 'abierta');
+    if (ops.length < 3) errores.push(`${donde}: necesita 3 preguntas de opción.`);
+    if (abiertas.length < 2) errores.push(`${donde}: necesita 2 preguntas abiertas.`);
+    const texto = plano(p.parrafos.join(' '));
+    for (const [i, q] of ops.entries()) {
+      if (!(q.correcta >= 0 && q.correcta < q.opciones.length)) errores.push(`${donde} P${i + 1}: «correcta» fuera de rango.`);
+      if (new Set(q.opciones).size !== q.opciones.length) errores.push(`${donde} P${i + 1}: opciones repetidas.`);
+      if (!q.dondeLoDice && !q.porque) errores.push(`${donde} P${i + 1}: falta «dondeLoDice» o «porque».`);
+      const cita = q.dondeLoDice ? plano(q.dondeLoDice).replace(/^[—\-«»"' ]+|[—\-«»"' ]+$/g, '').replace(/[.,;:!?]+$/, '') : '';
+      if (cita && !texto.includes(cita.slice(0, 70))) errores.push(`${donde} P${i + 1}: «dondeLoDice» no está en el texto.`);
     }
-    if (q.tipo === 'abierta' && !q.pista) errores.push(`${q.id}: pregunta abierta sin pista.`);
+    for (const q of abiertas) if (!q.pista) errores.push(`${donde}: pregunta abierta sin pista.`);
+    const b = p.brujula;
+    if (!b?.emocion?.nombre || !b?.valor?.nombre || !b?.disciplina || !b?.innovar || !b?.conecta?.actividad) errores.push(`${donde}: Crecer incompleto.`);
+    for (const id of b?.competencias || []) if (!compIds.has(id)) errores.push(`${donde}: competencia desconocida «${id}».`);
+    if (!p.guiaFamilia?.pasos?.length) errores.push(`${donde}: sin pasos para la familia.`);
+    if (!p.guiaDocente?.proposito) errores.push(`${donde}: sin guía docente.`);
+    if (!p.voz?.intro || !p.voz?.cierre) errores.push(`${donde}: sin voz del Guardián.`);
+    if (!p.reinventar?.length) errores.push(`${donde}: sin retos para reinventar.`);
   }
-  if (!c.reinventar?.length) errores.push(`${donde}: faltan retos para reinventar.`);
-  const b = c.brujula;
-  if (!b) errores.push(`${donde}: falta «brujula» (pestaña Crecer).`);
-  else {
-    if (!b.emocion?.nombre || !b.emocion?.estrategia) errores.push(`${donde}: Crecer sin emoción y estrategia.`);
-    if (!b.valor?.nombre || !b.valor?.proposito) errores.push(`${donde}: Crecer sin valor con propósito.`);
-    for (const k of ['disciplina', 'innovar']) if (!b[k]) errores.push(`${donde}: Crecer sin ${k}.`);
-    if (!b.conecta?.area || !b.conecta?.actividad) errores.push(`${donde}: Crecer sin conexión entre áreas.`);
-    for (const id of b.competencias || []) if (!compIds.has(id)) errores.push(`${donde}: competencia desconocida «${id}».`);
-  }
-  for (const k of ['proposito', 'competencias', 'actividad', 'errorFrecuente']) if (!c.guiaDocente?.[k]) errores.push(`${donde}: guía docente sin ${k}.`);
-}
-for (const m of medios.mural || []) {
-  if (/\d{7,}|@/.test(`${m.firma} ${m.texto}`)) errores.push(`Mural «${m.titulo}»: parece tener teléfono o correo (Ley 1581).`);
-}
+  resumen += ` · libro válido: ${libro.paginas.length} páginas, ${n} cuentos y lecturas, ${libro.unidades.length} unidades`;
+} else resumen += ' · (contenido/libro.json no está en este equipo: el libro se valida donde se arma)';
 
 if (errores.length) { console.error('✗ Revisar:\n- ' + errores.join('\n- ')); process.exit(1); }
-console.log(`✓ Libro válido: ${libro.cuentos.length} cuentos, ${ids.size} preguntas.`);
+console.log('✓ ' + resumen + '.');
