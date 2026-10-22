@@ -10,7 +10,7 @@ Tarea programada en claude.ai: **«Dots Jardín Mágico – actualización pedag
 | Dot | Trabajo | Entrega |
 | --- | --- | --- |
 | `Dot_Investigador_SextoSentido` | Busca investigación revisada por pares del último año: comprensión lectora temprana, lectura dialógica y compartida, vocabulario, conciencia fonológica, funciones ejecutivas, desarrollo socioemocional, lectura en pantalla vs. papel, uso de IA con niños. Verifica cada DOI abriéndolo. | Hallazgos con cita y DOI en el informe del mes. |
-| `Dot_Lectura_Comprension` | Convierte los hallazgos en mejoras concretas de `public/data/cuentos.json`: preguntas por nivel (literal, inferencial, crítico, creativo), retos para reinventar, guías docente y familia, vocabulario. | Cambios en el JSON, con `revision.estado` = «en revisión». |
+| `Dot_Lectura_Comprension` | Convierte los hallazgos en mejoras concretas del material de aprendizaje (ver `docs/CONTENIDO.md`; el texto del libro está en D1, no en el repositorio): preguntas por nivel (literal, inferencial, crítico, creativo), retos para reinventar, guías docente y familia, vocabulario. | Cambios en el JSON, con `revision.estado` = «en revisión». |
 | `Dot_Auditor_Riguroso` | Revisa lo que hizo el Dot de lectura (nunca lo propio): exactitud frente al texto del cuento, lenguaje apto para Transición a 3.°, sin neuromitos, sin datos personales, DOIs que existen. | Aprobado o lista de correcciones. |
 | `Dot_Mejora_Continua` | Lee el informe del auditor y los comentarios docentes, prioriza y actualiza `docs/PENDIENTES.md`. | Pendientes ordenados. |
 

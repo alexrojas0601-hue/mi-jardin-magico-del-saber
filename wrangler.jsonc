@@ -3,11 +3,17 @@
   "name": "mi-jardin-magico-del-saber",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-01",
+  // El libro cifrado se empaqueta como texto dentro del Worker.
+  "rules": [{ "type": "Text", "globs": ["**/*.txt"], "fallthrough": true }],
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": true
   },
+  // Base privada: guarda la llave del libro cifrado (meta.clave_libro). © Editorial Pluma de Oro S.A.S.
+  "d1_databases": [
+    { "binding": "LIBRO", "database_name": "jardin-magico-libro", "database_id": "208f30bf-9048-417a-956a-420c11a9b0a8" }
+  ],
   "vars": {
     "MODELO": "claude-haiku-5-5"
   }

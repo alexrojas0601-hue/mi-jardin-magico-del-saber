@@ -1,11 +1,18 @@
 # Pendientes
 
-- [ ] Equipo de Lenguaje y psicología: revisar el mapa de 16 competencias (semillas por grado) y la pestaña «Crecer» de cada cuento (emoción, valor, disciplina, innovación, conexión entre áreas).
-- [ ] Equipo de Lenguaje: revisar y aprobar las 42 preguntas, retos y guías (hoy «en revisión»).
+## Contenido (equipo de Lenguaje, psicólogas y autores)
+- [ ] Revisar y aprobar el material de aprendizaje de los 113 cuentos y lecturas (preguntas, Crecer, guía docente, pasos para familias, voz del Guardián). Hoy está «en revisión».
+- [ ] Revisar las notas para los autores de la auditoría (posibles erratas del texto original, títulos repetidos).
+- [ ] Confirmar el título de las Semanas 1-2 (el libro no trae encabezado; hoy aparece «Semanas 1-2»).
+- [ ] Decidir si se quedan las dos versiones de «El Banquete de los Sabores Mágicos» y si «El Valle de los Dinosaurios Mágicos II» y «El Círculo de las Emociones II» llevan otro título.
 - [ ] Verificar y asignar los DBA de Lenguaje (número y redacción oficial) por grado.
-- [ ] Conectar el repositorio en Cloudflare (Workers & Pages → Importar repositorio) y asignar el dominio `jardin.sabicentec.com`.
-- [ ] Agregar el secreto `ANTHROPIC_API_KEY` en Cloudflare para encender al Guardián en sabicentec.com.
-- [ ] Enlazar el libro desde el portal `sabicentec-portal`.
-- [ ] Subir los videoclips de cada cuento y poner sus enlaces en `public/data/medios.json`.
-- [ ] Incorporar las ilustraciones originales del libro (pendiente: archivos de imagen).
+
+## Imágenes y voz
+- [ ] Ilustraciones originales del libro: el zip pesa más de 20 MB; subir las imágenes por separado para incorporarlas.
+- [ ] Grabar cuentos con voz de docentes de CENTEC (mp3) y ponerlos en `medios.json` → `audios`.
+- [ ] Subir los videoclips de cada cuento y poner sus enlaces en `medios.json` → `videos`.
+
+## Plataforma
+- [ ] Hacer privado el repositorio de GitHub (el texto ya no está en él, pero conviene).
+- [ ] Conectar el libro al ingreso único SABI si se quiere saber quién lee (hoy es abierto y sin datos personales).
 - [ ] Publicar en el mural los primeros cuentos reinventados que lleguen por WhatsApp (solo nombre y grado).
