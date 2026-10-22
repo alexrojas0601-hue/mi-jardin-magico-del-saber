@@ -340,9 +340,9 @@ function medidas() {
   const alto = Math.max(430, Math.min(980, innerHeight - Math.max(0, top - scrollY) - 92));
   return { ancho, alto };
 }
-function paginar(bloques, { ancho, alto }) {
+function paginar(bloques, { ancho, alto, letra = yo.letra }) {
   const medir = document.createElement('div');
-  medir.className = 'leaf medir'; medir.style.cssText = `width:${ancho}px;height:${alto}px;--read:${yo.letra}rem`;
+  medir.className = 'leaf medir'; medir.style.cssText = `width:${ancho}px;height:${alto}px;--read:${letra}rem`;
   medir.innerHTML = '<div class="leaf-in"></div>';
   document.body.append(medir);
   const dentro = $('.leaf-in', medir);
@@ -407,9 +407,26 @@ async function mostrarPagina(id, hoja = 0, dir = 0, rapido = false) {
   }
   const { bloques, habla } = bloquesDe(item, p || {});
   let hojas;
-  if (bloques[0]?.tipo === 'especial') hojas = [htmlEspecial(item)];
+  if (bloques[0]?.tipo === 'especial') { hojas = [htmlEspecial(item)]; vista.letraHoja = yo.letra; }
   else {
-    hojas = paginar(bloques, medidas());
+    const med = medidas();
+    hojas = paginar(bloques, med);
+    const n = hojas.length;
+    // Estética, como en el libro impreso: cada cuento toma el tamaño de letra más grande con el que
+    // sigue cabiendo en el mismo número de hojas, y luego el texto se reparte parejo entre ellas.
+    let letra = yo.letra; let lo = yo.letra; let hi = yo.letra * 1.22;
+    for (let i = 0; i < 5; i++) {
+      const mid = (lo + hi) / 2; const prueba = paginar(bloques, { ...med, letra: mid });
+      if (prueba.length === n) { letra = mid; hojas = prueba; lo = mid; } else hi = mid;
+    }
+    if (n > 1) {
+      let a = Math.round(med.alto * 0.6); let b = med.alto;
+      for (let i = 0; i < 5 && b - a > 12; i++) {
+        const mid = Math.round((a + b) / 2); const prueba = paginar(bloques, { ...med, alto: mid, letra });
+        if (prueba.length === n) { hojas = prueba; b = mid; } else a = mid;
+      }
+    }
+    vista.letraHoja = letra;
     if (item.tipo === 'cuento' || item.tipo === 'lectura') hojas.push('__aprende__');
   }
   if (hoja < 0) hoja = hojas.length - 1;
@@ -469,7 +486,7 @@ function pintarHoja(dir, rapido) {
   const html = vista.hojas[vista.hoja] === '__aprende__' ? htmlAprendeHoja() : vista.hojas[vista.hoja];
   const leaf = document.createElement('div');
   leaf.className = 'leaf' + (item.tipo === 'portada' || item.tipo === 'unidad' || item.tipo === 'fin' ? ' especial' : '');
-  leaf.style.setProperty('--read', yo.letra + 'rem');
+  leaf.style.setProperty('--read', (vista.letraHoja || yo.letra) + 'rem');
   const folio = item.tipo === 'portada' ? '' : `<div class="folio">${esc(item.titulo).slice(0, 48)} · ${vista.hoja + 1}/${vista.hojas.length}</div>`;
   leaf.innerHTML = `${decorHoja(temaDe(item), item.id + vista.hoja)}<div class="leaf-in${vista.hojas[vista.hoja] === '__aprende__' || /especial/.test(leaf.className) ? ' scroll' : ''}">${html}</div>${folio}`;
   const vieja = $('.leaf:not(.saliendo)', st);
