@@ -8,7 +8,7 @@ const WHATSAPP_VISIBLE = '318 490 5115';
 
 /* ---------- Estado por persona (solo en este navegador) ---------- */
 const CLAVE = 'jardin-magico-v1';
-const inicial = { semillas: 0, hechas: {}, respuestas: {}, versiones: [], rol: 'estudiante', grado: '1.°', leidos: {} };
+const inicial = { semillas: 0, hechas: {}, respuestas: {}, versiones: [], rol: 'estudiante', grado: '1.°', leidos: {}, pagina: 0 };
 let yo = cargar();
 function cargar() {
   try { return { ...inicial, ...JSON.parse(localStorage.getItem(CLAVE) || '{}') }; } catch { return { ...inicial }; }
@@ -119,6 +119,8 @@ async function iniciar() {
 }
 
 function pintarControles() {
+  $('#nav').innerHTML = [['libro', '#libro', '📖 Leer el libro'], ['actividades', '#actividades', 'Actividades'], ['competencias', '#competencias', 'Competencias'], ['por-que-leer', '#por-que-leer', 'Por qué leer']]
+    .map(([id, href, n]) => `<a href="${href}" data-nav="${id}">${n}</a>`).join('');
   const roles = [['estudiante', 'Estudiante'], ['familia', 'Familia'], ['docente', 'Docente']];
   $('#roles').innerHTML = roles.map(([v, n]) => `<button type="button" data-rol="${v}" aria-pressed="${yo.rol === v}">${n}</button>`).join('');
   $('#roles').onclick = (e) => { const b = e.target.closest('[data-rol]'); if (!b) return; yo.rol = b.dataset.rol; guardar(); pintarControles(); rutear(); };
@@ -131,6 +133,10 @@ function pintarControles() {
 function rutear() {
   const h = decodeURIComponent(location.hash.slice(1));
   const c = libro.cuentos.find((x) => x.id === h);
+  const libroM = /^libro(?:\/(\d+))?$/.exec(h);
+  if (!h || libroM) { vista.cuento = null; pararVoz(); pintarLibro(libroM?.[1] != null ? +libroM[1] : 0); marcarNav('libro'); return; }
+  libroActual = null;
+  marcarNav(h === 'competencias' || h === 'por-que-leer' ? h : 'actividades');
   if (c) { if (vista.cuento?.id !== c.id) Object.assign(vista, { cuento: c, tab: 'leer', q: 0, intento: 0, consigna: 0 }); pintarCuento(); }
   else if (h === 'arbol') { vista.cuento = null; pintarArbol(); }
   else if (h === 'competencias') { vista.cuento = null; pintarCompetencias(); }
@@ -138,6 +144,123 @@ function rutear() {
   else if (h === 'mural') { vista.cuento = null; pintarInicio('mural'); }
   else { vista.cuento = null; pintarInicio(); }
 }
+function marcarNav(id) {
+  document.querySelectorAll('#nav a').forEach((a) => a.setAttribute('aria-current', a.dataset.nav === id ? 'page' : 'false'));
+}
+
+/* ---------- El libro, página por página ---------- */
+function paginasLibro() {
+  const cap = libro.capitulos[0];
+  return [
+    { tipo: 'portada', titulo: 'Portada' },
+    { tipo: 'presentacion', titulo: cap.titulo, cap },
+    ...libro.cuentos.map((c, i) => ({ tipo: 'cuento', titulo: c.titulo, c, n: i + 1 })),
+    { tipo: 'fin', titulo: 'Fin del capítulo' },
+  ];
+}
+let tamanoLibro = 1.2;
+let libroActual = null;
+function pintarLibro(n) {
+  const P = paginasLibro(); n = Math.max(0, Math.min(P.length - 1, n | 0));
+  const pg = P[n]; yo.pagina = n; guardar();
+  const lista = (a) => `<ul>${a.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  let cuerpo = '';
+  if (pg.tipo === 'portada') {
+    cuerpo = `<div class="cover">
+      <svg class="cover-art" viewBox="0 0 220 150" aria-hidden="true">
+        <ellipse class="t-ground" cx="110" cy="138" rx="90" ry="10"/>
+        <path class="t-trunk" d="M102 138 L104 88 Q110 78 116 88 L118 138 Z"/>
+        <circle class="t-leaf" cx="110" cy="66" r="42"/><circle class="t-leaf" cx="76" cy="84" r="24"/><circle class="t-leaf" cx="144" cy="84" r="24"/>
+        <circle class="t-flower" cx="92" cy="58" r="5"/><circle class="t-flower" cx="128" cy="50" r="5"/><circle class="t-flower" cx="112" cy="80" r="5"/><circle class="t-flower" cx="146" cy="78" r="4"/><circle class="t-flower" cx="76" cy="82" r="4"/>
+        <path class="t-star" d="M30 18 l3 7 7 .5 -5.5 4.5 2 7 -6.5 -4 -6.5 4 2 -7 -5.5 -4.5 7 -.5z"/>
+        <path class="t-star" d="M190 26 l3 7 7 .5 -5.5 4.5 2 7 -6.5 -4 -6.5 4 2 -7 -5.5 -4.5 7 -.5z"/>
+      </svg>
+      <div class="eyebrow-ink">Colegio CENTEC Córdoba · Cali</div>
+      <h2 class="cover-title">El Jardín <span>Mágico</span> del Saber</h2>
+      <p class="cover-sub">Libro de cuentos para Transición, 1.°, 2.° y 3.°</p>
+      <p class="cover-cap">Capítulo especial: ${esc(libro.capitulos[0].titulo)}</p>
+      <div class="row" style="justify-content:center;margin-top:18px"><a class="btn" href="#libro/1">Empezar a leer →</a></div>
+      <nav class="toc" aria-label="Contenido"><h3>Contenido</h3><ol>
+        ${P.slice(1).map((x, k) => `<li><a href="#libro/${k + 1}">${x.tipo === 'cuento' ? `${x.n}. ` : ''}${esc(x.titulo)}</a><span>pág. ${k + 1}</span></li>`).join('')}
+      </ol></nav>
+    </div>`;
+  } else if (pg.tipo === 'presentacion') {
+    const [a, b, ...resto] = pg.cap.intro;
+    cuerpo = `<div class="kicker">Capítulo especial</div><h2 class="page-title">${esc(pg.cap.titulo)}</h2>
+      <div class="prose">${[a, b].filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join('')}</div>
+      ${resto.map((p) => `<div class="family-note">${esc(p)}</div>`).join('')}`;
+  } else if (pg.tipo === 'cuento') {
+    const c = pg.c; const r = c.rutaLectora;
+    cuerpo = `<div class="kicker">Cuento ${pg.n} de ${libro.cuentos.length}</div><h2 class="page-title">${esc(c.titulo)}</h2>
+      <div class="prose">${c.texto.map((p) => `<p>${esc(p)}</p>`).join('')}</div>
+      <section class="ruta-libro" aria-label="Ruta Lectora CENTEC">
+        <h3>Ruta Lectora CENTEC</h3>
+        <h4>Palabras</h4><ul>${c.vocabulario.map((v) => `<li><b>${esc(v.palabra)}</b>: ${esc(v.significado)}</li>`).join('')}</ul>
+        <h4>Literal</h4>${lista(r.literal)}
+        <h4>Inferencial</h4>${lista(r.inferencial)}
+        <h4>Crítico</h4>${lista(r.critico)}
+        <h4>Reto en familia</h4><p>${esc(r.reto)}</p>
+      </section>
+      <a class="more" href="#${c.id}">Jugar, pensar, crecer y reinventar con este cuento →</a>`;
+  } else {
+    cuerpo = `<div class="cover"><div class="kicker">Fin del capítulo</div><h2 class="page-title">¡Terminaste el libro! 🌟</h2>
+      <p class="cover-sub" style="max-width:52ch;margin-inline:auto">Cada cuento leído es una semilla. Ahora vuelve a tu cuento favorito, inventa un final nuevo y compártelo con tu familia.</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <a class="btn" href="#actividades">Ir a las actividades</a>
+        <a class="btn ghost" href="#competencias">Competencias</a>
+        <a class="btn ghost" href="#por-que-leer">Por qué leer</a>
+        <a class="btn ghost" href="#libro/0">Volver a la portada</a>
+      </div></div>`;
+  }
+  const nav = (pos) => `<div class="pager ${pos}">
+      <a class="btn ghost small" data-prev href="#libro/${n - 1}" ${n === 0 ? 'aria-disabled="true" tabindex="-1"' : ''}>← Anterior</a>
+      <label class="pnum">Página <select data-ir aria-label="Ir a la página">${P.map((x, k) => `<option value="${k}" ${k === n ? 'selected' : ''}>${k ? k + ' · ' + esc(x.titulo).slice(0, 34) : 'Portada'}</option>`).join('')}</select> de ${P.length - 1}</label>
+      <a class="btn small" data-next href="#libro/${n + 1}" ${n === P.length - 1 ? 'aria-disabled="true" tabindex="-1"' : ''}>Siguiente →</a>
+    </div>`;
+  $('#app').innerHTML = `
+    ${n > 0 ? `<div class="toolbar book-tools">
+      ${'speechSynthesis' in window && pg.tipo !== 'fin' ? '<button class="btn navy small" type="button" id="oirPag">Escuchar esta página</button>' : ''}
+      <button class="btn ghost small" type="button" id="menosL" aria-label="Letra más pequeña">A−</button>
+      <button class="btn ghost small" type="button" id="masL" aria-label="Letra más grande">A+</button>
+    </div>${nav('top')}` : ''}
+    <article class="sheet" style="--read:${tamanoLibro}rem">${cuerpo}${n > 0 ? `<div class="folio">${n}</div>` : ''}</article>
+    ${nav('bottom')}`;
+  const sheet = $('.sheet');
+  $('#app').querySelectorAll('[data-ir]').forEach((sel) => { sel.onchange = () => { location.hash = 'libro/' + sel.value; }; });
+  const m = $('#masL'); if (m) m.onclick = () => { tamanoLibro = Math.min(1.7, tamanoLibro + 0.1); sheet.style.setProperty('--read', tamanoLibro + 'rem'); };
+  const l = $('#menosL'); if (l) l.onclick = () => { tamanoLibro = Math.max(1, tamanoLibro - 0.1); sheet.style.setProperty('--read', tamanoLibro + 'rem'); };
+  const o = $('#oirPag');
+  if (o) o.onclick = () => {
+    if (speechSynthesis.speaking) { pararVoz(); o.textContent = 'Escuchar esta página'; return; }
+    const txt = pg.tipo === 'cuento' ? pg.c.titulo + '. ' + pg.c.texto.join(' ') : pg.cap.titulo + '. ' + pg.cap.intro.join(' ');
+    try {
+      const u = new SpeechSynthesisUtterance(sinEmoji(txt)); u.lang = 'es-CO'; u.rate = 0.9;
+      const voz = speechSynthesis.getVoices().find((v) => v.lang?.startsWith('es')); if (voz) u.voice = voz;
+      u.onend = () => { o.textContent = 'Escuchar esta página'; };
+      speechSynthesis.speak(u); o.textContent = 'Detener';
+    } catch { o.hidden = true; }
+  };
+  // Pasar de un cuento a la página siguiente cuenta como cuento leído (1 semilla, una sola vez).
+  $('#app').querySelectorAll('[data-next]').forEach((a) => a.addEventListener('click', () => {
+    if (pg.tipo === 'cuento' && !yo.leidos[pg.c.id]) { yo.leidos[pg.c.id] = true; guardar(); sumar(1); }
+  }));
+  libroActual = { n, total: P.length };
+  window.scrollTo(0, 0);
+}
+document.addEventListener('keydown', (e) => {
+  if (!libroActual || e.target.closest('input,textarea,select')) return;
+  if (e.key === 'ArrowRight' && libroActual.n < libroActual.total - 1) $('.pager.bottom [data-next]')?.click();
+  if (e.key === 'ArrowLeft' && libroActual.n > 0) location.hash = 'libro/' + (libroActual.n - 1);
+});
+let toqueX = null;
+document.addEventListener('touchstart', (e) => { toqueX = e.target.closest('.sheet') ? e.touches[0].clientX : null; }, { passive: true });
+document.addEventListener('touchend', (e) => {
+  if (toqueX == null || !libroActual) return;
+  const dx = e.changedTouches[0].clientX - toqueX; toqueX = null;
+  if (Math.abs(dx) < 70) return;
+  if (dx < 0 && libroActual.n < libroActual.total - 1) $('.pager.bottom [data-next]')?.click();
+  if (dx > 0 && libroActual.n > 0) location.hash = 'libro/' + (libroActual.n - 1);
+});
 
 /* ---------- Inicio ---------- */
 function progresoCuento(c) {
@@ -161,6 +284,11 @@ function pintarInicio(ancla) {
         <button class="btn" id="dado" type="button">Lanzar el dado</button>
       </aside>
     </section>
+    <a class="compass-banner book-banner" href="#libro/${yo.pagina > 0 ? yo.pagina : 1}">
+      <span class="compass-ico" aria-hidden="true">📖</span>
+      <span><b>${yo.pagina > 1 ? 'Seguir leyendo el libro' : 'Leer el libro completo'}</b>Página por página, como un libro de verdad, con la Ruta Lectora de cada cuento.</span>
+      <span class="btn small">${yo.pagina > 1 ? 'Continuar en la página ' + yo.pagina : 'Abrir el libro'}</span>
+    </a>
     <a class="compass-banner" href="#competencias">
       <span class="compass-ico" aria-hidden="true">🧭</span>
       <span><b>Leer para crecer</b>Pensamiento crítico, palabras precisas, imaginación, emociones, valores y disciplina: mira qué siembra cada cuento en ${esc(yo.grado)}.</span>
@@ -171,7 +299,7 @@ function pintarInicio(ancla) {
       <span><b>Leer es la mejor inversión</b>Para familias y docentes: lo que gana un niño que lee todos los días, con la evidencia, y el plan de 15 minutos diarios.</span>
       <span class="btn small navy">Por qué leer</span>
     </a>
-    <div class="section-title"><h2>Los cuentos</h2><span class="chip">${libro.cuentos.length} cuentos · Transición a 3.°</span></div>
+    <div class="section-title"><h2>Actividades por cuento</h2><span class="chip">${libro.cuentos.length} cuentos · Transición a 3.°</span></div>
     <div class="shelf">
       ${libro.cuentos.map((c, i) => {
         const p = progresoCuento(c);
@@ -201,7 +329,7 @@ function pintarArbol() {
   const e = etapa(yo.semillas);
   const leidos = Object.keys(yo.leidos).length;
   $('#app').innerHTML = `
-    <button class="back" type="button" id="volver">← Volver a los cuentos</button>
+    <button class="back" type="button" id="volver">← Volver a las actividades</button>
     <div class="section-title"><h2>Mi Árbol del Saber</h2></div>
     <div class="card tree-panel">
       ${arbolSVG(e.i)}
@@ -219,7 +347,7 @@ function pintarArbol() {
       <li>Reinventar un cuento: 3 semillas.</li>
     </ul>
     <p class="hint" style="margin-top:10px">Llevas ${leidos} de ${libro.cuentos.length} cuentos leídos y ${yo.versiones.length} cuento${yo.versiones.length === 1 ? '' : 's'} reinventado${yo.versiones.length === 1 ? '' : 's'}. Tus semillas viven en este dispositivo; nadie más las ve.</p></div>`;
-  $('#volver').onclick = () => { location.hash = ''; };
+  $('#volver').onclick = () => { location.hash = 'actividades'; };
   window.scrollTo(0, 0);
 }
 
@@ -228,14 +356,14 @@ const TABS = [['leer', 'Leer'], ['jugar', 'Jugar'], ['pensar', 'Pensar'], ['crec
 function pintarCuento() {
   const c = vista.cuento; const i = libro.cuentos.indexOf(c);
   $('#app').innerHTML = `
-    <button class="back" type="button" id="volver">← Todos los cuentos</button>
+    <button class="back" type="button" id="volver">← Todas las actividades</button>
     <div class="story-head">
       <h2><span class="num">${i + 1}.</span> ${esc(c.titulo)}</h2>
       <div class="row">${i > 0 ? `<a class="btn ghost small" href="#${libro.cuentos[i - 1].id}">Anterior</a>` : ''}${i < libro.cuentos.length - 1 ? `<a class="btn ghost small" href="#${libro.cuentos[i + 1].id}">Siguiente</a>` : ''}</div>
     </div>
     <div class="tabs" role="tablist">${TABS.map(([v, n]) => `<button role="tab" type="button" data-tab="${v}" aria-selected="${vista.tab === v}">${n}</button>`).join('')}</div>
     <div class="layout"><div id="panel" role="tabpanel" style="min-width:0"></div><aside class="side" id="guia"></aside></div>`;
-  $('#volver').onclick = () => { location.hash = ''; };
+  $('#volver').onclick = () => { location.hash = 'actividades'; };
   $('.tabs').onclick = (e) => { const b = e.target.closest('[data-tab]'); if (!b) return; vista.tab = b.dataset.tab; pararVoz(); pintarCuento(); };
   ({ leer: pLeer, jugar: pJugar, pensar: pPensar, crecer: pCrecer, reinventar: pReinventar, video: pVideo })[vista.tab](c);
   pGuia(c);
@@ -434,7 +562,7 @@ function pintarCompetencias() {
   const M = libro.competencias; const g = yo.grado;
   const enCuentos = (id) => libro.cuentos.filter((c) => c.brujula?.competencias.includes(id));
   $('#app').innerHTML = `
-    <button class="back" type="button" id="volver">← Volver a los cuentos</button>
+    <button class="back" type="button" id="volver">← Volver a las actividades</button>
     <div class="section-title"><h2>${esc(M.titulo)}</h2><span class="chip rev">En revisión</span></div>
     <p class="lead">El objetivo es que cada niño se enamore de leer y llegue a ser un lector experto. ${esc(M.nota)}</p>
     <div class="row" style="margin:16px 0 4px"><span class="hint" style="margin:0">Mostrando las semillas de <b>${esc(g)}</b>. Cambia el grado arriba.</span></div>
@@ -446,7 +574,7 @@ function pintarCompetencias() {
         <p style="margin:8px 0 6px;font-size:.92rem"><b>Cómo la siembra el libro:</b> ${esc(k.comoLoSiembra)}</p>
         <div class="row">${enCuentos(k.id).map((c) => `<a class="chip link" href="#${c.id}">${libro.cuentos.indexOf(c) + 1}. ${esc(c.titulo)}</a>`).join('')}</div>
       </article>`).join('')}</div>`).join('')}`;
-  $('#volver').onclick = () => { location.hash = ''; };
+  $('#volver').onclick = () => { location.hash = 'actividades'; };
   window.scrollTo(0, 0);
 }
 
@@ -455,7 +583,7 @@ function pintarPorQueLeer() {
   const P = libro.porQueLeer; const F = Object.fromEntries(P.fuentes.map((f, i) => [f.id, { ...f, n: i + 1 }]));
   const refs = (ids = []) => ids.map((id) => `<a class="ref" href="#fuente-${id}" data-ref="${id}">[${F[id].n}]</a>`).join('');
   $('#app').innerHTML = `
-    <button class="back" type="button" id="volver">← Volver a los cuentos</button>
+    <button class="back" type="button" id="volver">← Volver a las actividades</button>
     <div class="section-title"><h2>${esc(P.titulo)}</h2></div>
     ${P.intro.map((p) => `<p class="lead">${esc(p)}</p>`).join('')}
     ${P.areas.map((a) => `<div class="section-title"><h2 style="font-size:1.3rem">${a.icono} ${esc(a.nombre)}</h2></div>
@@ -469,7 +597,7 @@ function pintarPorQueLeer() {
     <div class="card"><ol class="plan">${P.habito.pasos.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></div>
     <div class="section-title"><h2 style="font-size:1.1rem">Fuentes</h2></div>
     <ol class="fuentes">${P.fuentes.map((f) => `<li id="fuente-${f.id}">${esc(f.cita)} ${f.doi ? `<a href="https://doi.org/${esc(f.doi)}" target="_blank" rel="noopener">doi:${esc(f.doi)}</a>` : `<span class="hint">(${esc(f.nota || 'DOI por verificar')})</span>`}</li>`).join('')}</ol>`;
-  $('#volver').onclick = () => { location.hash = ''; };
+  $('#volver').onclick = () => { location.hash = 'actividades'; };
   $('#app').onclick = (e) => { const r = e.target.closest('[data-ref]'); if (!r) return; e.preventDefault(); document.getElementById('fuente-' + r.dataset.ref)?.scrollIntoView({ behavior: 'smooth' }); };
   window.scrollTo(0, 0);
 }
