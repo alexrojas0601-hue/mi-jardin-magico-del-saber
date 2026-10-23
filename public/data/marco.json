@@ -1,459 +1,630 @@
 {
-  "version": "2026-10-22",
-  "libro": "El Jardín Mágico del Saber",
-  "grados": [
-    "Transición",
-    "1.°",
-    "2.°",
-    "3.°"
+ "version": "2026-10-22",
+ "libro": "El Jardín Mágico del Saber",
+ "grados": [
+  "Transición",
+  "1.°",
+  "2.°",
+  "3.°"
+ ],
+ "revision": {
+  "estado": "en revisión",
+  "nota": "El material de aprendizaje (preguntas, Crecer, guías, voz del Guardián) queda «en revisión» hasta que el equipo de Lenguaje de CENTEC lo apruebe. DBA: por verificar con el docente."
+ },
+ "competencias": {
+  "titulo": "Competencias que siembra El Jardín Mágico del Saber",
+  "nota": "Estas son metas de lector experto. En Transición a 3.° el libro siembra sus raíces: cada competencia tiene una semilla observable por grado. Contenido en revisión hasta que lo apruebe el equipo de Lenguaje.",
+  "familias": [
+   {
+    "id": "cognitivas",
+    "nombre": "Capacidades cognitivas avanzadas",
+    "icono": "🧠"
+   },
+   {
+    "id": "linguisticas",
+    "nombre": "Competencias lingüísticas y comunicativas",
+    "icono": "🗣️"
+   },
+   {
+    "id": "cultural",
+    "nombre": "Capital intelectual y cultural",
+    "icono": "📚"
+   },
+   {
+    "id": "personales",
+    "nombre": "Beneficios personales y psicológicos",
+    "icono": "👤"
+   },
+   {
+    "id": "caracter",
+    "nombre": "Corazón y carácter",
+    "icono": "💛"
+   }
   ],
-  "revision": {
-    "estado": "en revisión",
-    "nota": "El material de aprendizaje (preguntas, Crecer, guías, voz del Guardián) queda «en revisión» hasta que el equipo de Lenguaje de CENTEC lo apruebe. DBA: por verificar con el docente."
-  },
-  "competencias": {
-    "titulo": "Competencias que siembra El Jardín Mágico del Saber",
-    "nota": "Estas son metas de lector experto. En Transición a 3.° el libro siembra sus raíces: cada competencia tiene una semilla observable por grado. Contenido en revisión hasta que lo apruebe el equipo de Lenguaje.",
-    "familias": [
-      {
-        "id": "cognitivas",
-        "nombre": "Capacidades cognitivas avanzadas",
-        "icono": "🧠"
-      },
-      {
-        "id": "linguisticas",
-        "nombre": "Competencias lingüísticas y comunicativas",
-        "icono": "🗣️"
-      },
-      {
-        "id": "cultural",
-        "nombre": "Capital intelectual y cultural",
-        "icono": "📚"
-      },
-      {
-        "id": "personales",
-        "nombre": "Beneficios personales y psicológicos",
-        "icono": "👤"
-      },
-      {
-        "id": "caracter",
-        "nombre": "Corazón y carácter",
-        "icono": "💛"
-      }
-    ],
-    "lista": [
-      {
-        "id": "pc",
-        "familia": "cognitivas",
-        "nombre": "Pensamiento crítico profundo",
-        "meta": "Evaluar si un argumento es válido, detectar sesgos, contrastar fuentes y cuestionar la información con lógica.",
-        "comoLoSiembra": "Preguntas críticas de «Pensar»: opinar con razones y volver al texto para comprobar.",
-        "semillas": {
-          "Transición": "Dice si algo le parece bien o mal y da una razón sencilla («porque…»).",
-          "1.°": "Distingue lo que dice el cuento de lo que él imagina.",
-          "2.°": "Da dos razones para su opinión y escucha una opinión distinta.",
-          "3.°": "Compara dos personajes o dos finales y explica cuál es más justo y por qué."
-        }
-      },
-      {
-        "id": "cc",
-        "familia": "cognitivas",
-        "nombre": "Comprensión conceptual compleja",
-        "meta": "Entender ideas abstractas, teorías densas y textos académicos o técnicos.",
-        "comoLoSiembra": "Ideas grandes dichas con palabras sencillas: esperanza, gratitud, que el amor «se multiplica».",
-        "semillas": {
-          "Transición": "Reconoce una idea grande en un ejemplo («esperar con alegría es esperanza»).",
-          "1.°": "Explica con sus palabras qué significa una comparación del cuento.",
-          "2.°": "Entiende metáforas sencillas («la familia es como un árbol»).",
-          "3.°": "Explica una idea abstracta del cuento y da un ejemplo de su propia vida."
-        }
-      },
-      {
-        "id": "aa",
-        "familia": "cognitivas",
-        "nombre": "Agudeza analítica",
-        "meta": "Descomponer un texto en sus partes esenciales, hallar la tesis y seguir razonamientos intrincados.",
-        "comoLoSiembra": "«Jugar» muestra la oración exacta donde está la respuesta; la Ruta Lectora separa lo literal, lo inferencial y lo crítico.",
-        "semillas": {
-          "Transición": "Cuenta qué pasó al inicio, en el medio y al final.",
-          "1.°": "Encuentra en el texto la oración que responde una pregunta.",
-          "2.°": "Identifica la idea principal del cuento en una frase.",
-          "3.°": "Explica la causa y la consecuencia de lo que hace un personaje."
-        }
-      },
-      {
-        "id": "lx",
-        "familia": "linguisticas",
-        "nombre": "Léxico amplio y preciso",
-        "meta": "Dominar un vocabulario extenso para expresar ideas complejas con exactitud, al hablar y al escribir.",
-        "comoLoSiembra": "«Palabras mágicas» de cada cuento y preguntas de palabras en contexto.",
-        "semillas": {
-          "Transición": "Usa en una frase oral una palabra nueva del cuento.",
-          "1.°": "Explica qué significa una palabra mágica sin mirarla.",
-          "2.°": "Elige entre dos palabras la más precisa para lo que quiere decir.",
-          "3.°": "Usa tres palabras nuevas del libro en un texto propio."
-        }
-      },
-      {
-        "id": "re",
-        "familia": "linguisticas",
-        "nombre": "Excelente redacción y ortografía",
-        "meta": "Escribir con estructura gramatical correcta y estilo fluido gracias a la exposición a textos de calidad.",
-        "comoLoSiembra": "«Reinventar»: escribir la propia versión del cuento a partir de un modelo bien escrito.",
-        "semillas": {
-          "Transición": "Dicta su cuento a un adulto y reconoce su nombre escrito.",
-          "1.°": "Escribe frases cortas con mayúscula inicial y punto final.",
-          "2.°": "Escribe un párrafo con inicio, problema y final.",
-          "3.°": "Escribe un cuento de varios párrafos y revisa su ortografía con ayuda."
-        }
-      },
-      {
-        "id": "fv",
-        "familia": "linguisticas",
-        "nombre": "Fluidez y articulación verbal",
-        "meta": "Dar discursos, argumentar en debates y comunicar ideas abstractas con claridad.",
-        "comoLoSiembra": "Lectura en voz alta, conversación en familia y retos para contar el cuento a otros.",
-        "semillas": {
-          "Transición": "Vuelve a contar el cuento con sus palabras, con ayuda de los dibujos.",
-          "1.°": "Lee en voz alta una página con ritmo y entonación.",
-          "2.°": "Explica su opinión frente a su grupo durante un minuto.",
-          "3.°": "Participa en un pequeño debate: escucha, responde y da razones."
-        }
-      },
-      {
-        "id": "cg",
-        "familia": "cultural",
-        "nombre": "Vasta cultura general",
-        "meta": "Conectarse con el pensamiento histórico, filosófico, científico y literario de la humanidad.",
-        "comoLoSiembra": "Datos verdaderos dentro del cuento (cuánto crece un bebé, cómo crecen las plantas) y costumbres de Cali y el Valle.",
-        "semillas": {
-          "Transición": "Nombra algo verdadero que aprendió del cuento (un bebé crece nueve meses).",
-          "1.°": "Relaciona el cuento con costumbres de su familia y su ciudad.",
-          "2.°": "Busca con un adulto un dato nuevo sobre un tema del cuento.",
-          "3.°": "Compara una costumbre de su familia con la de otra cultura."
-        }
-      },
-      {
-        "id": "pi",
-        "familia": "cultural",
-        "nombre": "Pensamiento interdisciplinario",
-        "meta": "Conectar conceptos de distintas áreas (historia con economía, literatura con psicología).",
-        "comoLoSiembra": "La sección «Conecta con…» de cada cuento lleva el cuento a matemáticas, ciencias, arte, inglés o finanzas.",
-        "semillas": {
-          "Transición": "Cuenta, dibuja o canta algo del cuento.",
-          "1.°": "Usa números del cuento para contar o sumar.",
-          "2.°": "Relaciona el cuento con ciencias o con el dinero (ahorro, regalos).",
-          "3.°": "Explica cómo una idea del cuento sirve en otra materia."
-        }
-      },
-      {
-        "id": "au",
-        "familia": "cultural",
-        "nombre": "Autonomía en el aprendizaje",
-        "meta": "Ser autodidacta: dominar materias nuevas de forma independiente.",
-        "comoLoSiembra": "El Árbol del Saber registra el avance propio; cada niño elige cuento, reto y ritmo.",
-        "semillas": {
-          "Transición": "Escoge un cuento y pide que se lo lean.",
-          "1.°": "Termina una actividad del libro sin que se lo recuerden.",
-          "2.°": "Se pone una meta de lectura semanal y la cumple.",
-          "3.°": "Busca por su cuenta una respuesta y cuenta dónde la encontró."
-        }
-      },
-      {
-        "id": "co",
-        "familia": "personales",
-        "nombre": "Alta capacidad de concentración",
-        "meta": "Mantener el enfoque prolongado en tareas intelectuales complejas, sin dispersarse.",
-        "comoLoSiembra": "Sesiones cortas y completas: leer, jugar y pensar sin interrupciones, y crecer el tiempo poco a poco.",
-        "semillas": {
-          "Transición": "Escucha un cuento completo (5 a 8 minutos).",
-          "1.°": "Lee y responde durante 10 minutos seguidos.",
-          "2.°": "Trabaja 15 minutos en un reto sin distraerse.",
-          "3.°": "Sostiene 20 minutos de lectura y escritura con una meta clara."
-        }
-      },
-      {
-        "id": "em",
-        "familia": "personales",
-        "nombre": "Empatía y perspectiva",
-        "meta": "Comprender la condición humana, otras culturas y puntos de vista opuestos a través de narrativas diversas.",
-        "comoLoSiembra": "Retos para contar el cuento desde los ojos de otro personaje y preguntas «¿qué sintió…?».",
-        "semillas": {
-          "Transición": "Dice cómo se siente un personaje mirando su cara en el dibujo.",
-          "1.°": "Explica por qué un personaje se sintió así.",
-          "2.°": "Cuenta una parte del cuento desde los ojos de otro personaje.",
-          "3.°": "Reconoce que dos personajes pueden sentir distinto ante lo mismo, y respeta ambos."
-        }
-      },
-      {
-        "id": "ag",
-        "familia": "personales",
-        "nombre": "Agilidad y plasticidad mental",
-        "meta": "Adaptarse rápido a contextos nuevos y resolver problemas complejos con creatividad.",
-        "comoLoSiembra": "El Dado de la imaginación cambia personaje, lugar y problema: el niño se adapta y resuelve.",
-        "semillas": {
-          "Transición": "Inventa qué pasaría si el cuento ocurriera en otro lugar.",
-          "1.°": "Propone dos soluciones distintas para un problema del cuento.",
-          "2.°": "Resuelve un problema nuevo que le sale en el Dado.",
-          "3.°": "Cambia una regla del cuento y explica cómo cambia todo lo demás."
-        }
-      },
-      {
-        "id": "ie",
-        "familia": "caracter",
-        "nombre": "Inteligencia emocional",
-        "meta": "Reconocer, nombrar y regular las propias emociones y comprender las de los demás.",
-        "comoLoSiembra": "En «Crecer», cada cuento trae una emoción para nombrar y una estrategia sencilla para manejarla.",
-        "semillas": {
-          "Transición": "Nombra la emoción que siente (alegría, miedo, rabia, tristeza, sorpresa).",
-          "1.°": "Dice qué hace su cuerpo cuando siente esa emoción.",
-          "2.°": "Usa una estrategia para calmarse (respirar, pedir ayuda, hablar).",
-          "3.°": "Explica qué le hace sentir así y elige cómo responder."
-        }
-      },
-      {
-        "id": "vp",
-        "familia": "caracter",
-        "nombre": "Valores con propósito",
-        "meta": "Vivir valores que se traducen en acciones concretas que mejoran la vida propia y la de los demás.",
-        "comoLoSiembra": "Cada cuento tiene un valor y una acción concreta para practicarlo esta semana.",
-        "semillas": {
-          "Transición": "Hace una acción amable sencilla en casa o en clase.",
-          "1.°": "Explica por qué una acción del cuento fue buena.",
-          "2.°": "Practica un valor durante una semana y cuenta qué pasó.",
-          "3.°": "Propone una acción con un valor que ayude a su grupo o a su barrio."
-        }
-      },
-      {
-        "id": "di",
-        "familia": "caracter",
-        "nombre": "Disciplina",
-        "meta": "Sostener hábitos y compromisos aunque cueste, para alcanzar metas propias.",
-        "comoLoSiembra": "Un hábito por cuento (leer a la misma hora, terminar lo que se empieza, ahorrar) y el Árbol del Saber que crece con la constancia.",
-        "semillas": {
-          "Transición": "Sigue la rutina de lectura con un adulto.",
-          "1.°": "Termina lo que empieza antes de pasar a otra cosa.",
-          "2.°": "Lleva un registro sencillo de su hábito (calendario de estrellas).",
-          "3.°": "Planea su semana de lectura y cumple lo que se propuso."
-        }
-      },
-      {
-        "id": "ic",
-        "familia": "caracter",
-        "nombre": "Imaginar, crear e innovar",
-        "meta": "Imaginar posibilidades, crear cosas nuevas y mejorar lo que existe para resolver problemas reales.",
-        "comoLoSiembra": "«Reinventar» y el reto de innovación de cada cuento: inventar un objeto, un juego o una solución.",
-        "semillas": {
-          "Transición": "Dibuja y cuenta un final distinto.",
-          "1.°": "Inventa un personaje nuevo con nombre y poder.",
-          "2.°": "Diseña un objeto que ayude a un personaje y explica cómo funciona.",
-          "3.°": "Propone una mejora para un problema real de su casa o colegio y la prueba."
-        }
-      }
-    ]
-  },
-  "porQueLeer": {
-    "titulo": "Leer es la mejor inversión: la cuota inicial empieza hoy",
-    "intro": [
-      "La disciplina constante de la lectura transforma la mente, la vida académica y profesional y el bienestar emocional de una persona. Es una de las inversiones más rentables que existen: sus beneficios se acumulan y se multiplican con el tiempo, como el ahorro.",
-      "La niñez es la etapa más importante para empezar. Quien lee de niño lee mejor, y quien lee mejor disfruta más y lee más: es una espiral que crece sola. El Jardín Mágico del Saber, con historias verdaderas de familias CENTEC y un poco de magia, es la cuota inicial para formar estudiantes lectores."
-    ],
-    "areas": [
-      {
-        "id": "intelectual",
-        "icono": "🧠",
-        "nombre": "Desarrollo intelectual y cognitivo",
-        "beneficios": [
-          {
-            "titulo": "Ejercicio mental que cambia el cerebro",
-            "adulto": "Aprender a leer reorganiza las redes del cerebro para la visión y el lenguaje. En adultos mayores, una vida de lectura y escritura se asocia con un deterioro de la memoria más lento.",
-            "nino": "Cada cuento leído en voz alta con un adulto, cada palabra mágica y cada pregunta ponen a trabajar esas redes desde Transición.",
-            "evidencia": "Estudio de imágenes cerebrales en personas que aprendieron a leer a distintas edades; y seguimiento de 294 personas hasta su muerte (asociación, no prueba de causa).",
-            "fuente": [
-              "dehaene2010",
-              "wilson2013"
-            ]
-          },
-          {
-            "titulo": "Enfoque y atención profunda",
-            "adulto": "En la era de la distracción digital, sostener la atención en un texto es una ventaja. Leer en papel da mejor comprensión que leer en pantalla, sobre todo cuando hay prisa.",
-            "nino": "Sesiones cortas y completas (10 a 15 minutos), sin interrupciones, y preferir el libro impreso para la lectura larga; la app es para jugar, pensar y crear.",
-            "evidencia": "Metaanálisis de 54 comparaciones entre papel y pantalla.",
-            "fuente": [
-              "delgado2018"
-            ]
-          },
-          {
-            "titulo": "Memoria que se ejercita",
-            "adulto": "Seguir tramas, personajes y argumentos obliga a recordar y relacionar.",
-            "nino": "Volver a contar el cuento con sus palabras, responder preguntas literales y buscar «dónde lo dice el cuento».",
-            "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
-          }
-        ]
-      },
-      {
-        "id": "academico",
-        "icono": "💼",
-        "nombre": "Ventajas académicas y profesionales",
-        "beneficios": [
-          {
-            "titulo": "Ventaja que se acumula",
-            "adulto": "Leer por gusto en la niñez predice más progreso entre los 10 y los 16 años en vocabulario, ortografía y matemáticas, incluso más que el nivel educativo de los padres en vocabulario. Leer permite aprender en horas lo que a otros les tomó años descubrir.",
-            "nino": "Que el niño elija y disfrute: leer por gusto, no por obligación, es lo que más pesa.",
-            "evidencia": "Cohorte británica de 1970, miles de niños seguidos durante años.",
-            "fuente": [
-              "sullivan2015"
-            ]
-          },
-          {
-            "titulo": "Decisiones con criterio",
-            "adulto": "Conocer muchas perspectivas y marcos de referencia ayuda a resolver problemas complejos con mejor juicio.",
-            "nino": "Las preguntas críticas de «Pensar» piden opinar con razones y escuchar otra opinión.",
-            "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
-          },
-          {
-            "titulo": "Comunicación de alto nivel",
-            "adulto": "Quienes leen más tienen mejor lenguaje oral y escrito. Esa relación crece con los años: explica cerca del 12 % de las diferencias en lenguaje oral en preescolar y cerca del 34 % en la universidad.",
-            "nino": "Palabras mágicas, lectura en voz alta y escribir la propia versión de cada cuento.",
-            "evidencia": "Metaanálisis de 99 estudios, desde el preescolar hasta la universidad.",
-            "fuente": [
-              "mol2011"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "emocional",
-        "icono": "🌱",
-        "nombre": "Crecimiento personal y emocional",
-        "beneficios": [
-          {
-            "titulo": "Un momento de calma",
-            "adulto": "Leer con tranquilidad puede ser una pausa que relaja. Ojo: la cifra que circula («6 minutos bajan el estrés un 68 %») viene de un estudio comercial sin revisión de pares; no la usamos.",
-            "nino": "El cuento antes de dormir, sin pantallas, en voz suave y en brazos de alguien que quiere al niño.",
-            "evidencia": "Sin evidencia sólida citada aquí sobre cortisol o estrés."
-          },
-          {
-            "titulo": "Inteligencia emocional y empatía",
-            "adulto": "Vivir la vida de otros personajes mejora un poco la capacidad de entender lo que otros piensan y sienten. El efecto es pequeño, pero real, y se suma con los años.",
-            "nino": "La pestaña «Crecer» nombra una emoción por cuento y propone contar la historia desde los ojos de otro personaje.",
-            "evidencia": "Metaanálisis de 14 estudios (efecto pequeño, g ≈ 0,15).",
-            "fuente": [
-              "dodell2018"
-            ]
-          },
-          {
-            "titulo": "Autoconocimiento",
-            "adulto": "Los libros son espejos: ayudan a poner en palabras pensamientos, miedos y sueños que uno no lograba decir.",
-            "nino": "«¿Cuándo has sentido algo así?» en cada cuento, y la Ruta Lectora en familia.",
-            "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
-          }
-        ]
-      },
-      {
-        "id": "realidad",
-        "icono": "🌍",
-        "nombre": "Expansión de la realidad",
-        "beneficios": [
-          {
-            "titulo": "Viajes sin fronteras ni presupuesto",
-            "adulto": "Leer abre la puerta a otras épocas, culturas y mundos imaginarios desde un sillón.",
-            "nino": "El Dado de la imaginación lleva a Luciana y Paulina al fondo del mar, a una nave espacial o a una biblioteca gigante.",
-            "evidencia": "Idea pedagógica."
-          },
-          {
-            "titulo": "Criterio propio",
-            "adulto": "Quien lee mucho y lee bien tiene más herramientas para no dejarse llevar por opiniones superficiales y formar su propio criterio.",
-            "nino": "Desde ya: distinguir lo que dice el texto de lo que imaginamos, y preguntar siempre «¿dónde lo dice?» y «¿por qué piensas eso?».",
-            "evidencia": "Idea pedagógica: es una meta de formación, no un resultado medido."
-          },
-          {
-            "titulo": "Una inversión para toda la vida",
-            "adulto": "En adultos de 50 años o más, leer libros se asoció con vivir casi dos años más que quienes no leían, aun leyendo apenas media hora al día.",
-            "nino": "Formar el hábito ahora es la cuota inicial de esa inversión.",
-            "evidencia": "Estudio de adultos de 50 años o más seguidos hasta 12 años (asociación, no prueba de causa).",
-            "fuente": [
-              "bavishi2016"
-            ]
-          }
-        ]
-      }
-    ],
-    "habito": {
-      "titulo": "El plan de la cuota inicial: 15 minutos diarios en familia",
-      "pasos": [
-        "Misma hora todos los días (por ejemplo, antes de dormir). La constancia vale más que la duración.",
-        "Un adulto lee en voz alta, aunque el niño ya sepa leer: escuchar también es leer.",
-        "Al terminar, una sola pregunta: «¿qué sentiste?» o «¿qué pasaría si…?». Escuchar sin corregir.",
-        "Pegar una estrella en el calendario. Siete estrellas: celebrar en familia, sin premios de dinero ni pantallas.",
-        "Una vez por semana, que el niño le lea o le cuente el cuento a alguien más pequeño."
+  "lista": [
+   {
+    "id": "pc",
+    "familia": "cognitivas",
+    "nombre": "Pensamiento crítico profundo",
+    "meta": "Evaluar si un argumento es válido, detectar sesgos, contrastar fuentes y cuestionar la información con lógica.",
+    "comoLoSiembra": "Preguntas críticas de «Pensar»: opinar con razones y volver al texto para comprobar.",
+    "semillas": {
+     "Transición": "Dice si algo le parece bien o mal y da una razón sencilla («porque…»).",
+     "1.°": "Distingue lo que dice el cuento de lo que él imagina.",
+     "2.°": "Da dos razones para su opinión y escucha una opinión distinta.",
+     "3.°": "Compara dos personajes o dos finales y explica cuál es más justo y por qué."
+    }
+   },
+   {
+    "id": "cc",
+    "familia": "cognitivas",
+    "nombre": "Comprensión conceptual compleja",
+    "meta": "Entender ideas abstractas, teorías densas y textos académicos o técnicos.",
+    "comoLoSiembra": "Ideas grandes dichas con palabras sencillas: esperanza, gratitud, que el amor «se multiplica».",
+    "semillas": {
+     "Transición": "Reconoce una idea grande en un ejemplo («esperar con alegría es esperanza»).",
+     "1.°": "Explica con sus palabras qué significa una comparación del cuento.",
+     "2.°": "Entiende metáforas sencillas («la familia es como un árbol»).",
+     "3.°": "Explica una idea abstracta del cuento y da un ejemplo de su propia vida."
+    }
+   },
+   {
+    "id": "aa",
+    "familia": "cognitivas",
+    "nombre": "Agudeza analítica",
+    "meta": "Descomponer un texto en sus partes esenciales, hallar la tesis y seguir razonamientos intrincados.",
+    "comoLoSiembra": "«Jugar» muestra la oración exacta donde está la respuesta; la Ruta Lectora separa lo literal, lo inferencial y lo crítico.",
+    "semillas": {
+     "Transición": "Cuenta qué pasó al inicio, en el medio y al final.",
+     "1.°": "Encuentra en el texto la oración que responde una pregunta.",
+     "2.°": "Identifica la idea principal del cuento en una frase.",
+     "3.°": "Explica la causa y la consecuencia de lo que hace un personaje."
+    }
+   },
+   {
+    "id": "lx",
+    "familia": "linguisticas",
+    "nombre": "Léxico amplio y preciso",
+    "meta": "Dominar un vocabulario extenso para expresar ideas complejas con exactitud, al hablar y al escribir.",
+    "comoLoSiembra": "«Palabras mágicas» de cada cuento y preguntas de palabras en contexto.",
+    "semillas": {
+     "Transición": "Usa en una frase oral una palabra nueva del cuento.",
+     "1.°": "Explica qué significa una palabra mágica sin mirarla.",
+     "2.°": "Elige entre dos palabras la más precisa para lo que quiere decir.",
+     "3.°": "Usa tres palabras nuevas del libro en un texto propio."
+    }
+   },
+   {
+    "id": "re",
+    "familia": "linguisticas",
+    "nombre": "Excelente redacción y ortografía",
+    "meta": "Escribir con estructura gramatical correcta y estilo fluido gracias a la exposición a textos de calidad.",
+    "comoLoSiembra": "«Reinventar»: escribir la propia versión del cuento a partir de un modelo bien escrito.",
+    "semillas": {
+     "Transición": "Dicta su cuento a un adulto y reconoce su nombre escrito.",
+     "1.°": "Escribe frases cortas con mayúscula inicial y punto final.",
+     "2.°": "Escribe un párrafo con inicio, problema y final.",
+     "3.°": "Escribe un cuento de varios párrafos y revisa su ortografía con ayuda."
+    }
+   },
+   {
+    "id": "fv",
+    "familia": "linguisticas",
+    "nombre": "Fluidez y articulación verbal",
+    "meta": "Dar discursos, argumentar en debates y comunicar ideas abstractas con claridad.",
+    "comoLoSiembra": "Lectura en voz alta, conversación en familia y retos para contar el cuento a otros.",
+    "semillas": {
+     "Transición": "Vuelve a contar el cuento con sus palabras, con ayuda de los dibujos.",
+     "1.°": "Lee en voz alta una página con ritmo y entonación.",
+     "2.°": "Explica su opinión frente a su grupo durante un minuto.",
+     "3.°": "Participa en un pequeño debate: escucha, responde y da razones."
+    }
+   },
+   {
+    "id": "cg",
+    "familia": "cultural",
+    "nombre": "Vasta cultura general",
+    "meta": "Conectarse con el pensamiento histórico, filosófico, científico y literario de la humanidad.",
+    "comoLoSiembra": "Datos verdaderos dentro del cuento (cuánto crece un bebé, cómo crecen las plantas) y costumbres de Cali y el Valle.",
+    "semillas": {
+     "Transición": "Nombra algo verdadero que aprendió del cuento (un bebé crece nueve meses).",
+     "1.°": "Relaciona el cuento con costumbres de su familia y su ciudad.",
+     "2.°": "Busca con un adulto un dato nuevo sobre un tema del cuento.",
+     "3.°": "Compara una costumbre de su familia con la de otra cultura."
+    }
+   },
+   {
+    "id": "pi",
+    "familia": "cultural",
+    "nombre": "Pensamiento interdisciplinario",
+    "meta": "Conectar conceptos de distintas áreas (historia con economía, literatura con psicología).",
+    "comoLoSiembra": "La sección «Conecta con…» de cada cuento lleva el cuento a matemáticas, ciencias, arte, inglés o finanzas.",
+    "semillas": {
+     "Transición": "Cuenta, dibuja o canta algo del cuento.",
+     "1.°": "Usa números del cuento para contar o sumar.",
+     "2.°": "Relaciona el cuento con ciencias o con el dinero (ahorro, regalos).",
+     "3.°": "Explica cómo una idea del cuento sirve en otra materia."
+    }
+   },
+   {
+    "id": "au",
+    "familia": "cultural",
+    "nombre": "Autonomía en el aprendizaje",
+    "meta": "Ser autodidacta: dominar materias nuevas de forma independiente.",
+    "comoLoSiembra": "El Árbol del Saber registra el avance propio; cada niño elige cuento, reto y ritmo.",
+    "semillas": {
+     "Transición": "Escoge un cuento y pide que se lo lean.",
+     "1.°": "Termina una actividad del libro sin que se lo recuerden.",
+     "2.°": "Se pone una meta de lectura semanal y la cumple.",
+     "3.°": "Busca por su cuenta una respuesta y cuenta dónde la encontró."
+    }
+   },
+   {
+    "id": "co",
+    "familia": "personales",
+    "nombre": "Alta capacidad de concentración",
+    "meta": "Mantener el enfoque prolongado en tareas intelectuales complejas, sin dispersarse.",
+    "comoLoSiembra": "Sesiones cortas y completas: leer, jugar y pensar sin interrupciones, y crecer el tiempo poco a poco.",
+    "semillas": {
+     "Transición": "Escucha un cuento completo (5 a 8 minutos).",
+     "1.°": "Lee y responde durante 10 minutos seguidos.",
+     "2.°": "Trabaja 15 minutos en un reto sin distraerse.",
+     "3.°": "Sostiene 20 minutos de lectura y escritura con una meta clara."
+    }
+   },
+   {
+    "id": "em",
+    "familia": "personales",
+    "nombre": "Empatía y perspectiva",
+    "meta": "Comprender la condición humana, otras culturas y puntos de vista opuestos a través de narrativas diversas.",
+    "comoLoSiembra": "Retos para contar el cuento desde los ojos de otro personaje y preguntas «¿qué sintió…?».",
+    "semillas": {
+     "Transición": "Dice cómo se siente un personaje mirando su cara en el dibujo.",
+     "1.°": "Explica por qué un personaje se sintió así.",
+     "2.°": "Cuenta una parte del cuento desde los ojos de otro personaje.",
+     "3.°": "Reconoce que dos personajes pueden sentir distinto ante lo mismo, y respeta ambos."
+    }
+   },
+   {
+    "id": "ag",
+    "familia": "personales",
+    "nombre": "Agilidad y plasticidad mental",
+    "meta": "Adaptarse rápido a contextos nuevos y resolver problemas complejos con creatividad.",
+    "comoLoSiembra": "El Dado de la imaginación cambia personaje, lugar y problema: el niño se adapta y resuelve.",
+    "semillas": {
+     "Transición": "Inventa qué pasaría si el cuento ocurriera en otro lugar.",
+     "1.°": "Propone dos soluciones distintas para un problema del cuento.",
+     "2.°": "Resuelve un problema nuevo que le sale en el Dado.",
+     "3.°": "Cambia una regla del cuento y explica cómo cambia todo lo demás."
+    }
+   },
+   {
+    "id": "ie",
+    "familia": "caracter",
+    "nombre": "Inteligencia emocional",
+    "meta": "Reconocer, nombrar y regular las propias emociones y comprender las de los demás.",
+    "comoLoSiembra": "En «Crecer», cada cuento trae una emoción para nombrar y una estrategia sencilla para manejarla.",
+    "semillas": {
+     "Transición": "Nombra la emoción que siente (alegría, miedo, rabia, tristeza, sorpresa).",
+     "1.°": "Dice qué hace su cuerpo cuando siente esa emoción.",
+     "2.°": "Usa una estrategia para calmarse (respirar, pedir ayuda, hablar).",
+     "3.°": "Explica qué le hace sentir así y elige cómo responder."
+    }
+   },
+   {
+    "id": "vp",
+    "familia": "caracter",
+    "nombre": "Valores con propósito",
+    "meta": "Vivir valores que se traducen en acciones concretas que mejoran la vida propia y la de los demás.",
+    "comoLoSiembra": "Cada cuento tiene un valor y una acción concreta para practicarlo esta semana.",
+    "semillas": {
+     "Transición": "Hace una acción amable sencilla en casa o en clase.",
+     "1.°": "Explica por qué una acción del cuento fue buena.",
+     "2.°": "Practica un valor durante una semana y cuenta qué pasó.",
+     "3.°": "Propone una acción con un valor que ayude a su grupo o a su barrio."
+    }
+   },
+   {
+    "id": "di",
+    "familia": "caracter",
+    "nombre": "Disciplina",
+    "meta": "Sostener hábitos y compromisos aunque cueste, para alcanzar metas propias.",
+    "comoLoSiembra": "Un hábito por cuento (leer a la misma hora, terminar lo que se empieza, ahorrar) y el Árbol del Saber que crece con la constancia.",
+    "semillas": {
+     "Transición": "Sigue la rutina de lectura con un adulto.",
+     "1.°": "Termina lo que empieza antes de pasar a otra cosa.",
+     "2.°": "Lleva un registro sencillo de su hábito (calendario de estrellas).",
+     "3.°": "Planea su semana de lectura y cumple lo que se propuso."
+    }
+   },
+   {
+    "id": "ic",
+    "familia": "caracter",
+    "nombre": "Imaginar, crear e innovar",
+    "meta": "Imaginar posibilidades, crear cosas nuevas y mejorar lo que existe para resolver problemas reales.",
+    "comoLoSiembra": "«Reinventar» y el reto de innovación de cada cuento: inventar un objeto, un juego o una solución.",
+    "semillas": {
+     "Transición": "Dibuja y cuenta un final distinto.",
+     "1.°": "Inventa un personaje nuevo con nombre y poder.",
+     "2.°": "Diseña un objeto que ayude a un personaje y explica cómo funciona.",
+     "3.°": "Propone una mejora para un problema real de su casa o colegio y la prueba."
+    }
+   }
+  ]
+ },
+ "porQueLeer": {
+  "titulo": "Leer es la mejor inversión: la cuota inicial empieza hoy",
+  "intro": [
+   "La disciplina constante de la lectura transforma la mente, la vida académica y profesional y el bienestar emocional de una persona. Es una de las inversiones más rentables que existen: sus beneficios se acumulan y se multiplican con el tiempo, como el ahorro.",
+   "La niñez es la etapa más importante para empezar. Quien lee de niño lee mejor, y quien lee mejor disfruta más y lee más: es una espiral que crece sola. El Jardín Mágico del Saber, con historias verdaderas de familias CENTEC y un poco de magia, es la cuota inicial para formar estudiantes lectores."
+  ],
+  "areas": [
+   {
+    "id": "intelectual",
+    "icono": "🧠",
+    "nombre": "Desarrollo intelectual y cognitivo",
+    "beneficios": [
+     {
+      "titulo": "Ejercicio mental que cambia el cerebro",
+      "adulto": "Aprender a leer reorganiza las redes del cerebro para la visión y el lenguaje. En adultos mayores, una vida de lectura y escritura se asocia con un deterioro de la memoria más lento.",
+      "nino": "Cada cuento leído en voz alta con un adulto, cada palabra mágica y cada pregunta ponen a trabajar esas redes desde Transición.",
+      "evidencia": "Estudio de imágenes cerebrales en personas que aprendieron a leer a distintas edades; y seguimiento de 294 personas hasta su muerte (asociación, no prueba de causa).",
+      "fuente": [
+       "dehaene2010",
+       "wilson2013"
       ]
-    },
-    "fuentes": [
-      {
-        "id": "dehaene2010",
-        "cita": "Dehaene, S., Pegado, F., Braga, L. W., et al. (2010). How learning to read changes the cortical networks for vision and language. Science, 330(6009), 1359–1364.",
-        "doi": "10.1126/science.1194140"
-      },
-      {
-        "id": "wilson2013",
-        "cita": "Wilson, R. S., Boyle, P. A., Yu, L., Barnes, L. L., Schneider, J. A., & Bennett, D. A. (2013). Life-span cognitive activity, neuropathologic burden, and cognitive aging. Neurology.",
-        "doi": "10.1212/WNL.0b013e31829c5e8a"
-      },
-      {
-        "id": "delgado2018",
-        "cita": "Delgado, P., Vargas, C., Ackerman, R., & Salmerón, L. (2018). Don't throw away your printed books: A meta-analysis on the effects of reading media on reading comprehension. Educational Research Review, 25, 23–38.",
-        "doi": "10.1016/j.edurev.2018.09.003"
-      },
-      {
-        "id": "sullivan2015",
-        "cita": "Sullivan, A., & Brown, M. (2015). Reading for pleasure and progress in vocabulary and mathematics. British Educational Research Journal, 41(6), 971–991.",
-        "doi": "10.1002/berj.3180"
-      },
-      {
-        "id": "mol2011",
-        "cita": "Mol, S. E., & Bus, A. G. (2011). To read or not to read: A meta-analysis of print exposure from infancy to early adulthood. Psychological Bulletin, 137(2), 267–296.",
-        "doi": "",
-        "nota": "DOI por verificar"
-      },
-      {
-        "id": "dodell2018",
-        "cita": "Dodell-Feder, D., & Tamir, D. I. (2018). Fiction reading has a small positive impact on social cognition: A meta-analysis. Journal of Experimental Psychology: General, 147(11), 1713–1727.",
-        "doi": "10.1037/xge0000395"
-      },
-      {
-        "id": "bavishi2016",
-        "cita": "Bavishi, A., Slade, M. D., & Levy, B. R. (2016). A chapter a day: Association of book reading with longevity. Social Science & Medicine, 164, 44–48.",
-        "doi": "10.1016/j.socscimed.2016.07.014"
-      }
+     },
+     {
+      "titulo": "Enfoque y atención profunda",
+      "adulto": "En la era de la distracción digital, sostener la atención en un texto es una ventaja. Leer en papel da mejor comprensión que leer en pantalla, sobre todo cuando hay prisa.",
+      "nino": "Sesiones cortas y completas (10 a 15 minutos), sin interrupciones, y preferir el libro impreso para la lectura larga; la app es para jugar, pensar y crear.",
+      "evidencia": "Metaanálisis de 54 comparaciones entre papel y pantalla.",
+      "fuente": [
+       "delgado2018"
+      ]
+     },
+     {
+      "titulo": "Memoria que se ejercita",
+      "adulto": "Seguir tramas, personajes y argumentos obliga a recordar y relacionar.",
+      "nino": "Volver a contar el cuento con sus palabras, responder preguntas literales y buscar «dónde lo dice el cuento».",
+      "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
+     }
     ]
+   },
+   {
+    "id": "academico",
+    "icono": "💼",
+    "nombre": "Ventajas académicas y profesionales",
+    "beneficios": [
+     {
+      "titulo": "Ventaja que se acumula",
+      "adulto": "Leer por gusto en la niñez predice más progreso entre los 10 y los 16 años en vocabulario, ortografía y matemáticas, incluso más que el nivel educativo de los padres en vocabulario. Leer permite aprender en horas lo que a otros les tomó años descubrir.",
+      "nino": "Que el niño elija y disfrute: leer por gusto, no por obligación, es lo que más pesa.",
+      "evidencia": "Cohorte británica de 1970, miles de niños seguidos durante años.",
+      "fuente": [
+       "sullivan2015"
+      ]
+     },
+     {
+      "titulo": "Decisiones con criterio",
+      "adulto": "Conocer muchas perspectivas y marcos de referencia ayuda a resolver problemas complejos con mejor juicio.",
+      "nino": "Las preguntas críticas de «Pensar» piden opinar con razones y escuchar otra opinión.",
+      "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
+     },
+     {
+      "titulo": "Comunicación de alto nivel",
+      "adulto": "Quienes leen más tienen mejor lenguaje oral y escrito. Esa relación crece con los años: explica cerca del 12 % de las diferencias en lenguaje oral en preescolar y cerca del 34 % en la universidad.",
+      "nino": "Palabras mágicas, lectura en voz alta y escribir la propia versión de cada cuento.",
+      "evidencia": "Metaanálisis de 99 estudios, desde el preescolar hasta la universidad.",
+      "fuente": [
+       "mol2011"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "emocional",
+    "icono": "🌱",
+    "nombre": "Crecimiento personal y emocional",
+    "beneficios": [
+     {
+      "titulo": "Un momento de calma",
+      "adulto": "Leer con tranquilidad puede ser una pausa que relaja. Ojo: la cifra que circula («6 minutos bajan el estrés un 68 %») viene de un estudio comercial sin revisión de pares; no la usamos.",
+      "nino": "El cuento antes de dormir, sin pantallas, en voz suave y en brazos de alguien que quiere al niño.",
+      "evidencia": "Sin evidencia sólida citada aquí sobre cortisol o estrés."
+     },
+     {
+      "titulo": "Inteligencia emocional y empatía",
+      "adulto": "Vivir la vida de otros personajes mejora un poco la capacidad de entender lo que otros piensan y sienten. El efecto es pequeño, pero real, y se suma con los años.",
+      "nino": "La pestaña «Crecer» nombra una emoción por cuento y propone contar la historia desde los ojos de otro personaje.",
+      "evidencia": "Metaanálisis de 14 estudios (efecto pequeño, g ≈ 0,15).",
+      "fuente": [
+       "dodell2018"
+      ]
+     },
+     {
+      "titulo": "Autoconocimiento",
+      "adulto": "Los libros son espejos: ayudan a poner en palabras pensamientos, miedos y sueños que uno no lograba decir.",
+      "nino": "«¿Cuándo has sentido algo así?» en cada cuento, y la Ruta Lectora en familia.",
+      "evidencia": "Idea pedagógica: no hay un estudio citado aquí que lo mida directamente."
+     }
+    ]
+   },
+   {
+    "id": "realidad",
+    "icono": "🌍",
+    "nombre": "Expansión de la realidad",
+    "beneficios": [
+     {
+      "titulo": "Viajes sin fronteras ni presupuesto",
+      "adulto": "Leer abre la puerta a otras épocas, culturas y mundos imaginarios desde un sillón.",
+      "nino": "El Dado de la imaginación lleva a Luciana y Paulina al fondo del mar, a una nave espacial o a una biblioteca gigante.",
+      "evidencia": "Idea pedagógica."
+     },
+     {
+      "titulo": "Criterio propio",
+      "adulto": "Quien lee mucho y lee bien tiene más herramientas para no dejarse llevar por opiniones superficiales y formar su propio criterio.",
+      "nino": "Desde ya: distinguir lo que dice el texto de lo que imaginamos, y preguntar siempre «¿dónde lo dice?» y «¿por qué piensas eso?».",
+      "evidencia": "Idea pedagógica: es una meta de formación, no un resultado medido."
+     },
+     {
+      "titulo": "Una inversión para toda la vida",
+      "adulto": "En adultos de 50 años o más, leer libros se asoció con vivir casi dos años más que quienes no leían, aun leyendo apenas media hora al día.",
+      "nino": "Formar el hábito ahora es la cuota inicial de esa inversión.",
+      "evidencia": "Estudio de adultos de 50 años o más seguidos hasta 12 años (asociación, no prueba de causa).",
+      "fuente": [
+       "bavishi2016"
+      ]
+     }
+    ]
+   }
+  ],
+  "habito": {
+   "titulo": "El plan de la cuota inicial: 15 minutos diarios en familia",
+   "pasos": [
+    "Misma hora todos los días (por ejemplo, antes de dormir). La constancia vale más que la duración.",
+    "Un adulto lee en voz alta, aunque el niño ya sepa leer: escuchar también es leer.",
+    "Al terminar, una sola pregunta: «¿qué sentiste?» o «¿qué pasaría si…?». Escuchar sin corregir.",
+    "Pegar una estrella en el calendario. Siete estrellas: celebrar en familia, sin premios de dinero ni pantallas.",
+    "Una vez por semana, que el niño le lea o le cuente el cuento a alguien más pequeño."
+   ]
   },
-  "dadoImaginacion": {
-    "personajes": [
-      "Luciana",
-      "Paulina",
-      "el Guardián de los Colores",
-      "el hada Laura",
-      "Alicia",
-      "Carlos Daniel",
-      "la señora Rosa",
-      "los abuelitos"
-    ],
-    "lugares": [
-      "el claro de las flores que cantan",
-      "una nave espacial",
-      "el fondo del mar",
-      "el colegio CENTEC",
-      "la cima de una montaña del Valle",
-      "una biblioteca gigante"
-    ],
-    "problemas": [
-      "el Árbol Familiar perdió sus hojas",
-      "los colores desaparecieron del Jardín",
-      "el Cofre de los Sueños no quiere abrir",
-      "una estrella se cayó del cielo",
-      "nadie recuerda la canción de cuna",
-      "un robot quiere aprender a abrazar"
+  "fuentes": [
+   {
+    "id": "dehaene2010",
+    "cita": "Dehaene, S., Pegado, F., Braga, L. W., et al. (2010). How learning to read changes the cortical networks for vision and language. Science, 330(6009), 1359–1364.",
+    "doi": "10.1126/science.1194140"
+   },
+   {
+    "id": "wilson2013",
+    "cita": "Wilson, R. S., Boyle, P. A., Yu, L., Barnes, L. L., Schneider, J. A., & Bennett, D. A. (2013). Life-span cognitive activity, neuropathologic burden, and cognitive aging. Neurology.",
+    "doi": "10.1212/WNL.0b013e31829c5e8a"
+   },
+   {
+    "id": "delgado2018",
+    "cita": "Delgado, P., Vargas, C., Ackerman, R., & Salmerón, L. (2018). Don't throw away your printed books: A meta-analysis on the effects of reading media on reading comprehension. Educational Research Review, 25, 23–38.",
+    "doi": "10.1016/j.edurev.2018.09.003"
+   },
+   {
+    "id": "sullivan2015",
+    "cita": "Sullivan, A., & Brown, M. (2015). Reading for pleasure and progress in vocabulary and mathematics. British Educational Research Journal, 41(6), 971–991.",
+    "doi": "10.1002/berj.3180"
+   },
+   {
+    "id": "mol2011",
+    "cita": "Mol, S. E., & Bus, A. G. (2011). To read or not to read: A meta-analysis of print exposure from infancy to early adulthood. Psychological Bulletin, 137(2), 267–296.",
+    "doi": "",
+    "nota": "DOI por verificar"
+   },
+   {
+    "id": "dodell2018",
+    "cita": "Dodell-Feder, D., & Tamir, D. I. (2018). Fiction reading has a small positive impact on social cognition: A meta-analysis. Journal of Experimental Psychology: General, 147(11), 1713–1727.",
+    "doi": "10.1037/xge0000395"
+   },
+   {
+    "id": "bavishi2016",
+    "cita": "Bavishi, A., Slade, M. D., & Levy, B. R. (2016). A chapter a day: Association of book reading with longevity. Social Science & Medicine, 164, 44–48.",
+    "doi": "10.1016/j.socscimed.2016.07.014"
+   }
+  ]
+ },
+ "dadoImaginacion": {
+  "personajes": [
+   "Luciana",
+   "Paulina",
+   "el Guardián de los Colores",
+   "el hada Laura",
+   "Alicia",
+   "Carlos Daniel",
+   "la señora Rosa",
+   "los abuelitos"
+  ],
+  "lugares": [
+   "el claro de las flores que cantan",
+   "una nave espacial",
+   "el fondo del mar",
+   "el colegio CENTEC",
+   "la cima de una montaña del Valle",
+   "una biblioteca gigante"
+  ],
+  "problemas": [
+   "el Árbol Familiar perdió sus hojas",
+   "los colores desaparecieron del Jardín",
+   "el Cofre de los Sueños no quiere abrir",
+   "una estrella se cayó del cielo",
+   "nadie recuerda la canción de cuna",
+   "un robot quiere aprender a abrazar"
+  ]
+ },
+ "planGrados": {
+  "estado": "en revisión",
+  "nota": "Tomado de los Planeadores Institucionales 2027 (columna «Cuento/Lectura» y «Lectura semana»). El Plan Lector Primaria 2027 programa otros 60 libros y no incluye cuentos de este libro.",
+  "grados": {
+   "Transición": {
+    "fuente": "Planeador Institucional Transición CENTEC 2027",
+    "lecturas": [
+     {
+      "semana": 1,
+      "periodo": 1,
+      "id": "s01-como-me-siento-hoy",
+      "uso": "Lectura",
+      "tema": "¡Bienvenido a mi jardín! Me conozco"
+     },
+     {
+      "semana": 2,
+      "periodo": 1,
+      "id": "s01-el-arcoiris-de-las-emociones",
+      "uso": "Lectura",
+      "tema": "Mi cuerpo: lo conozco y lo cuido"
+     },
+     {
+      "semana": 3,
+      "periodo": 1,
+      "id": "s01-el-desfile-de-las-formas-magicas",
+      "uso": "Lectura",
+      "tema": "Las figuras mágicas"
+     },
+     {
+      "semana": 4,
+      "periodo": 1,
+      "id": "s01-el-arcoiris-de-las-emociones",
+      "uso": "Relectura",
+      "tema": "Los colores: el arcoíris de la vida"
+     },
+     {
+      "semana": 5,
+      "periodo": 1,
+      "id": "s03-el-cofre-de-los-suenos",
+      "uso": "Lectura",
+      "tema": "Los números del 1 al 10"
+     },
+     {
+      "semana": 6,
+      "periodo": 1,
+      "id": "s01-mi-familia-y-mi-vecindario",
+      "uso": "Lectura",
+      "tema": "Las plantas: seres vivos que crecen"
+     },
+     {
+      "semana": 8,
+      "periodo": 1,
+      "id": "s03-el-cofre-de-los-suenos",
+      "uso": "Relectura",
+      "tema": "El agua: fuente de vida"
+     },
+     {
+      "semana": 9,
+      "periodo": 1,
+      "id": "s01-mi-familia-y-mi-vecindario",
+      "uso": "Relectura",
+      "tema": "Mi familia: mi primera escuela"
+     },
+     {
+      "semana": 10,
+      "periodo": 1,
+      "id": "s01-como-me-siento-hoy",
+      "uso": "Relectura",
+      "tema": "Los números del 11 al 20"
+     },
+     {
+      "semana": 11,
+      "periodo": 1,
+      "id": "s01-el-desfile-de-las-formas-magicas",
+      "uso": "Relectura",
+      "tema": "Las vocales y el nombre propio"
+     },
+     {
+      "semana": 14,
+      "periodo": 1,
+      "id": "s03-el-cofre-de-los-suenos",
+      "uso": "Relectura",
+      "tema": "Mis metas para el Período 2"
+     },
+     {
+      "semana": 18,
+      "periodo": 2,
+      "id": "s01-mis-senales-magicas",
+      "uso": "Lectura",
+      "tema": "Las consonantes M, P, S"
+     },
+     {
+      "semana": 20,
+      "periodo": 2,
+      "id": "s03-el-cofre-de-los-suenos",
+      "uso": "Relectura",
+      "tema": "El cielo: sol, luna y estrellas"
+     }
     ]
+   },
+   "1.°": {
+    "fuente": "Planeador Institucional Grado 1.° CENTEC 2027",
+    "lecturas": [
+     {
+      "semana": 1,
+      "periodo": 1,
+      "id": "s01-como-me-siento-hoy",
+      "uso": "Lectura",
+      "tema": "Somos un equipo de aprendizaje"
+     },
+     {
+      "semana": 2,
+      "periodo": 1,
+      "id": "s01-el-arcoiris-de-las-emociones",
+      "uso": "Lectura",
+      "tema": "Mi cuerpo: mi primera casa"
+     },
+     {
+      "semana": 3,
+      "periodo": 1,
+      "id": "s01-el-desfile-de-las-formas-magicas",
+      "uso": "Lectura",
+      "tema": "Las plantas: seres vivos que nos alimentan"
+     },
+     {
+      "semana": 4,
+      "periodo": 1,
+      "id": "s01-mi-familia-y-mi-vecindario",
+      "uso": "Lectura",
+      "tema": "Los animales: compañeros en la Tierra"
+     },
+     {
+      "semana": 5,
+      "periodo": 1,
+      "id": "s01-mis-senales-magicas",
+      "uso": "Lectura",
+      "tema": "Los números: lenguaje universal"
+     },
+     {
+      "semana": 6,
+      "periodo": 1,
+      "id": "s03-el-cofre-de-los-suenos",
+      "uso": "Lectura",
+      "tema": "El agua: recurso que debemos cuidar"
+     },
+     {
+      "semana": 7,
+      "periodo": 1,
+      "id": "s01-el-desfile-de-las-formas-magicas",
+      "uso": "Relectura",
+      "tema": "Las formas: geometría en nuestro entorno"
+     },
+     {
+      "semana": 8,
+      "periodo": 1,
+      "id": "s01-mi-familia-y-mi-vecindario",
+      "uso": "Relectura",
+      "tema": "Mi familia y mi comunidad"
+     }
+    ]
+   },
+   "2.°": {
+    "fuente": "Planeador Institucional Grado 2.° CENTEC 2027",
+    "lecturas": []
+   },
+   "3.°": {
+    "fuente": "Planeador Institucional Grado 3.° CENTEC 2027",
+    "lecturas": []
+   }
   }
+ }
 }

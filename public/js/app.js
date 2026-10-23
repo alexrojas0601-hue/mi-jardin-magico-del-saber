@@ -322,6 +322,8 @@ if (AC) fetch('./api/voz?estado=1').then((r) => r.json()).then((j) => { if (!j.o
 let marco, medios, indice;
 let guardian = { modo: null };
 const vista = { pagina: null, hojas: [], hoja: 0, ocupado: false, aprende: null };
+// Lectura por grado: si el niño entró desde «Mi grado», «Siguiente» lo lleva al próximo cuento programado.
+let rutaGrado = null; // { grado, ids: [] }
 
 async function iniciar() {
   try {
@@ -364,7 +366,7 @@ const etiquetaUnidad = (u) => (u ? (u.clave === 'ce' ? 'Capítulo especial' : `S
 
 /* ---------- Navegación general ---------- */
 function pintarControles() {
-  $('#nav').innerHTML = [['libro', '#libro', '📖 Leer el libro'], ['indice', '#indice', 'Índice'], ['competencias', '#competencias', 'Competencias'], ['por-que-leer', '#por-que-leer', 'Por qué leer']]
+  $('#nav').innerHTML = [['libro', '#libro', '📖 Leer el libro'], ['grado', '#grado', '🎒 Mi grado'], ['indice', '#indice', 'Índice'], ['competencias', '#competencias', 'Competencias'], ['por-que-leer', '#por-que-leer', 'Por qué leer']]
     .map(([id, href, n]) => `<a href="${href}" data-nav="${id}">${n}</a>`).join('');
   const roles = [['estudiante', 'Estudiante'], ['familia', 'Familia'], ['docente', 'Docente']];
   $('#roles').innerHTML = roles.map(([v, n]) => `<button type="button" data-rol="${v}" aria-pressed="${yo.rol === v}">${n}</button>`).join('');
@@ -384,13 +386,16 @@ function rutear() {
   if (!h || m) {
     document.body.classList.add('modo-libro'); marcarNav('libro');
     let id = m?.[1]; let hoja = m?.[2] ? +m[2] - 1 : 0;
-    if (!id) { id = 'portada'; hoja = 0; }
+    if (!id) { id = 'portada'; hoja = 0; rutaGrado = null; }
+    if (rutaGrado && !rutaGrado.ids.includes(id)) rutaGrado = null;
     if (posDe(id) < 0) { id = 'portada'; hoja = 0; }
     mostrarPagina(id, hoja, 0);
     return;
   }
   document.body.classList.remove('modo-libro'); fondoTema('jardin');
-  if (h === 'arbol') { marcarNav(''); pintarArbol(); }
+  const g = /^grado(?:\/(.+))?$/.exec(h);
+  if (g) { marcarNav('grado'); pintarGrado(g[1]); }
+  else if (h === 'arbol') { marcarNav(''); pintarArbol(); }
   else if (h === 'competencias') { marcarNav('competencias'); pintarCompetencias(); }
   else if (h === 'por-que-leer') { marcarNav('por-que-leer'); pintarPorQueLeer(); }
   else { marcarNav('indice'); pintarIndice(h === 'mural' ? 'mural' : null); }
@@ -619,7 +624,7 @@ function pintarHoja(dir, rapido) {
   }
   setTimeout(() => { vista.ocupado = false; }, 900);
   const u = item.tipo === 'unidad' ? item.unidad : item.unidadInfo;
-  $('#donde').innerHTML = `<b>${esc(item.titulo).slice(0, 60)}</b><small>${esc(etiquetaUnidad(u))}${u ? ' · ' : ''}Hoja ${vista.hoja + 1} de ${vista.hojas.length} · Página ${vista.pagina.pos} de ${secuencia.length - 1}</small>`;
+  $('#donde').innerHTML = `<b>${esc(item.titulo).slice(0, 60)}</b><small>${esc(etiquetaUnidad(u))}${u ? ' · ' : ''}Hoja ${vista.hoja + 1} de ${vista.hojas.length} · ${rutaGrado?.ids.includes(item.id) ? `🎒 Cuento ${rutaGrado.ids.indexOf(item.id) + 1} de ${rutaGrado.ids.length} de ${esc(rutaGrado.grado)}` : `Página ${vista.pagina.pos} de ${secuencia.length - 1}`}</small>`;
   $$('[data-ir="-1"]').forEach((b) => { b.disabled = vista.pagina.pos === 0 && vista.hoja === 0; });
   $$('[data-ir="1"]').forEach((b) => { b.disabled = vista.pagina.pos === secuencia.length - 1 && vista.hoja === vista.hojas.length - 1; });
   if (vista.hojas[vista.hoja] === '__aprende__' && !yo.leidos[item.id]) { yo.leidos[item.id] = true; guardar(); sumar(1, 'leido-' + item.id); }
@@ -634,6 +639,13 @@ async function pasar(d) {
     vista.hoja = h; yo.pos = { id: vista.pagina.id, hoja: h }; guardar();
     history.replaceState(null, '', `#libro/${vista.pagina.id}/${h + 1}`);
     pintarHoja(d); verLibro(); return;
+  }
+  if (rutaGrado) {
+    const i = rutaGrado.ids.indexOf(vista.pagina.id);
+    if (i >= 0) {
+      if (d > 0 && i === rutaGrado.ids.length - 1) { location.hash = 'grado/' + rutaGrado.grado; return; }
+      if (i + d >= 0 && i + d < rutaGrado.ids.length) { await mostrarPagina(rutaGrado.ids[i + d], d > 0 ? 0 : -1, d); verLibro(); return; }
+    }
   }
   const destino = secuencia[vista.pagina.pos + d]; if (!destino) return;
   await mostrarPagina(destino.id, d > 0 ? 0 : -1, d); verLibro();
@@ -966,11 +978,11 @@ function pintarIndice(ancla) {
   const intro = secuencia.filter((x) => x.tipo === 'texto');
   const leidos = Object.keys(yo.leidos).length; const total = secuencia.filter((x) => x.tipo === 'cuento' || x.tipo === 'lectura').length;
   const mural = (medios.mural || []).filter((m) => m.aprobado !== false);
-  void U;
+  void U; rutaGrado = null;
   $('#app').innerHTML = `
     <div class="section-title"><h2>Índice del libro</h2><span class="chip">${leidos} de ${total} leídos</span></div>
     <p class="lead">Toca un cuento para abrirlo en el libro. Cada uno trae su Ruta Lectora y su hoja «Aprende con este cuento» para jugar, pensar, crecer y reinventar.</p>
-    <div class="row" style="margin:14px 0"><a class="btn" href="#libro/portada/1">📖 Abrir el libro</a>${yo.pos ? `<a class="btn ghost" href="#libro/${yo.pos.id}/${(yo.pos.hoja || 0) + 1}">Seguir donde quedé</a>` : ''}</div>
+    <div class="row" style="margin:14px 0"><a class="btn" href="#libro/portada/1">📖 Abrir el libro</a><a class="btn ghost" href="#grado">🎒 Solo los cuentos de ${esc(yo.grado)}</a>${yo.pos ? `<a class="btn ghost" href="#libro/${yo.pos.id}/${(yo.pos.hoja || 0) + 1}">Seguir donde quedé</a>` : ''}</div>
     ${intro.length ? `<div class="card" style="margin-bottom:14px"><h3>Para empezar</h3><ul class="lista-indice">${intro.map((x) => `<li><a href="#libro/${x.id}/1">${esc(x.titulo)}</a></li>`).join('')}</ul></div>` : ''}
     <div class="unidades">${grupos.map((g) => { const T = tema(g.u.tema); return `<section class="card unidad-card" style="--ua:${T.a};--ub:${T.b}">
       <div class="unidad-arte" aria-hidden="true">${motivo(T.m[0], T.c[0], 86, 26, 56, -10)}${motivo(T.m[1], T.c[1], 70, 70, 40, 12)}</div>
@@ -989,6 +1001,31 @@ function pintarIndice(ancla) {
     $('#dadoOut').innerHTML = `${esc(t)} ${botonVoz(t)}`;
   };
   if (ancla === 'mural') $('#mural').scrollIntoView(); else window.scrollTo(0, 0);
+}
+
+/* ---------- Mi grado: solo los cuentos programados en la planeación ---------- */
+function pintarGrado(pedido) {
+  const plan = marco.planGrados || { grados: {} };
+  const g = marco.grados.includes(pedido) ? pedido : yo.grado;
+  const info = plan.grados[g] || { lecturas: [] };
+  const titulo = (id) => secuencia.find((x) => x.id === id)?.titulo || id;
+  const ids = [...new Set(info.lecturas.map((x) => x.id).filter((id) => posDe(id) >= 0))];
+  const leidos = ids.filter((id) => yo.leidos[id]).length;
+  const porId = (id) => info.lecturas.filter((x) => x.id === id);
+  $('#app').innerHTML = `
+    <div class="section-title"><h2>🎒 Mi grado: ${esc(g)}</h2>${ids.length ? `<span class="chip">${leidos} de ${ids.length} leídos</span>` : ''}</div>
+    <div class="row" role="tablist" aria-label="Grado" style="margin:10px 0 14px">${marco.grados.map((x) => `<a class="btn small ${x === g ? '' : 'ghost'}" role="tab" aria-selected="${x === g}" href="#grado/${encodeURIComponent(x)}">${esc(x)}</a>`).join('')}</div>
+    ${ids.length ? `<p class="lead">Estos son los cuentos que la planeación de ${esc(g)} tiene programados, en el orden de las semanas. Al terminar uno, «Siguiente» te lleva al próximo cuento de tu grado.</p>
+      <div class="row" style="margin:12px 0"><a class="btn" href="#libro/${ids[0]}/1" data-grado-ir="${ids[0]}">📖 Empezar a leer los cuentos de ${esc(g)}</a></div>
+      <ol class="lista-grado">${ids.map((id, n) => `<li class="card"><div class="kicker" style="text-align:left">Cuento ${n + 1} de ${ids.length}</div>
+        <h3><a href="#libro/${id}/1" data-grado-ir="${id}">${esc(titulo(id))}</a>${yo.leidos[id] ? ' <span class="ok">✓</span>' : ''}</h3>
+        <ul class="semanas">${porId(id).map((x) => `<li><b>Semana ${x.semana}</b> · Período ${x.periodo} · ${esc(x.uso)}${x.tema ? ` — ${esc(x.tema)}` : ''}</li>`).join('')}</ul></li>`).join('')}</ol>`
+    : `<div class="empty">La planeación 2027 de ${esc(g)} todavía no tiene cuentos de este libro programados. Mientras el equipo docente los asigna, puedes leer el libro completo.</div>`}
+    <div class="row" style="margin:16px 0"><a class="btn ghost" href="#libro/portada/1">📖 Leer todo el libro</a><a class="btn ghost" href="#indice">☰ Índice completo</a></div>
+    <p class="hint">Fuente: ${esc(info.fuente || 'Planeación institucional')}. ${esc(plan.nota || '')} <span class="chip rev">${esc(plan.estado || 'en revisión')}</span></p>`;
+  if (g !== yo.grado) { yo.grado = g; guardar(); const sel = $('#grado'); if (sel) sel.value = g; }
+  $('#app').onclick = (e) => { const a = e.target.closest('[data-grado-ir]'); if (a) rutaGrado = { grado: g, ids }; };
+  window.scrollTo(0, 0);
 }
 
 /* ---------- Árbol ---------- */

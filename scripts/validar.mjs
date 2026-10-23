@@ -8,6 +8,7 @@ const leer = (r) => JSON.parse(readFileSync(new URL(r, import.meta.url), 'utf8')
 const marco = leer('../public/data/marco.json');
 const medios = leer('../public/data/medios.json');
 
+for (const g of Object.keys(marco.planGrados?.grados || {})) if (!marco.grados.includes(g)) errores.push(`Plan por grado: grado desconocido «${g}».`);
 if (!marco.revision?.estado) errores.push('Falta revision.estado (todo contenido nuevo nace «en revisión»).');
 const compIds = new Set((marco.competencias?.lista || []).map((k) => k.id));
 for (const k of marco.competencias?.lista || []) for (const g of marco.grados) if (!k.semillas?.[g]) errores.push(`Competencia ${k.nombre}: falta la semilla de ${g}.`);
@@ -55,6 +56,7 @@ if (existsSync(ruta)) {
     if (!p.voz?.intro || !p.voz?.cierre) errores.push(`${donde}: sin voz del Guardián.`);
     if (!p.reinventar?.length) errores.push(`${donde}: sin retos para reinventar.`);
   }
+  for (const [g, info] of Object.entries(marco.planGrados?.grados || {})) for (const x of info.lecturas) if (!ids.has(x.id)) errores.push(`Plan de ${g}, semana ${x.semana}: el cuento «${x.id}» no existe en el libro.`);
   resumen += ` · libro válido: ${libro.paginas.length} páginas, ${n} cuentos y lecturas, ${libro.unidades.length} unidades`;
 } else resumen += ' · (contenido/libro.json no está en este equipo: el libro se valida donde se arma)';
 
