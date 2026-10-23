@@ -1,0 +1,36 @@
+# Dot guardián: mantiene el bot de acceso SABI en todas las páginas del Jardín.
+# Regla de este repositorio: los Dots nunca escriben en main; proponen un pull request.
+name: SABI · guardián del bot
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.html", ".sabi-puerta.json"]
+  schedule:
+    - cron: "0 12 * * 1"   # lunes 7:00 a. m. hora Colombia
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  guardian:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar el bot donde falte
+        run: python3 .github/scripts/sabi-puerta-guardian.py
+      - name: Validar
+        run: node scripts/validar.mjs
+      - name: Proponer pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: dots/guardian-bot-sabi
+          delete-branch: true
+          commit-message: "Dot guardián: bot de acceso SABI en páginas nuevas"
+          title: "Dot guardián: bot de acceso SABI en páginas nuevas"
+          body: |
+            El Dot guardián encontró páginas sin el bot de acceso SABI y lo instaló.
+            Revisa en el navegador y haz «Merge» si todo está bien.
