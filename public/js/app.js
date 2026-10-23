@@ -147,7 +147,8 @@ function traerPagina(id) {
    Motor principal: voz neuronal en español generada en el servidor (/api/voz, Aura-2 de Cloudflare),
    reproducida con Web Audio y volumen reforzado. Respaldo: la voz del navegador. */
 const AC = window.AudioContext || window.webkitAudioContext;
-const VOZ_NUBE = 'celeste';
+const VOZ_NARRADORA = 'celeste'; // colombiana, clara y entusiasta
+const VOZ_GUARDIAN = 'sirio';    // barítono calmado: el Guardián de los Colores
 const voz = { disponible: !!AC || 'speechSynthesis' in window, motor: AC ? 'nube' : 'navegador', activa: false, gen: 0, ctx: null, salida: null, fuente: null, clips: new Map(), u: null };
 function prepararAudio() {
   // Se llama dentro del toque del usuario: así los celulares (iPhone incluido) permiten el sonido.
@@ -162,24 +163,48 @@ function prepararAudio() {
   }
   if (voz.ctx.state === 'suspended') voz.ctx.resume().catch(() => {});
 }
-const limpiarHabla = (s) => sinEmoji(s).replace(/[«»"“”]/g, '').replace(/—/g, ', ').replace(/\s*\.\.\.\s*|…/g, '… ').replace(/\s+/g, ' ').trim();
-function clip(texto) {
+// Dirección de locución (equipo de sonido): la voz recibe el texto limpio; en pantalla no cambia nada.
+const limpiarHabla = (s) => sinEmoji(s)
+  .replace(/^\s*[-•]\s+/, '')
+  .replace(/^\s*—\s*/, '')                 // raya que abre un diálogo
+  .replace(/\s*—\s*([.,;:!?])/g, '$1')      // raya que cierra un inciso antes de un signo
+  .replace(/\s+—\s*|\s*—\s+/g, ', ')        // incisos del narrador: «—dijo Ana—» → «, dijo Ana,»
+  .replace(/—/g, ', ')
+  .replace(/[«»"“”]/g, '').replace(/…|\.{3,}/g, '...')
+  .replace(/,\s*,/g, ',').replace(/,\s*([.!?])/g, '$1').replace(/\s+/g, ' ').trim();
+// Pide el audio de un fragmento (se guarda en el servidor; aquí se recuerda mientras la página está abierta).
+function bajarClip(texto, quien = VOZ_NARRADORA) {
   const t = limpiarHabla(texto).slice(0, 600);
-  if (!voz.clips.has(t)) {
-    if (voz.clips.size > 80) voz.clips.delete(voz.clips.keys().next().value);
-    const p = fetch(`./api/voz?v=${VOZ_NUBE}&t=${encodeURIComponent(t)}`, { headers: { 'x-jardin': 'lector' } })
+  const llave = quien + '|' + t;
+  if (!voz.clips.has(llave)) {
+    if (voz.clips.size > 120) voz.clips.delete(voz.clips.keys().next().value);
+    const p = fetch(`./api/voz?v=${quien}&t=${encodeURIComponent(t)}`, { headers: { 'x-jardin': 'lector' } })
       .then(async (r) => { if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(`voz ${r.status} ${j.code || ''} ${j.detalle || ''}`); } return r.arrayBuffer(); })
-      .then((ab) => new Promise((ok, mal) => voz.ctx.decodeAudioData(ab, ok, (e) => mal(new Error('decodificar: ' + (e?.message || e))))))
-      .catch((e) => { voz.clips.delete(t); throw e; });
-    voz.clips.set(t, p);
+      .catch((e) => { voz.clips.delete(llave); throw e; });
+    voz.clips.set(llave, p);
   }
-  return voz.clips.get(t);
+  return voz.clips.get(llave);
+}
+async function clip(texto, quien) {
+  const ab = await bajarClip(texto, quien);
+  return new Promise((ok, mal) => voz.ctx.decodeAudioData(ab.slice(0), ok, (e) => mal(new Error('decodificar: ' + (e?.message || e)))));
+}
+// Ritmo por grado: más silencio para los más pequeños (la voz no se acelera ni se frena).
+const ritmo = () => ({ 'Transición': 1.3, '1.°': 1.15, '2.°': 1, '3.°': 0.9 }[yo.grado] || 1) * (yo.vozLenta ? 1.4 : 1);
+function pausaDe(f) {
+  if (f.pausa != null) return f.pausa;
+  const t = limpiarHabla(f.texto);
+  let ms = 380;
+  if (/\.\.\.$/.test(t)) ms = 1050;
+  else if (/\?$/.test(t)) ms = f.alNino ? 2400 : 700;
+  else if (/!$/.test(t)) ms = 480;
+  if (f.finParrafo) ms = Math.max(ms, 950);
+  return Math.round(ms * ritmo());
 }
 function tocar(buf, gen) {
   return new Promise((ok) => {
     if (gen !== voz.gen) { ok(); return; }
     const f = voz.ctx.createBufferSource(); f.buffer = buf;
-    if (yo.vozLenta) f.playbackRate.value = 0.9;
     f.connect(voz.salida); f.onended = () => ok(); voz.fuente = f; f.start();
   });
 }
@@ -203,14 +228,15 @@ function narrar(frases, { alFrase, alFin } = {}) {
       try {
         for (; i < frases.length; i++) {
           if (gen !== voz.gen) return;
-          for (let j = i; j < Math.min(i + 3, frases.length); j++) clip(frases[j].texto).catch(() => {});
+          for (let j = i; j < Math.min(i + 4, frases.length); j++) bajarClip(frases[j].texto, frases[j].quien).catch(() => {});
           if (i === 0) aviso('El Guardián se prepara para leer… 🎙️');
-          const buf = await clip(frases[i].texto);
+          const buf = await clip(frases[i].texto, frases[i].quien);
           if (gen !== voz.gen) return;
           alFrase?.(frases[i], i);
           await tocar(buf, gen);
           if (gen !== voz.gen) return;
-          await esperar(frases[i].pausa ?? (yo.vozLenta ? 650 : 280));
+          const sig = frases[i + 1];
+          await esperar(pausaDe(frases[i]) + (sig && (sig.quien || VOZ_NARRADORA) !== (frases[i].quien || VOZ_NARRADORA) ? 700 : 0));
         }
         fin();
       } catch (e) {
@@ -270,7 +296,13 @@ function diag(etapa, detalle, extra = {}) {
 }
 window.addEventListener('error', (e) => diag('js', e.message + ' @' + (e.lineno || '')));
 window.addEventListener('unhandledrejection', (e) => diag('promesa', e.reason?.message || String(e.reason)));
-function decir(texto) { narrar([{ texto }]); }
+function decir(texto) { narrar(fragmentar(texto).map((t) => ({ texto: t, quien: VOZ_NARRADORA }))); }
+// Fragmentos de una oración, uniendo las muy cortas (Aura-2 entona mejor frases completas).
+function fragmentar(texto) {
+  const out = [];
+  for (const f of frasesDe(texto)) { if (out.length && limpiarHabla(out[out.length - 1]).length < 40) out[out.length - 1] += ' ' + f; else out.push(f); }
+  return out;
+}
 function actualizarBotonesVoz() {
   $$('[data-narrar]').forEach((b) => { b.textContent = voz.activa ? '⏸ Detener' : b.dataset.etq; b.setAttribute('aria-pressed', voz.activa); });
 }
@@ -385,7 +417,7 @@ function bloquesDe(item, p) {
   const parrafo = (texto, clase = '') => {
     const lista = /^\s*[-•]\s+/.test(texto); const limpio = texto.replace(/^\s*[-•]\s+/, '');
     const fr = frasesDe(limpio);
-    const frases = fr.map((f) => { const kk = k++; habla.push({ k: kk, texto: f }); return { k: kk, texto: f, html: htmlFrase(f, kk) }; });
+    const frases = fr.map((f, n) => { const kk = k++; habla.push({ k: kk, texto: f, fin: n === fr.length - 1 }); return { k: kk, texto: f, html: htmlFrase(f, kk) }; });
     B.push({ tipo: 'p', clase: (lista ? 'li ' : '') + clase, frases });
   };
   if (T === 'portada' || T === 'unidad' || T === 'fin') return { bloques: [{ tipo: 'especial' }], habla };
@@ -516,6 +548,10 @@ async function mostrarPagina(id, hoja = 0, dir = 0, rapido = false) {
   yo.pos = { id, hoja }; guardar();
   history.replaceState(null, '', `#libro/${id}/${hoja + 1}`);
   pintarHoja(dir, rapido);
+  if (voz.motor === 'nube' && (item.tipo === 'cuento' || item.tipo === 'lectura') && p) {
+    if (p.voz?.intro) fragmentar(p.voz.intro).slice(0, 2).forEach((t) => bajarClip(t, VOZ_GUARDIAN).catch(() => {}));
+    bajarClip((p.titulo || item.titulo).replace(/[.!?]*$/, '.')).catch(() => {});
+  }
   // Adelanta la página siguiente para que pasar sea instantáneo.
   const sig = secuencia[pos + 1]; if (sig && ['cuento', 'lectura', 'texto'].includes(sig.tipo)) traerPagina(sig.id).catch(() => {});
 }
@@ -623,13 +659,13 @@ function narrarPagina() {
     return;
   }
   const frases = [];
-  if (datos?.voz?.intro) frases.push({ texto: datos.voz.intro, guardian: true, pausa: 600 });
-  frases.push({ texto: datos?.titulo || item.titulo, pausa: 500 });
+  if (datos?.voz?.intro) fragmentar(datos.voz.intro).forEach((t, n, a) => frases.push({ texto: t, guardian: true, quien: VOZ_GUARDIAN, alNino: true, pausa: n === a.length - 1 ? Math.round(900 * ritmo()) : undefined }));
+  frases.push({ texto: (datos?.titulo || item.titulo).replace(/[.!?]*$/, '.'), pausa: Math.round(1200 * ritmo()) });
   // Empieza en la hoja visible.
   const enHoja = (k) => vista.hojas.findIndex((h) => h !== '__aprende__' && h.includes(`data-k="${k}"`));
   const primero = habla.find((f) => enHoja(f.k) >= vista.hoja) || habla[0];
-  habla.filter((f) => f.k >= primero.k).forEach((f) => frases.push({ texto: f.texto, k: f.k }));
-  if (datos?.voz?.cierre) frases.push({ texto: datos.voz.cierre, guardian: true, pausa: 400 });
+  habla.filter((f) => f.k >= primero.k).forEach((f) => frases.push({ texto: f.texto, k: f.k, finParrafo: f.fin }));
+  if (datos?.voz?.cierre) { frases[frases.length - 1].pausa = Math.round(1500 * ritmo()); fragmentar(datos.voz.cierre).forEach((t) => frases.push({ texto: t, guardian: true, quien: VOZ_GUARDIAN, alNino: true })); }
   narrar(frases, {
     alFrase: (f) => {
       if (f.guardian) { quitarResaltado(); burbuja(f.texto); return; }
