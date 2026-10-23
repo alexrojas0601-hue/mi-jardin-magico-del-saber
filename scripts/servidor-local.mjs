@@ -22,6 +22,15 @@ createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   const enviar = (code, obj) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(obj)); };
   if (url.pathname === '/api/guardian') return enviar(200, { ok: false });
+  if (url.pathname === '/api/voz') {
+    // Prueba local: medio segundo de silencio en WAV (la voz real la genera Cloudflare).
+    if (url.searchParams.get('estado') === '1') return enviar(200, { ok: process.env.VOZ_LOCAL !== '0' });
+    if (process.env.VOZ_LOCAL === '0') return enviar(503, { code: 'sin_voz' });
+    const n = 11025; const b = Buffer.alloc(44 + n * 2);
+    b.write('RIFF', 0); b.writeUInt32LE(36 + n * 2, 4); b.write('WAVEfmt ', 8); b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22);
+    b.writeUInt32LE(22050, 24); b.writeUInt32LE(44100, 28); b.writeUInt16LE(2, 32); b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(n * 2, 40);
+    res.writeHead(200, { 'content-type': 'audio/wav' }); return res.end(b);
+  }
   if (url.pathname.startsWith('/api/libro/')) {
     if (req.headers['x-jardin'] !== 'lector') return enviar(403, { code: 'solo_lectura_en_pantalla' });
     const r = url.pathname.slice(11);

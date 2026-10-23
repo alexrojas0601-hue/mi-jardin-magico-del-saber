@@ -143,52 +143,125 @@ function traerPagina(id) {
   return cachePaginas.get(id);
 }
 
-/* ---------- Voz del Guardián: narración para niños ---------- */
-const voz = { disponible: 'speechSynthesis' in window, cola: [], i: 0, activa: false, gen: 0, alFrase: null, alFin: null };
+/* ---------- Voz del Guardián: narración para niños ----------
+   Motor principal: voz neuronal en español generada en el servidor (/api/voz, Aura-2 de Cloudflare),
+   reproducida con Web Audio y volumen reforzado. Respaldo: la voz del navegador. */
+const AC = window.AudioContext || window.webkitAudioContext;
+const VOZ_NUBE = 'celeste';
+const voz = { disponible: !!AC || 'speechSynthesis' in window, motor: AC ? 'nube' : 'navegador', activa: false, gen: 0, ctx: null, salida: null, fuente: null, clips: new Map(), u: null };
+function prepararAudio() {
+  // Se llama dentro del toque del usuario: así los celulares (iPhone incluido) permiten el sonido.
+  if (!AC) return;
+  if (!voz.ctx) {
+    voz.ctx = new AC();
+    const comp = voz.ctx.createDynamicsCompressor();
+    comp.threshold.value = -24; comp.knee.value = 12; comp.ratio.value = 5; comp.attack.value = 0.003; comp.release.value = 0.2;
+    const gan = voz.ctx.createGain(); gan.gain.value = 2.6; // volumen reforzado, el compresor evita que distorsione
+    gan.connect(comp); comp.connect(voz.ctx.destination); voz.salida = gan;
+    try { const b = voz.ctx.createBuffer(1, 1, 22050); const f = voz.ctx.createBufferSource(); f.buffer = b; f.connect(voz.ctx.destination); f.start(0); } catch { /* nada */ }
+  }
+  if (voz.ctx.state === 'suspended') voz.ctx.resume().catch(() => {});
+}
+const limpiarHabla = (s) => sinEmoji(s).replace(/[«»"“”]/g, '').replace(/—/g, ', ').replace(/\s*\.\.\.\s*|…/g, '… ').replace(/\s+/g, ' ').trim();
+function clip(texto) {
+  const t = limpiarHabla(texto).slice(0, 600);
+  if (!voz.clips.has(t)) {
+    if (voz.clips.size > 80) voz.clips.delete(voz.clips.keys().next().value);
+    const p = fetch(`./api/voz?v=${VOZ_NUBE}&t=${encodeURIComponent(t)}`, { headers: { 'x-jardin': 'lector' } })
+      .then((r) => { if (!r.ok) throw new Error('voz ' + r.status); return r.arrayBuffer(); })
+      .then((ab) => new Promise((ok, mal) => voz.ctx.decodeAudioData(ab, ok, mal)))
+      .catch((e) => { voz.clips.delete(t); throw e; });
+    voz.clips.set(t, p);
+  }
+  return voz.clips.get(t);
+}
+function tocar(buf, gen) {
+  return new Promise((ok) => {
+    if (gen !== voz.gen) { ok(); return; }
+    const f = voz.ctx.createBufferSource(); f.buffer = buf;
+    if (yo.vozLenta) f.playbackRate.value = 0.9;
+    f.connect(voz.salida); f.onended = () => ok(); voz.fuente = f; f.start();
+  });
+}
+const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+function callar() {
+  voz.gen++; voz.activa = false;
+  try { voz.fuente?.stop(); } catch { /* ya terminó */ }
+  voz.fuente = null;
+  try { speechSynthesis.cancel(); } catch { /* nada */ }
+  const a = $('audio#vozGrabada'); if (a && !a.paused) a.pause();
+  actualizarBotonesVoz(); quitarResaltado(); burbuja(null);
+}
+function narrar(frases, { alFrase, alFin } = {}) {
+  if (!voz.disponible) { aviso('Este navegador no tiene sonido para la voz. Prueba con Chrome o Safari.'); return; }
+  callar(); prepararAudio();
+  const gen = ++voz.gen; voz.activa = true; actualizarBotonesVoz();
+  const fin = () => { if (gen !== voz.gen) return; voz.activa = false; actualizarBotonesVoz(); quitarResaltado(); burbuja(null); alFin?.(); };
+  if (voz.motor === 'nube' && voz.ctx) {
+    (async () => {
+      let i = 0;
+      try {
+        for (; i < frases.length; i++) {
+          if (gen !== voz.gen) return;
+          for (let j = i; j < Math.min(i + 3, frases.length); j++) clip(frases[j].texto).catch(() => {});
+          if (i === 0) aviso('El Guardián se prepara para leer… 🎙️');
+          const buf = await clip(frases[i].texto);
+          if (gen !== voz.gen) return;
+          alFrase?.(frases[i], i);
+          await tocar(buf, gen);
+          if (gen !== voz.gen) return;
+          await esperar(frases[i].pausa ?? (yo.vozLenta ? 650 : 280));
+        }
+        fin();
+      } catch {
+        if (gen !== voz.gen) return;
+        voz.motor = 'navegador'; // el servidor de voz no respondió: sigue la voz del navegador desde donde iba
+        narrarNavegador(frases.slice(i), { alFrase: (f, k) => alFrase?.(f, i + k), alFin: fin }, gen);
+      }
+    })();
+  } else narrarNavegador(frases, { alFrase, alFin: fin }, gen);
+}
+/* Respaldo: voz del navegador, con los arreglos para que no se corte. */
 function vocesES() { try { return speechSynthesis.getVoices().filter((v) => /^es\b|^es[-_]/i.test(v.lang)); } catch { return []; } }
 function elegirVoz() {
   const vs = vocesES(); if (!vs.length) return null;
   if (yo.vozNombre) { const v = vs.find((x) => x.name === yo.vozNombre); if (v) return v; }
-  const nombres = [/Paulina/i, /Sabina/i, /Google español de Estados Unidos/i, /Natural.*(Dalia|Salome|Salomé|Elena|Paloma)/i, /Google español/i, /Helena|Laura|Mónica|Monica|Marisol/i];
+  const nombres = [/Paulina/i, /Sabina/i, /Mónica|Monica|Marisol|Helena|Laura/i, /Natural/i];
   const regiones = [/es[-_]CO/i, /es[-_]MX/i, /es[-_](US|419)/i, /es/i];
   let mejor = vs[0]; let pts = -1;
   for (const v of vs) {
-    let p = 0;
-    nombres.forEach((re, k) => { if (re.test(v.name)) p = Math.max(p, 60 - k * 6); });
+    let p = v.localService ? 40 : 0; // las voces locales no se cortan; las de internet sí
+    nombres.forEach((re, k) => { if (re.test(v.name)) p = Math.max(p, p + 30 - k * 6); });
     regiones.forEach((re, k) => { if (re.test(v.lang)) p += 20 - k * 5; });
-    if (v.localService === false) p += 3;
     if (p > pts) { pts = p; mejor = v; }
   }
   return mejor;
 }
-const limpiarHabla = (s) => sinEmoji(s).replace(/[«»"“”]/g, '').replace(/—/g, ', ').replace(/\s*\.\.\.\s*|…/g, '… ');
-function enunciado(texto) {
-  const u = new SpeechSynthesisUtterance(limpiarHabla(texto));
-  const v = elegirVoz(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'es-CO';
-  const ninos = yo.grado === 'Transición' || yo.grado === '1.°';
-  u.rate = yo.vozLenta ? 0.72 : (ninos ? 0.86 : 0.92);
-  u.pitch = 1.12; u.volume = 1;
-  return u;
-}
-function callar() { voz.gen++; voz.activa = false; try { speechSynthesis.cancel(); } catch { /* nada */ } actualizarBotonesVoz(); quitarResaltado(); burbuja(null); }
-function narrar(frases, { alFrase, alFin, desde = 0 } = {}) {
-  if (!voz.disponible) { aviso('Este navegador no tiene voz. Prueba con Chrome o Safari.'); return; }
-  callar();
-  const gen = ++voz.gen;
-  Object.assign(voz, { cola: frases, i: desde, activa: true, alFrase, alFin });
-  actualizarBotonesVoz();
+let latido = null;
+function narrarNavegador(frases, { alFrase, alFin }, gen) {
+  if (!('speechSynthesis' in window)) { alFin?.(); return; }
+  let i = 0;
+  clearInterval(latido);
+  // Chrome detiene la voz después de unos segundos si no se «despierta».
+  latido = setInterval(() => { if (gen !== voz.gen) { clearInterval(latido); return; } if (speechSynthesis.speaking && !speechSynthesis.paused) { speechSynthesis.pause(); speechSynthesis.resume(); } }, 9000);
   const sig = () => {
     if (gen !== voz.gen) return;
-    if (voz.i >= voz.cola.length) { voz.activa = false; actualizarBotonesVoz(); quitarResaltado(); burbuja(null); alFin?.(); return; }
-    const f = voz.cola[voz.i];
-    const u = enunciado(f.texto);
-    u.onstart = () => { if (gen === voz.gen) alFrase?.(f, voz.i); };
-    const fin = () => { if (gen !== voz.gen) return; voz.i++; setTimeout(sig, f.pausa ?? 260); };
+    if (i >= frases.length) { clearInterval(latido); alFin?.(); return; }
+    const f = frases[i];
+    const u = new SpeechSynthesisUtterance(limpiarHabla(f.texto));
+    const v = elegirVoz(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'es-CO';
+    u.rate = yo.vozLenta ? 0.75 : 0.92; u.pitch = 1.1; u.volume = 1;
+    let listo = false;
+    const fin = () => { if (listo || gen !== voz.gen) return; listo = true; i++; setTimeout(sig, f.pausa ?? 250); };
     u.onend = fin; u.onerror = fin;
+    alFrase?.(f, i);
+    voz.u = u; // se guarda: si el navegador lo olvida, la lectura se queda quieta
+    // Seguro: si el navegador nunca avisa que terminó, sigue igual.
+    setTimeout(() => { if (!listo && gen === voz.gen && !speechSynthesis.speaking) fin(); }, 1500 + limpiarHabla(f.texto).length * 110);
     try { speechSynthesis.speak(u); } catch { fin(); }
   };
   try { speechSynthesis.cancel(); } catch { /* nada */ }
-  setTimeout(sig, 120);
+  setTimeout(sig, 60);
 }
 function decir(texto) { narrar([{ texto }]); }
 function actualizarBotonesVoz() {
@@ -203,7 +276,8 @@ function burbuja(texto) {
 }
 const botonVoz = (texto, etiqueta = '🔊') => `<button class="oir" type="button" data-decir="${esc(sinEmoji(texto))}" aria-label="Escuchar">${etiqueta}</button>`;
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-decir]'); if (b) { e.preventDefault(); e.stopPropagation(); decir(b.dataset.decir); } }, true);
-if (voz.disponible) { try { speechSynthesis.onvoiceschanged = () => {}; speechSynthesis.getVoices(); } catch { voz.disponible = false; } }
+if ('speechSynthesis' in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch { /* nada */ } }
+if (AC) fetch('./api/voz?estado=1').then((r) => r.json()).then((j) => { if (!j.ok) voz.motor = 'navegador'; }).catch(() => { voz.motor = 'navegador'; });
 
 /* ---------- Datos ---------- */
 let marco, medios, indice;

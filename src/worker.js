@@ -105,9 +105,65 @@ async function guardian(request, env) {
   catch { return json({ code: 'invalid_json' }, 502); }
 }
 
+/* ---------- Voz del Guardián: voz neuronal en español generada en Cloudflare ----------
+   Aura-2 (Deepgram) en Workers AI; si no está disponible, MeloTTS. Cada oración se genera una sola vez
+   y se guarda en D1 (tabla voz) y en la caché de Cloudflare. */
+const VOCES = ['celeste', 'estrella', 'diana', 'selena', 'carina', 'aquila', 'sirio', 'nestor', 'alvaro', 'javier'];
+async function huella(t) {
+  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+  return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+const audioResp = (cuerpo, tipo) => new Response(cuerpo, { headers: { 'content-type': tipo, 'cache-control': 'public, max-age=31536000, immutable', 'x-robots-tag': 'noindex' } });
+async function generarVoz(env, texto, voz) {
+  if (!env.AI) throw new Error('sin AI');
+  try {
+    const r = await env.AI.run('@cf/deepgram/aura-2-es', { text: texto, speaker: voz, encoding: 'mp3' }, { returnRawResponse: true });
+    if (r instanceof Response) {
+      if (r.ok) return { datos: await r.arrayBuffer(), tipo: 'audio/mpeg' };
+    } else if (r) {
+      const datos = r instanceof ReadableStream ? await new Response(r).arrayBuffer() : r;
+      return { datos, tipo: 'audio/mpeg' };
+    }
+  } catch { /* se intenta con MeloTTS */ }
+  const m = await env.AI.run('@cf/myshell-ai/melotts', { prompt: texto, lang: 'es' });
+  if (m?.audio) return { datos: Uint8Array.from(atob(m.audio), (c) => c.charCodeAt(0)).buffer, tipo: 'audio/mpeg' };
+  if (m instanceof ReadableStream) return { datos: await new Response(m).arrayBuffer(), tipo: 'audio/mpeg' };
+  throw new Error('sin audio');
+}
+async function vozGuardian(request, env, ctx) {
+  const url = new URL(request.url);
+  if (url.searchParams.get('estado') === '1') return json({ ok: Boolean(env.AI) });
+  if (!permitido(request)) return json({ code: 'invalid_request' }, 403);
+  const texto = String(url.searchParams.get('t') || '').replace(/\s+/g, ' ').trim().slice(0, 600);
+  const voz = VOCES.includes(url.searchParams.get('v')) ? url.searchParams.get('v') : 'celeste';
+  if (texto.length < 1) return json({ code: 'invalid_request' }, 400);
+  const clave = await huella(voz + '|' + texto);
+  const cache = caches.default;
+  const llaveCache = new Request(new URL('/__voz/' + clave, request.url).toString());
+  const enCache = await cache.match(llaveCache);
+  if (enCache) return enCache;
+  if (env.LIBRO) {
+    const fila = await env.LIBRO.prepare('SELECT audio, tipo FROM voz WHERE clave = ?').bind(clave).first();
+    if (fila) {
+      const r = audioResp(new Uint8Array(fila.audio), fila.tipo);
+      ctx.waitUntil(cache.put(llaveCache, r.clone()));
+      return r;
+    }
+  }
+  let a;
+  try { a = await generarVoz(env, texto, voz); } catch { return json({ code: 'sin_voz' }, 503); }
+  const r = audioResp(a.datos, a.tipo);
+  ctx.waitUntil(Promise.all([
+    cache.put(llaveCache, r.clone()),
+    env.LIBRO ? env.LIBRO.prepare('INSERT OR IGNORE INTO voz (clave, audio, tipo) VALUES (?, ?, ?)').bind(clave, a.datos, a.tipo).run().catch(() => {}) : null,
+  ]));
+  return r;
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === '/api/voz') return vozGuardian(request, env, ctx);
     if (url.pathname === '/api/guardian') return guardian(request, env);
     if (url.pathname.startsWith('/api/libro/')) return libro(request, env, url.pathname.slice('/api/libro/'.length));
     const r = await env.ASSETS.fetch(request);

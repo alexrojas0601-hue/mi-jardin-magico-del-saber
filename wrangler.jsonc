@@ -14,6 +14,8 @@
   "d1_databases": [
     { "binding": "LIBRO", "database_name": "jardin-magico-libro", "database_id": "208f30bf-9048-417a-956a-420c11a9b0a8" }
   ],
+  // Voz del Guardián: Workers AI (Aura-2 en español, respaldo MeloTTS).
+  "ai": { "binding": "AI" },
   "vars": {
     "MODELO": "claude-haiku-5-5"
   }
