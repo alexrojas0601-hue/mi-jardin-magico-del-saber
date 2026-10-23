@@ -56,7 +56,7 @@ if (existsSync(ruta)) {
     if (!p.voz?.intro || !p.voz?.cierre) errores.push(`${donde}: sin voz del Guardián.`);
     if (!p.reinventar?.length) errores.push(`${donde}: sin retos para reinventar.`);
   }
-  for (const [g, info] of Object.entries(marco.planGrados?.grados || {})) for (const x of info.lecturas) if (!ids.has(x.id)) errores.push(`Plan de ${g}, semana ${x.semana}: el cuento «${x.id}» no existe en el libro.`);
+  for (const [g, info] of Object.entries(marco.planGrados?.grados || {})) for (const x of [...(info.lecturas || []), ...(info.recomendadas || [])]) if (!ids.has(x.id)) errores.push(`Plan de ${g}, semana ${x.semana}: el cuento «${x.id}» no existe en el libro.`);
   resumen += ` · libro válido: ${libro.paginas.length} páginas, ${n} cuentos y lecturas, ${libro.unidades.length} unidades`;
 } else resumen += ' · (contenido/libro.json no está en este equipo: el libro se valida donde se arma)';
 

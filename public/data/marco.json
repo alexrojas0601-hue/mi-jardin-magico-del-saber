@@ -554,6 +554,200 @@
       "uso": "Relectura",
       "tema": "El cielo: sol, luna y estrellas"
      }
+    ],
+    "recomendadas": [
+     {
+      "semana": 1,
+      "periodo": 1,
+      "id": "s01-el-guardian-de-los-colores-encantados",
+      "tema": "¡Bienvenido a mi jardín!: Me conozco y conozco mi espacio"
+     },
+     {
+      "semana": 2,
+      "periodo": 1,
+      "id": "s09-senales-del-jardin-magico",
+      "tema": "Mi cuerpo: lo conozco y lo cuido"
+     },
+     {
+      "semana": 3,
+      "periodo": 1,
+      "id": "s13-el-jardin-magico-de-las-formas",
+      "tema": "Las figuras mágicas: el mundo de las formas"
+     },
+     {
+      "semana": 4,
+      "periodo": 1,
+      "id": "s03-coloreando-y-practicando-pronunciacion-hablemos-con-colores",
+      "tema": "Los colores: el arcoíris de la vida"
+     },
+     {
+      "semana": 5,
+      "periodo": 1,
+      "id": "s09-cuentas-y-patrones-en-el-jardin-magico",
+      "tema": "Los números 1 al 10: contamos el mundo"
+     },
+     {
+      "semana": 6,
+      "periodo": 1,
+      "id": "s07-cosecha-de-numeros-en-el-bosque-magico",
+      "tema": "Las plantas: seres vivos que crecen con amor"
+     },
+     {
+      "semana": 7,
+      "periodo": 1,
+      "id": "s01-nuestro-viaje-por-el-jardin-magico",
+      "tema": "Los animales: amigos del planeta"
+     },
+     {
+      "semana": 9,
+      "periodo": 1,
+      "id": "s09-el-arbol-familiar",
+      "tema": "Mi familia: mi primera escuela"
+     },
+     {
+      "semana": 10,
+      "periodo": 1,
+      "id": "s11-el-juego-de-numeros-dorados",
+      "tema": "Los números del 11 al 20: contamos más"
+     },
+     {
+      "semana": 11,
+      "periodo": 1,
+      "id": "s05-el-bingo-de-vocales-en-el-cielo-emocional",
+      "tema": "Las vocales y el nombre propio: mis primeras letras"
+     },
+     {
+      "semana": 13,
+      "periodo": 1,
+      "id": "s07-bingo-de-vocales-en-el-bosque",
+      "tema": "Nivelación período 1"
+     },
+     {
+      "semana": 14,
+      "periodo": 1,
+      "id": "s03-el-dibujo-de-los-suenos",
+      "tema": "TRANSICIÓN P1→P2: Mis metas para el Período 2"
+     },
+     {
+      "semana": 15,
+      "periodo": 2,
+      "id": "s19-palabras-del-jardin",
+      "tema": "Las sílabas: construyendo palabras"
+     },
+     {
+      "semana": 16,
+      "periodo": 2,
+      "id": "s09-contando-hasta-la-docena-en-el-jardin-magico",
+      "tema": "La suma: juntar es sumar"
+     },
+     {
+      "semana": 17,
+      "periodo": 2,
+      "id": "s15-el-jardin-de-las-hojas-magicas-de-lety-y-tere",
+      "tema": "El entorno natural: explorar con los sentidos"
+     },
+     {
+      "semana": 18,
+      "periodo": 2,
+      "id": "s09-la-fiesta-de-las-letras",
+      "tema": "Las consonantes M P S: mi primera lectura"
+     },
+     {
+      "semana": 19,
+      "periodo": 2,
+      "id": "s13-el-jardin-magico-de-las-frutas-y-verduras",
+      "tema": "La resta: quitar para restar"
+     },
+     {
+      "semana": 20,
+      "periodo": 2,
+      "id": "s05-mi-cielo-emocional",
+      "tema": "El cielo: sol, luna, estrellas y planetas"
+     },
+     {
+      "semana": 21,
+      "periodo": 2,
+      "id": "s11-los-sonidos-magicos-de-los-animales",
+      "tema": "Las consonantes L T N: seguimos leyendo"
+     },
+     {
+      "semana": 23,
+      "periodo": 2,
+      "id": "ce-el-cofre-de-los-suenos-de-paulina",
+      "tema": "El texto y la imagen: leo con los ojos y la mente"
+     },
+     {
+      "semana": 24,
+      "periodo": 2,
+      "id": "s19-formacion-de-palabras",
+      "tema": "Las consonantes D R C: nuevas letras, más palabras"
+     },
+     {
+      "semana": 25,
+      "periodo": 2,
+      "id": "s03-dramatizacion-del-cofre-de-los-suenos-actuemos-con-el-corazon",
+      "tema": "Proyecto \"Feria del Libro\": celebramos la lectura"
+     },
+     {
+      "semana": 28,
+      "periodo": 3,
+      "id": "s07-el-jardin-de-las-conjunciones",
+      "tema": "Oraciones: expreso ideas completas"
+     },
+     {
+      "semana": 29,
+      "periodo": 3,
+      "id": "s13-la-casa-magica-de-los-numeros",
+      "tema": "Las decenas: el número 10 y sus amigos"
+     },
+     {
+      "semana": 30,
+      "periodo": 3,
+      "id": "s13-adivinanzas-de-emociones",
+      "tema": "El cuerpo humano: sistemas que nos mantienen vivos"
+     },
+     {
+      "semana": 31,
+      "periodo": 3,
+      "id": "s13-los-cristales-de-las-emociones",
+      "tema": "Texto descriptivo: describir con detalles"
+     },
+     {
+      "semana": 32,
+      "periodo": 3,
+      "id": "s11-desafios-del-jardin",
+      "tema": "La multiplicación como suma repetida"
+     },
+     {
+      "semana": 35,
+      "periodo": 3,
+      "id": "ce-canciones-para-la-pancita",
+      "tema": "El tiempo y el calendario: el año en números"
+     },
+     {
+      "semana": 36,
+      "periodo": 3,
+      "id": "s13-mi-historia-de-cristales",
+      "tema": "La narración: cuento mi propia historia"
+     },
+     {
+      "semana": 37,
+      "periodo": 3,
+      "id": "s19-mi-pintura-magica",
+      "tema": "Proyecto STEAM final: Transformando mi jardín"
+     },
+     {
+      "semana": 39,
+      "periodo": 3,
+      "id": "ce-pequenos-pasos-grandes-suenos",
+      "tema": "Nivelación final y preparación para grado 1°"
+     },
+     {
+      "semana": 40,
+      "periodo": 3,
+      "id": "s09-la-fiesta-familiar",
+      "tema": "DÍA DE LOGROS Y CLAUSURA: Fin de año Transición"
+     }
     ]
    },
    "1.°": {
@@ -615,16 +809,479 @@
       "uso": "Relectura",
       "tema": "Mi familia y mi comunidad"
      }
+    ],
+    "recomendadas": [
+     {
+      "semana": 1,
+      "periodo": 1,
+      "id": "s15-el-bingo-de-las-emociones",
+      "tema": "Somos un equipo de aprendizaje"
+     },
+     {
+      "semana": 2,
+      "periodo": 1,
+      "id": "s03-twister-de-ingles-juguemos-aprendiendo",
+      "tema": "Mi cuerpo: mi primera casa"
+     },
+     {
+      "semana": 3,
+      "periodo": 1,
+      "id": "s07-el-bosque-de-los-cambios",
+      "tema": "Las plantas: seres vivos que nos alimentan"
+     },
+     {
+      "semana": 5,
+      "periodo": 1,
+      "id": "s19-matematicas-conteo-y-reconocimiento-de-numeros",
+      "tema": "Los números: lenguaje universal"
+     },
+     {
+      "semana": 6,
+      "periodo": 1,
+      "id": "s27-cuidando-el-santuario",
+      "tema": "El agua: recurso que debemos cuidar"
+     },
+     {
+      "semana": 7,
+      "periodo": 1,
+      "id": "s07-figuras-en-el-bosque",
+      "tema": "Las formas: geometría en nuestro entorno"
+     },
+     {
+      "semana": 8,
+      "periodo": 1,
+      "id": "s09-mi-arbol-familiar",
+      "tema": "Mi familia y mi comunidad"
+     },
+     {
+      "semana": 9,
+      "periodo": 1,
+      "id": "s11-guardianes-del-jardin",
+      "tema": "La materia: todo ocupa un lugar"
+     },
+     {
+      "semana": 10,
+      "periodo": 1,
+      "id": "ce-dos-hojas-nuevas-en-el-arbol-familiar",
+      "tema": "Colombia: mi país, mi orgullo"
+     },
+     {
+      "semana": 11,
+      "periodo": 1,
+      "id": "s09-proyecto-del-arbol-familiar",
+      "tema": "Proyecto del Período: Feria del Saber"
+     },
+     {
+      "semana": 13,
+      "periodo": 1,
+      "id": "s07-retos-del-bosque",
+      "tema": "Nivelación y Consolidación Período 1"
+     },
+     {
+      "semana": 14,
+      "periodo": 1,
+      "id": "s07-semillas-de-palabras",
+      "tema": "Cierre del Período 1: Preparación Período 2"
+     },
+     {
+      "semana": 15,
+      "periodo": 2,
+      "id": "s19-el-cuento-magico",
+      "tema": "El texto narrativo: historias que nos enseñan"
+     },
+     {
+      "semana": 16,
+      "periodo": 2,
+      "id": "s11-cuento-y-calculo",
+      "tema": "Suma y resta: operaciones de la vida"
+     },
+     {
+      "semana": 18,
+      "periodo": 2,
+      "id": "ce-bienvenida-alicia",
+      "tema": "La multiplicación: sumar grupos iguales"
+     },
+     {
+      "semana": 19,
+      "periodo": 2,
+      "id": "s29-cata-y-rafa-y-el-globo-terraqueo-encantado",
+      "tema": "Los ecosistemas: comunidades de vida"
+     },
+     {
+      "semana": 20,
+      "periodo": 2,
+      "id": "s05-estrellas-en-singular-y-plural-descubre-las-estrellas",
+      "tema": "El texto informativo: aprender de la realidad"
+     },
+     {
+      "semana": 22,
+      "periodo": 2,
+      "id": "s11-relato-familiar",
+      "tema": "El cuerpo humano: sistemas que trabajan juntos"
+     },
+     {
+      "semana": 24,
+      "periodo": 2,
+      "id": "s17-la-carrera-magica-de-bicicletas-y-la-amistad-eterna",
+      "tema": "La convivencia: vivir bien con los demás"
+     },
+     {
+      "semana": 25,
+      "periodo": 2,
+      "id": "s15-el-teatro-de-las-emociones",
+      "tema": "Feria de Ciencias Período 2"
+     },
+     {
+      "semana": 27,
+      "periodo": 2,
+      "id": "s05-las-estrellas-del-cielo-emocional",
+      "tema": "Nivelación Período 2"
+     },
+     {
+      "semana": 28,
+      "periodo": 3,
+      "id": "s07-oraciones-en-el-bosque",
+      "tema": "El texto argumentativo: opinar con razones"
+     },
+     {
+      "semana": 31,
+      "periodo": 3,
+      "id": "s19-el-museo-de-las-aventuras",
+      "tema": "Estadística: leer el mundo con datos"
+     },
+     {
+      "semana": 32,
+      "periodo": 3,
+      "id": "s13-el-mercado-magico-de-los-sabores",
+      "tema": "La cadena alimentaria humana: qué comemos y por qué"
+     },
+     {
+      "semana": 34,
+      "periodo": 3,
+      "id": "s37-el-viaje-en-el-cohete-de-estrellas",
+      "tema": "El sistema solar: nuestro hogar cósmico"
+     },
+     {
+      "semana": 35,
+      "periodo": 3,
+      "id": "ce-bienvenido-carlos-daniel",
+      "tema": "Tiempo y dinero: economía para la vida"
+     },
+     {
+      "semana": 36,
+      "periodo": 3,
+      "id": "s05-explorando-el-jardin-magico-con-realidad-aumentada",
+      "tema": "La electricidad y la tecnología: inventos que cambian el mundo"
+     },
+     {
+      "semana": 37,
+      "periodo": 3,
+      "id": "s37-estrellas-de-deseos",
+      "tema": "Proyecto Final del Año: Transformando mi mundo"
+     },
+     {
+      "semana": 40,
+      "periodo": 3,
+      "id": "s39-busqueda-del-tesoro-del-jardin-magico",
+      "tema": "Día de Logros y Clausura"
+     }
     ]
    },
    "2.°": {
     "fuente": "Planeador Institucional Grado 2.° CENTEC 2027",
-    "lecturas": []
+    "lecturas": [],
+    "recomendadas": [
+     {
+      "semana": 1,
+      "periodo": 1,
+      "id": "s15-el-viento-y-las-emociones",
+      "tema": "El texto narrativo y sus elementos"
+     },
+     {
+      "semana": 4,
+      "periodo": 1,
+      "id": "s23-caza-de-monedas-magicas",
+      "tema": "Suma y resta con reagrupación"
+     },
+     {
+      "semana": 5,
+      "periodo": 1,
+      "id": "s27-el-santuario-de-los-animales-magicos",
+      "tema": "Los ecosistemas de Colombia"
+     },
+     {
+      "semana": 6,
+      "periodo": 1,
+      "id": "s17-tu-bicicleta-magica",
+      "tema": "El texto descriptivo: detalles que pintan"
+     },
+     {
+      "semana": 8,
+      "periodo": 1,
+      "id": "s15-el-baile-de-las-hojas",
+      "tema": "El cuerpo humano: sistemas integrados"
+     },
+     {
+      "semana": 9,
+      "periodo": 1,
+      "id": "s31-el-banquete-magico-del-jardin",
+      "tema": "Fracciones: partes del todo"
+     },
+     {
+      "semana": 10,
+      "periodo": 1,
+      "id": "s25-el-circulo-de-la-amistad-y-la-aventura-bilingue",
+      "tema": "Colombia: geografía y diversidad"
+     },
+     {
+      "semana": 11,
+      "periodo": 1,
+      "id": "s09-aumentativos-y-diminutivos-en-la-familia",
+      "tema": "El texto informativo: aprender de la realidad"
+     },
+     {
+      "semana": 13,
+      "periodo": 1,
+      "id": "s25-el-circulo-de-las-emociones",
+      "tema": "Nivelación P1"
+     },
+     {
+      "semana": 14,
+      "periodo": 1,
+      "id": "s21-el-circulo-de-la-amistad",
+      "tema": "Cierre P1 y preparación P2"
+     },
+     {
+      "semana": 15,
+      "periodo": 2,
+      "id": "s25-el-escudo-de-los-derechos",
+      "tema": "El texto argumentativo: opinar con razones"
+     },
+     {
+      "semana": 19,
+      "periodo": 2,
+      "id": "s37-crea-tu-propio-planeta-magico",
+      "tema": "El cuento de ciencia ficción: imaginar el futuro"
+     },
+     {
+      "semana": 21,
+      "periodo": 2,
+      "id": "s29-una-leccion-de-diversidad",
+      "tema": "Los seres vivos y su clasificación"
+     },
+     {
+      "semana": 24,
+      "periodo": 2,
+      "id": "s11-las-historias-del-cofre-dorado",
+      "tema": "Matemática financiera: el dinero y yo"
+     },
+     {
+      "semana": 25,
+      "periodo": 2,
+      "id": "s11-el-festival-de-historias-del-cofre-dorado",
+      "tema": "Feria del Libro P2"
+     },
+     {
+      "semana": 27,
+      "periodo": 2,
+      "id": "s31-las-estrellas-del-jardin-magico",
+      "tema": "Nivelación P2"
+     },
+     {
+      "semana": 30,
+      "periodo": 3,
+      "id": "s29-el-mapa-de-los-mundos-magicos",
+      "tema": "Cadenas tróficas y biodiversidad"
+     },
+     {
+      "semana": 32,
+      "periodo": 3,
+      "id": "ce-el-color-que-no-tenia-nombre",
+      "tema": "El texto poético: lenguaje que emociona"
+     },
+     {
+      "semana": 33,
+      "periodo": 3,
+      "id": "s33-el-misterio-del-sol-y-la-luna",
+      "tema": "El sistema solar y el universo"
+     },
+     {
+      "semana": 34,
+      "periodo": 3,
+      "id": "s05-medalla-de-pequeno-inventor",
+      "tema": "Electricidad y tecnología"
+     },
+     {
+      "semana": 35,
+      "periodo": 3,
+      "id": "s33-turnos-del-sol-y-la-luna",
+      "tema": "Tiempo y medida: calendario y reloj"
+     },
+     {
+      "semana": 36,
+      "periodo": 3,
+      "id": "s11-mi-historia-familiar-en-el-cofre-dorado",
+      "tema": "Mi proyecto de vida: metas y valores"
+     },
+     {
+      "semana": 37,
+      "periodo": 3,
+      "id": "s23-el-equipo-de-los-pequenos-exploradores",
+      "tema": "STEAM Final: Transformando mi mundo"
+     },
+     {
+      "semana": 39,
+      "periodo": 3,
+      "id": "s39-fiesta-magica-y-reflexion-final",
+      "tema": "Nivelación final y preparación siguiente grado"
+     },
+     {
+      "semana": 40,
+      "periodo": 3,
+      "id": "s39-mi-jardin-zen-magico",
+      "tema": "Clausura y día de logros"
+     }
+    ]
    },
    "3.°": {
     "fuente": "Planeador Institucional Grado 3.° CENTEC 2027",
-    "lecturas": []
+    "lecturas": [],
+    "recomendadas": [
+     {
+      "semana": 1,
+      "periodo": 1,
+      "id": "s05-ordenando-las-estrellas-historias-de-emociones",
+      "tema": "El cuento y sus elementos: idea principal y detalles"
+     },
+     {
+      "semana": 5,
+      "periodo": 1,
+      "id": "s05-emociones-magicas-sinonimos-y-antonimos",
+      "tema": "El diccionario y el contexto: palabras nuevas"
+     },
+     {
+      "semana": 8,
+      "periodo": 1,
+      "id": "s13-mis-cristales-de-las-emociones",
+      "tema": "El texto descriptivo: describir con detalles"
+     },
+     {
+      "semana": 9,
+      "periodo": 1,
+      "id": "s17-carrera-de-obstaculos-magicos",
+      "tema": "Perímetro y medidas de longitud"
+     },
+     {
+      "semana": 10,
+      "periodo": 1,
+      "id": "s27-el-mapa-del-santuario-magico",
+      "tema": "Los ecosistemas de Colombia y su cuidado"
+     },
+     {
+      "semana": 14,
+      "periodo": 1,
+      "id": "s23-el-circulo-de-las-emociones",
+      "tema": "Cierre P1 y preparación P2"
+     },
+     {
+      "semana": 15,
+      "periodo": 2,
+      "id": "s31-el-banquete-de-los-sabores-magicos",
+      "tema": "Fracciones: partes de un todo"
+     },
+     {
+      "semana": 17,
+      "periodo": 2,
+      "id": "s35-el-valle-de-los-dinosaurios-magicos",
+      "tema": "Fábulas y leyendas: el propósito del autor"
+     },
+     {
+      "semana": 19,
+      "periodo": 2,
+      "id": "s27-el-rio-del-santuario",
+      "tema": "Cambios físicos y químicos de la materia"
+     },
+     {
+      "semana": 20,
+      "periodo": 2,
+      "id": "s31-el-banquete-de-los-sabores-magicos-2",
+      "tema": "El texto instructivo: instrucciones claras"
+     },
+     {
+      "semana": 24,
+      "periodo": 2,
+      "id": "s29-protegiendo-los-oceanos",
+      "tema": "El reciclaje y los residuos del colegio"
+     },
+     {
+      "semana": 25,
+      "periodo": 2,
+      "id": "s35-el-valle-de-los-dinosaurios-magicos-2",
+      "tema": "Feria del Libro P2"
+     },
+     {
+      "semana": 27,
+      "periodo": 2,
+      "id": "s35-dramatizacion-del-valle-magico",
+      "tema": "Nivelación P2"
+     },
+     {
+      "semana": 28,
+      "periodo": 3,
+      "id": "s19-la-caza-de-rimas",
+      "tema": "La poesía y el lenguaje que emociona"
+     },
+     {
+      "semana": 29,
+      "periodo": 3,
+      "id": "s35-el-equilibrio-en-el-valle",
+      "tema": "Medidas de masa, capacidad y tiempo"
+     },
+     {
+      "semana": 30,
+      "periodo": 3,
+      "id": "s15-el-baile-de-las-hojas-magicas",
+      "tema": "El cuerpo humano: de la célula a los sistemas"
+     },
+     {
+      "semana": 31,
+      "periodo": 3,
+      "id": "s25-el-circulo-de-la-amistad-y-las-monedas-magicas",
+      "tema": "Dinero y finanzas: ahorro y presupuesto"
+     },
+     {
+      "semana": 33,
+      "periodo": 3,
+      "id": "s33-el-equilibrio-del-jardin-magico",
+      "tema": "Geometría: figuras, ángulos y simetría"
+     },
+     {
+      "semana": 34,
+      "periodo": 3,
+      "id": "s33-el-ciclo-del-sol-y-la-luna",
+      "tema": "Luz, sonido y energía"
+     },
+     {
+      "semana": 36,
+      "periodo": 3,
+      "id": "s19-la-familia-que-conquisto-el-museo-de-los-suenos",
+      "tema": "Mi proyecto de vida: metas y valores"
+     },
+     {
+      "semana": 37,
+      "periodo": 3,
+      "id": "s37-el-cohete-de-estrellas",
+      "tema": "STEAM Final: Transformando mi mundo"
+     },
+     {
+      "semana": 40,
+      "periodo": 3,
+      "id": "s39-la-gran-fiesta-de-los-animales-magicos",
+      "tema": "Clausura y día de logros"
+     }
+    ]
    }
-  }
+  },
+  "notaRecomendadas": "Propuesta del equipo de Claude para que todo el libro tenga un grado y una semana: ubica cada cuento según su propósito, su extensión y el tema semanal del planeador. En revisión hasta que rectoría o coordinación académica la aprueben."
  }
 }

@@ -1007,22 +1007,31 @@ function pintarIndice(ancla) {
 function pintarGrado(pedido) {
   const plan = marco.planGrados || { grados: {} };
   const g = marco.grados.includes(pedido) ? pedido : yo.grado;
-  const info = plan.grados[g] || { lecturas: [] };
+  const info = plan.grados[g] || { lecturas: [], recomendadas: [] };
   const titulo = (id) => secuencia.find((x) => x.id === id)?.titulo || id;
-  const ids = [...new Set(info.lecturas.map((x) => x.id).filter((id) => posDe(id) >= 0))];
+  const unicos = (lista) => [...new Set(lista.map((x) => x.id).filter((id) => posDe(id) >= 0))];
+  const prog = unicos(info.lecturas || []);
+  const reco = unicos(info.recomendadas || []).filter((id) => !prog.includes(id));
+  // Ruta de lectura del grado: programados y recomendados, en el orden de las semanas.
+  const primeraSemana = (id) => Math.min(...[...(info.lecturas || []), ...(info.recomendadas || [])].filter((x) => x.id === id).map((x) => x.semana));
+  const ids = [...prog, ...reco].sort((a, b) => primeraSemana(a) - primeraSemana(b));
   const leidos = ids.filter((id) => yo.leidos[id]).length;
-  const porId = (id) => info.lecturas.filter((x) => x.id === id);
+  const tarjeta = (id, filas, clase) => `<li class="card ${clase}"><div class="kicker" style="text-align:left">Cuento ${ids.indexOf(id) + 1} de ${ids.length}</div>
+      <h3><a href="#libro/${id}/1" data-grado-ir="${id}">${esc(titulo(id))}</a>${yo.leidos[id] ? ' <span class="ok">✓</span>' : ''}</h3>
+      <ul class="semanas">${filas.map((x) => `<li><b>Semana ${x.semana}</b> · Período ${x.periodo}${x.uso ? ` · ${esc(x.uso)}` : ''}${x.tema ? ` — ${esc(x.tema)}` : ''}</li>`).join('')}</ul></li>`;
+  const porId = (lista, id) => (lista || []).filter((x) => x.id === id);
   $('#app').innerHTML = `
     <div class="section-title"><h2>🎒 Mi grado: ${esc(g)}</h2>${ids.length ? `<span class="chip">${leidos} de ${ids.length} leídos</span>` : ''}</div>
     <div class="row" role="tablist" aria-label="Grado" style="margin:10px 0 14px">${marco.grados.map((x) => `<a class="btn small ${x === g ? '' : 'ghost'}" role="tab" aria-selected="${x === g}" href="#grado/${encodeURIComponent(x)}">${esc(x)}</a>`).join('')}</div>
-    ${ids.length ? `<p class="lead">Estos son los cuentos que la planeación de ${esc(g)} tiene programados, en el orden de las semanas. Al terminar uno, «Siguiente» te lleva al próximo cuento de tu grado.</p>
-      <div class="row" style="margin:12px 0"><a class="btn" href="#libro/${ids[0]}/1" data-grado-ir="${ids[0]}">📖 Empezar a leer los cuentos de ${esc(g)}</a></div>
-      <ol class="lista-grado">${ids.map((id, n) => `<li class="card"><div class="kicker" style="text-align:left">Cuento ${n + 1} de ${ids.length}</div>
-        <h3><a href="#libro/${id}/1" data-grado-ir="${id}">${esc(titulo(id))}</a>${yo.leidos[id] ? ' <span class="ok">✓</span>' : ''}</h3>
-        <ul class="semanas">${porId(id).map((x) => `<li><b>Semana ${x.semana}</b> · Período ${x.periodo} · ${esc(x.uso)}${x.tema ? ` — ${esc(x.tema)}` : ''}</li>`).join('')}</ul></li>`).join('')}</ol>`
-    : `<div class="empty">La planeación 2027 de ${esc(g)} todavía no tiene cuentos de este libro programados. Mientras el equipo docente los asigna, puedes leer el libro completo.</div>`}
-    <div class="row" style="margin:16px 0"><a class="btn ghost" href="#libro/portada/1">📖 Leer todo el libro</a><a class="btn ghost" href="#indice">☰ Índice completo</a></div>
-    <p class="hint">Fuente: ${esc(info.fuente || 'Planeación institucional')}. ${esc(plan.nota || '')} <span class="chip rev">${esc(plan.estado || 'en revisión')}</span></p>`;
+    <p class="lead">Aquí están los cuentos de ${esc(g)}, en el orden de las semanas del año. Al terminar uno, «Siguiente» te lleva al próximo cuento de tu grado.</p>
+    ${ids.length ? `<div class="row" style="margin:12px 0"><a class="btn" href="#libro/${ids[0]}/1" data-grado-ir="${ids[0]}">📖 Empezar a leer los cuentos de ${esc(g)}</a></div>` : ''}
+    <h3 class="sub-grado">📅 Programados en la planeación</h3>
+    ${prog.length ? `<ol class="lista-grado">${prog.map((id) => tarjeta(id, porId(info.lecturas, id), '')).join('')}</ol>`
+      : `<div class="empty">La planeación 2027 de ${esc(g)} todavía no programa cuentos de este libro.</div>`}
+    ${reco.length ? `<h3 class="sub-grado">⭐ Lecturas recomendadas para ${esc(g)} <span class="chip rev">en revisión</span></h3>
+      <ol class="lista-grado">${reco.map((id) => tarjeta(id, porId(info.recomendadas, id), 'reco')).join('')}</ol>` : ''}
+    <a class="compass-banner" href="#libro/portada/1" style="margin:20px 0"><span class="compass-ico" aria-hidden="true">📖</span><span><b>¡Te invitamos a leer todo el libro!</b>Los cuentos de los demás grados también son para ti: cada uno trae su Ruta Lectora y sus juegos para aprender.</span></a>
+    <p class="hint">Programados: ${esc(info.fuente || 'Planeación institucional')}. ${esc(plan.nota || '')}${reco.length ? ' Recomendadas: ' + esc(plan.notaRecomendadas || '') : ''}</p>`;
   if (g !== yo.grado) { yo.grado = g; guardar(); const sel = $('#grado'); if (sel) sel.value = g; }
   $('#app').onclick = (e) => { const a = e.target.closest('[data-grado-ir]'); if (a) rutaGrado = { grado: g, ids }; };
   window.scrollTo(0, 0);
