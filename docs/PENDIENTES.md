@@ -7,6 +7,12 @@
 - [ ] Decidir si se quedan las dos versiones de «El Banquete de los Sabores Mágicos» y si «El Valle de los Dinosaurios Mágicos II» y «El Círculo de las Emociones II» llevan otro título.
 - [ ] Verificar y asignar los DBA de Lenguaje (número y redacción oficial) por grado.
 
+## Dots · octubre de 2026 (ver `docs/informes/2026-10.md`)
+- [ ] Aprobar o pedir cambios a «Por qué leer» en `marco.json` (DOI de Mol y Bus verificado; matices de pantalla y empatía; tres fuentes nuevas).
+- [ ] Decidir si se aplican a los 113 cuentos las plantillas de la sección 3 (pregunta de estructura, pregunta de pensamientos y sentimientos, acción de ayuda en Crecer, retos de reinventar por grado, juego de sonidos, PEER y recontado). Sugerencia: empezar por Transición y 1.°.
+- [ ] Decidir el uso del Guardián con IA: ¿solo para el adulto o docente, con aviso de que es una máquina y sin datos personales?
+- [ ] Comprobar en el texto completo la cifra de Mol y Bus (12 % y 34 %) que ya estaba en el marco.
+
 ## Imágenes y voz
 - [ ] Ilustraciones originales del libro: el zip pesa más de 20 MB; subir las imágenes por separado para incorporarlas.
 - [ ] Grabar cuentos con voz de docentes de CENTEC (mp3) y ponerlos en `medios.json` → `audios`.
