@@ -168,8 +168,8 @@ function clip(texto) {
   if (!voz.clips.has(t)) {
     if (voz.clips.size > 80) voz.clips.delete(voz.clips.keys().next().value);
     const p = fetch(`./api/voz?v=${VOZ_NUBE}&t=${encodeURIComponent(t)}`, { headers: { 'x-jardin': 'lector' } })
-      .then((r) => { if (!r.ok) throw new Error('voz ' + r.status); return r.arrayBuffer(); })
-      .then((ab) => new Promise((ok, mal) => voz.ctx.decodeAudioData(ab, ok, mal)))
+      .then(async (r) => { if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(`voz ${r.status} ${j.code || ''} ${j.detalle || ''}`); } return r.arrayBuffer(); })
+      .then((ab) => new Promise((ok, mal) => voz.ctx.decodeAudioData(ab, ok, (e) => mal(new Error('decodificar: ' + (e?.message || e))))))
       .catch((e) => { voz.clips.delete(t); throw e; });
     voz.clips.set(t, p);
   }
@@ -213,8 +213,10 @@ function narrar(frases, { alFrase, alFin } = {}) {
           await esperar(frases[i].pausa ?? (yo.vozLenta ? 650 : 280));
         }
         fin();
-      } catch {
+      } catch (e) {
         if (gen !== voz.gen) return;
+        diag('nube', String(e?.message || e), { frase: i, de: frases.length, ctx: voz.ctx?.state });
+        aviso('La voz del Guardián no respondió; sigo con la voz del navegador.');
         voz.motor = 'navegador'; // el servidor de voz no respondió: sigue la voz del navegador desde donde iba
         narrarNavegador(frases.slice(i), { alFrase: (f, k) => alFrase?.(f, i + k), alFin: fin }, gen);
       }
@@ -253,7 +255,7 @@ function narrarNavegador(frases, { alFrase, alFin }, gen) {
     u.rate = yo.vozLenta ? 0.75 : 0.92; u.pitch = 1.1; u.volume = 1;
     let listo = false;
     const fin = () => { if (listo || gen !== voz.gen) return; listo = true; i++; setTimeout(sig, f.pausa ?? 250); };
-    u.onend = fin; u.onerror = fin;
+    u.onend = fin; u.onerror = (ev) => { if (i === 0) diag('navegador', 'speechSynthesis: ' + (ev?.error || 'error')); fin(); };
     alFrase?.(f, i);
     voz.u = u; // se guarda: si el navegador lo olvida, la lectura se queda quieta
     // Seguro: si el navegador nunca avisa que terminó, sigue igual.
@@ -263,6 +265,11 @@ function narrarNavegador(frases, { alFrase, alFin }, gen) {
   try { speechSynthesis.cancel(); } catch { /* nada */ }
   setTimeout(sig, 60);
 }
+function diag(etapa, detalle, extra = {}) {
+  try { fetch('./api/voz', { method: 'POST', headers: { 'content-type': 'application/json', 'x-jardin': 'lector' }, body: JSON.stringify({ etapa, detalle: String(detalle).slice(0, 400), ...extra, motor: voz.motor, voces: vocesES().length }) }).catch(() => {}); } catch { /* nada */ }
+}
+window.addEventListener('error', (e) => diag('js', e.message + ' @' + (e.lineno || '')));
+window.addEventListener('unhandledrejection', (e) => diag('promesa', e.reason?.message || String(e.reason)));
 function decir(texto) { narrar([{ texto }]); }
 function actualizarBotonesVoz() {
   $$('[data-narrar]').forEach((b) => { b.textContent = voz.activa ? '⏸ Detener' : b.dataset.etq; b.setAttribute('aria-pressed', voz.activa); });
@@ -605,6 +612,7 @@ document.addEventListener('keydown', (e) => {
 /* Narración de la página completa: el Guardián lee, resalta la oración y pasa las hojas solo. */
 function narrarPagina() {
   const { datos, habla, item } = vista.pagina;
+  diag('narrar', 'inicio', { id: item.id, frases: habla.length, activa: voz.activa });
   if (!habla.length) return;
   const audio = medios.audios?.[item.id];
   if (audio) {

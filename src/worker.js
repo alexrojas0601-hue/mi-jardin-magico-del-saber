@@ -114,25 +114,47 @@ async function huella(t) {
   return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 const audioResp = (cuerpo, tipo) => new Response(cuerpo, { headers: { 'content-type': tipo, 'cache-control': 'public, max-age=31536000, immutable', 'x-robots-tag': 'noindex' } });
-async function generarVoz(env, texto, voz) {
-  if (!env.AI) throw new Error('sin AI');
-  try {
-    const r = await env.AI.run('@cf/deepgram/aura-2-es', { text: texto, speaker: voz, encoding: 'mp3' }, { returnRawResponse: true });
-    if (r instanceof Response) {
-      if (r.ok) return { datos: await r.arrayBuffer(), tipo: 'audio/mpeg' };
-    } else if (r) {
-      const datos = r instanceof ReadableStream ? await new Response(r).arrayBuffer() : r;
-      return { datos, tipo: 'audio/mpeg' };
-    }
-  } catch { /* se intenta con MeloTTS */ }
-  const m = await env.AI.run('@cf/myshell-ai/melotts', { prompt: texto, lang: 'es' });
-  if (m?.audio) return { datos: Uint8Array.from(atob(m.audio), (c) => c.charCodeAt(0)).buffer, tipo: 'audio/mpeg' };
-  if (m instanceof ReadableStream) return { datos: await new Response(m).arrayBuffer(), tipo: 'audio/mpeg' };
-  throw new Error('sin audio');
+function anotar(env, ctx, origen, detalle) {
+  if (!env.LIBRO) return;
+  const p = env.LIBRO.prepare('INSERT INTO voz_log (origen, detalle) VALUES (?, ?)').bind(String(origen).slice(0, 40), String(detalle).slice(0, 900)).run().catch(() => {});
+  if (ctx) ctx.waitUntil(p);
+}
+async function aBuffer(r) {
+  if (!r) return null;
+  if (r instanceof Response) { if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + (await r.text()).slice(0, 300)); return r.arrayBuffer(); }
+  if (r instanceof ReadableStream) return new Response(r).arrayBuffer();
+  if (r instanceof ArrayBuffer) return r;
+  if (ArrayBuffer.isView(r)) return r.buffer;
+  if (typeof r.audio === 'string') return Uint8Array.from(atob(r.audio), (c) => c.charCodeAt(0)).buffer;
+  throw new Error('respuesta desconocida: ' + JSON.stringify(r).slice(0, 200));
+}
+async function generarVoz(env, ctx, texto, voz) {
+  if (!env.AI) throw new Error('sin binding AI');
+  const fallas = [];
+  const intentos = [
+    ['aura-2-es', () => env.AI.run('@cf/deepgram/aura-2-es', { text: texto, speaker: voz, encoding: 'mp3' }, { returnRawResponse: true })],
+    ['aura-2-es-b', () => env.AI.run('@cf/deepgram/aura-2-es', { text: texto, speaker: voz })],
+    ['melotts', () => env.AI.run('@cf/myshell-ai/melotts', { prompt: texto, lang: 'es' })],
+  ];
+  for (const [nombre, f] of intentos) {
+    try {
+      const datos = await aBuffer(await f());
+      if (datos && datos.byteLength > 200) return { datos, tipo: 'audio/mpeg', motor: nombre };
+      fallas.push(nombre + ': audio vacío');
+    } catch (e) { fallas.push(nombre + ': ' + (e?.message || e)); }
+  }
+  anotar(env, ctx, 'servidor', `[${texto.length} car.] ${fallas.join(' | ')}`);
+  throw new Error(fallas.join(' | '));
 }
 async function vozGuardian(request, env, ctx) {
   const url = new URL(request.url);
   if (url.searchParams.get('estado') === '1') return json({ ok: Boolean(env.AI) });
+  if (request.method === 'POST') {
+    // Diagnóstico desde la página: qué falló en el dispositivo del lector.
+    let d = {}; try { d = await request.json(); } catch { /* nada */ }
+    anotar(env, ctx, 'pagina', JSON.stringify({ ...d, ua: request.headers.get('user-agent') }).slice(0, 900));
+    return json({ ok: true });
+  }
   if (!permitido(request)) return json({ code: 'invalid_request' }, 403);
   const texto = String(url.searchParams.get('t') || '').replace(/\s+/g, ' ').trim().slice(0, 600);
   const voz = VOCES.includes(url.searchParams.get('v')) ? url.searchParams.get('v') : 'celeste';
@@ -151,8 +173,9 @@ async function vozGuardian(request, env, ctx) {
     }
   }
   let a;
-  try { a = await generarVoz(env, texto, voz); } catch { return json({ code: 'sin_voz' }, 503); }
+  try { a = await generarVoz(env, ctx, texto, voz); } catch (e) { return json({ code: 'sin_voz', detalle: String(e?.message || e).slice(0, 300) }, 503); }
   const r = audioResp(a.datos, a.tipo);
+  if (a.motor !== 'aura-2-es') anotar(env, ctx, 'servidor', 'audio generado con ' + a.motor);
   ctx.waitUntil(Promise.all([
     cache.put(llaveCache, r.clone()),
     env.LIBRO ? env.LIBRO.prepare('INSERT OR IGNORE INTO voz (clave, audio, tipo) VALUES (?, ?, ?)').bind(clave, a.datos, a.tipo).run().catch(() => {}) : null,
