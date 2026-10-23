@@ -7,6 +7,14 @@
 - [ ] Decidir si se quedan las dos versiones de «El Banquete de los Sabores Mágicos» y si «El Valle de los Dinosaurios Mágicos II» y «El Círculo de las Emociones II» llevan otro título.
 - [ ] Verificar y asignar los DBA de Lenguaje (número y redacción oficial) por grado.
 
+## Dots · actualización pedagógica (octubre 2026, ver `docs/informes/2026-10.md`)
+- [ ] Aprobar o pedir cambios a las 4 tarjetas nuevas de «Por qué leer» y sus 7 fuentes (`marco.json`).
+- [ ] Decidir el piloto «antes · mientras · después» en los pasos de la familia y la pregunta sobre lo que el personaje sabe o piensa (6 cuentos de Transición y 1.°). Si se aprueba: aplicar `claude/propuestas-dots-2026-10.json` (proyecto de claude.ai), validar, cifrar y subir.
+- [ ] Decidir si los pasos nuevos reemplazan los 3 actuales o se añaden.
+- [ ] Guardián con IA: aceptar la regla de transparencia («es un programa, puede equivocarse») y decidir si se añade un aviso visible junto al botón; psicología revisa su uso en Transición.
+- [ ] Al subir videoclips: solo los que cuentan la historia; nunca con reproducción automática.
+- [ ] Próximo mes: leer a mano Tang, Lau y Du (2026) y buscar evidencia en español y en Latinoamérica.
+
 ## Imágenes y voz
 - [ ] Ilustraciones originales del libro: el zip pesa más de 20 MB; subir las imágenes por separado para incorporarlas.
 - [ ] Grabar cuentos con voz de docentes de CENTEC (mp3) y ponerlos en `medios.json` → `audios`.
