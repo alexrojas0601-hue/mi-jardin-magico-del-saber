@@ -22,3 +22,9 @@ Cuando se construya: Transición y primera infancia. Juego, exploración, lectur
 - No romper lo que funciona: probar en navegador, en computador y en celular, sin errores de JavaScript.
 - Aplicar `/factcheck` y `/selfcheck`, y que un Dot auditor distinto de quien creó el contenido lo revise.
 - Commit en español que diga qué cambió; Cloudflare despliega desde GitHub. Verificar que el despliegue terminó.
+
+## Propiedad y protección (no quitar)
+- Titulares: **SABI CENTEC — Alexander Rojas Zamorano, Paula Andrea Rojas Cairasco y Daniela Rojas Cairasco**. Licencia propietaria en `LICENSE` (todos los derechos reservados, no es código abierto). Esto cubre el software de la app; el texto de los cuentos sigue siendo © Editorial Pluma de Oro S.A.S.
+- Cada HTML servido (hoy `public/index.html`) lleva: comentario de derechos tras `<!doctype html>`, metas `author`/`copyright`/`rights`/`robots noai`/`og:site_name`, JSON-LD con `copyrightHolder` y `author` (los tres titulares y SABI CENTEC) y en el pie la línea «© 2025-2026 SABI CENTEC · … · Todos los derechos reservados · Prohibida su copia o reproducción». Toda página nueva debe llevarlos.
+- `public/js/sabi-proteccion.js` se carga en el `<head>`: bloquea marcos ajenos, muestra «Copia no autorizada» si la app se aloja fuera de *.sabicentec.com (o workers.dev/pages.dev/localhost), protege imágenes y atajos. Es **disuasivo**: la protección real es el aviso legal, el registro ante la DNDA y el cifrado del libro. Convive con `proteger()` de `public/js/app.js` (lectura en pantalla).
+- `public/robots.txt` bloquea bots de IA y copiadores; `public/_headers` agrega cabeceras que no rompen (nosniff, `X-Robots-Tag: noai`, `frame-ancestors`). Como el Worker usa `run_worker_first`, las cabeceras que de verdad aplican son las que pone `src/worker.js`.
