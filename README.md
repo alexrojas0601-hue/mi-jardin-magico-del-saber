@@ -1,3 +1,5 @@
+> © 2025-2026 SABI CENTEC · Alexander Rojas Zamorano, Paula Andrea Rojas Cairasco y Daniela Rojas Cairasco. **Todos los derechos reservados.** Software propietario, no es de código abierto: prohibida su copia, reproducción o republicación sin autorización escrita. Ver [LICENSE](LICENSE).
+
 # El Jardín Mágico del Saber
 
 Libro interactivo de cuentos del ecosistema SABI CENTEC (Colegio CENTEC Córdoba, Cali) para Transición, 1.°, 2.° y 3.°. Al entrar se abre **el libro**, página por página: portada con contenido, presentación del capítulo y cada cuento completo con su Ruta Lectora (#libro/N). Además, cada cuento tiene sus actividades:

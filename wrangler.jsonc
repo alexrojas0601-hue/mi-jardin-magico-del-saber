@@ -14,6 +14,12 @@
   "d1_databases": [
     { "binding": "LIBRO", "database_name": "jardin-magico-libro", "database_id": "208f30bf-9048-417a-956a-420c11a9b0a8" }
   ],
+  // Vistas previas de PRs (`wrangler preview`): base de PRUEBAS vacía, nunca la real con la llave del libro.
+  "previews": {
+    "d1_databases": [
+      { "binding": "LIBRO", "database_name": "jardin-magico-libro-pruebas", "database_id": "d7d9b01f-a12c-4a99-9f81-73f88a1b5c01" }
+    ]
+  },
   // Voz del Guardián: Workers AI (Aura-2 en español, respaldo MeloTTS).
   "ai": { "binding": "AI" },
   "vars": {
