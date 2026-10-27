@@ -7,6 +7,11 @@
 - [ ] Decidir si se quedan las dos versiones de «El Banquete de los Sabores Mágicos» y si «El Valle de los Dinosaurios Mágicos II» y «El Círculo de las Emociones II» llevan otro título.
 - [ ] Verificar y asignar los DBA de Lenguaje (número y redacción oficial) por grado.
 
+## Dots · cierre de octubre 2026 (ver `docs/informes/2026-10-cierre.md`)
+- [ ] Revisar los PR #2, #3 y #4 y elegir una sola versión de «Por qué leer» y de la regla del Guardián (#2 y #3 chocan en `marco.json`).
+- [ ] Dejar la tarea programada de los Dots en una sola ejecución al mes (día 1).
+- [ ] Conseguir el texto completo de Tang, Lau y Du (2026) y de Arco-Tirado et al. (2026) para el informe de noviembre.
+
 ## Imágenes y voz
 - [ ] Ilustraciones originales del libro: el zip pesa más de 20 MB; subir las imágenes por separado para incorporarlas.
 - [ ] Grabar cuentos con voz de docentes de CENTEC (mp3) y ponerlos en `medios.json` → `audios`.
