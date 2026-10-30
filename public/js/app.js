@@ -21,7 +21,7 @@ let yo = cargar();
   if (!/^(es|en)(-ilus)?$/.test(v || '')) return;
   yo.idioma = v.slice(0, 2); yo.ilustrado = v.endsWith('-ilus');
   try { localStorage.setItem(CLAVE, JSON.stringify(yo)); } catch { /* sin almacenamiento */ }
-  history.replaceState(null, '', location.pathname + location.hash);
+  history.replaceState(null, '', location.pathname + (location.hash || (yo.ilustrado ? '#mundo' : '')));
 })();
 function cargar() { try { return { ...inicial, ...JSON.parse(localStorage.getItem(CLAVE) || '{}') }; } catch { return { ...inicial }; } }
 function guardar() { try { localStorage.setItem(CLAVE, JSON.stringify(yo)); } catch { /* sin almacenamiento: sigue en memoria */ } }
@@ -386,7 +386,7 @@ const etiquetaUnidad = (u) => (u ? (u.clave === 'ce' ? 'Capítulo especial' : `S
 
 /* ---------- Navegación general ---------- */
 function pintarControles() {
-  $('#nav').innerHTML = [['libro', '#libro', '📖 Leer el libro'], ['grado', '#grado', '🎒 Mi grado'], ['indice', '#indice', 'Índice'], ['competencias', '#competencias', 'Competencias'], ['por-que-leer', '#por-que-leer', 'Por qué leer']]
+  $('#nav').innerHTML = [['libro', '#libro', '📖 Leer el libro'], ['mundo', '#mundo', yo.idioma === 'en' ? '🗺️ Magic World' : '🗺️ Mundo mágico'], ['grado', '#grado', '🎒 Mi grado'], ['indice', '#indice', 'Índice'], ['competencias', '#competencias', 'Competencias'], ['por-que-leer', '#por-que-leer', 'Por qué leer']]
     .map(([id, href, n]) => `<a href="${href}" data-nav="${id}">${n}</a>`).join('');
   const roles = [['estudiante', 'Estudiante'], ['familia', 'Familia'], ['docente', 'Docente']];
   $('#roles').innerHTML = roles.map(([v, n]) => `<button type="button" data-rol="${v}" aria-pressed="${yo.rol === v}">${n}</button>`).join('');
@@ -417,6 +417,7 @@ function rutear() {
   if (g) { marcarNav('grado'); pintarGrado(g[1]); }
   else if (h === 'arbol') { marcarNav(''); pintarArbol(); }
   else if (h === 'revisar') { marcarNav(''); pintarRevision(); }
+  else if (h === 'mundo') { marcarNav('mundo'); pintarMundo(); }
   else if (h === 'competencias') { marcarNav('competencias'); pintarCompetencias(); }
   else if (h === 'por-que-leer') { marcarNav('por-que-leer'); pintarPorQueLeer(); }
   else { marcarNav('indice'); pintarIndice(h === 'mural' ? 'mural' : null); }
@@ -447,9 +448,15 @@ function bloquesDe(item, p) {
     B.push({ tipo: 'p', clase: (lista ? 'li ' : '') + clase, frases });
   };
   if (T === 'portada' || T === 'unidad' || T === 'fin') return { bloques: [{ tipo: 'especial' }], habla };
-  B.push({ tipo: 'cabeza', html: cabezaPagina(item, p) });
+  const ilus0 = yo.ilustrado ? (p.ilustraciones || []).filter((il) => il.aprobada) : [];
+  const ancha = matchMedia('(min-width: 760px) and (orientation: landscape)').matches;
+  const ladoPortada = ancha ? Math.max(150, Math.min(260, Math.round(medidas().alto * 0.42))) : Math.max(150, Math.min(300, Math.round(medidas().alto * 0.36)));
+  const portada = ilus0.find((il) => il.despues < 0);
+  const figPortada = portada ? `<figure class="ilus portada-ilus"><img style="width:min(100%,${ladoPortada}px)" src="./api/ilustracion/${encodeURIComponent(p.id)}/${portada.n}" alt="${esc((portada.alt || {})[p.idiomaActivo] || (portada.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` : '';
+  B.push({ tipo: 'cabeza', html: cabezaPagina(item, p, figPortada, ancha) });
   const ilus = yo.ilustrado ? (p.ilustraciones || []).filter((il) => il.aprobada) : [];
-  const figura = (il) => B.push({ tipo: 'html', html: `<figure class="ilus"><img src="./api/ilustracion/${encodeURIComponent(p.id)}/${il.n}" alt="${esc((il.alt || {})[p.idiomaActivo] || (il.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` });
+  const ladoIlus = Math.max(140, Math.min(300, Math.round(medidas().alto * 0.33)));
+  const figura = (il) => B.push({ tipo: 'html', html: `<figure class="ilus"><img style="width:min(100%,${ladoIlus}px)" src="./api/ilustracion/${encodeURIComponent(p.id)}/${il.n}" alt="${esc((il.alt || {})[p.idiomaActivo] || (il.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` });
   (p.parrafos || []).forEach((x, i) => { parrafo(x); ilus.filter((il) => il.despues === i).forEach(figura); });
   if (p.ruta) {
     const r = p.ruta; const li = (a) => (a || []).map((x) => `<li>${conNegrita(x)} ${botonVoz(x)}</li>`).join('');
@@ -462,17 +469,17 @@ function bloquesDe(item, p) {
   }
   return { bloques: B, habla };
 }
-function cabezaPagina(item, p) {
+function cabezaPagina(item, p, figura = '', ancha = false) {
   const u = item.unidadInfo;
   const kicker = item.tipo === 'cuento' ? 'Cuento' : item.tipo === 'lectura' ? 'Lectura' : '';
   const narrable = item.tipo === 'cuento' || item.tipo === 'lectura' || item.tipo === 'texto';
-  return `<header class="hoja-cabeza">
+  return `<header class="hoja-cabeza${figura ? (ancha ? ' con-ilus lado' : ' con-ilus') : ''}"><div class="cab-texto">
     <div class="kicker">${esc([etiquetaUnidad(u), kicker].filter(Boolean).join(' · '))}</div>
     <h2 class="page-title">${conNegrita(p.titulo || item.titulo)}</h2>
     ${yo.idioma === 'en' && narrable && p.idiomaActivo !== 'en' ? '<p class="hint centro">🌐 This story is not in English yet. Here it is in Spanish.</p>' : ''}
     ${p.idiomaActivo === 'en' && p.estadoEn ? '<p class="hint centro"><span class="chip rev">English · en revisión</span></p>' : ''}
     ${narrable && voz.disponible ? `<div class="row centro"><button class="btn navy small" type="button" data-narrar data-etq="🔊 Escuchar ${item.tipo === 'texto' ? 'esta página' : 'el cuento'}">🔊 Escuchar ${item.tipo === 'texto' ? 'esta página' : 'el cuento'}</button></div>` : ''}
-  </header>`;
+  </div>${figura}</header>`;
 }
 
 /* Reparte los bloques en hojas del tamaño de la pantalla, como un libro impreso. */
@@ -555,18 +562,22 @@ async function mostrarPagina(id, hoja = 0, dir = 0, rapido = false) {
     const med = medidas();
     hojas = paginar(bloques, med);
     const n = hojas.length;
+    // Si la ilustración cabe junto al título, ningún ajuste estético puede separarlos.
+    const conFig = (h) => h[0]?.includes('class="ilus"');
+    const fig0 = conFig(hojas);
+    const igual = (prueba) => prueba.length === n && conFig(prueba) === fig0;
     // Estética, como en el libro impreso: cada cuento toma el tamaño de letra más grande con el que
     // sigue cabiendo en el mismo número de hojas, y luego el texto se reparte parejo entre ellas.
     let letra = yo.letra; let lo = yo.letra; let hi = yo.letra * 1.22;
     for (let i = 0; i < 5; i++) {
       const mid = (lo + hi) / 2; const prueba = paginar(bloques, { ...med, letra: mid });
-      if (prueba.length === n) { letra = mid; hojas = prueba; lo = mid; } else hi = mid;
+      if (igual(prueba)) { letra = mid; hojas = prueba; lo = mid; } else hi = mid;
     }
     if (n > 1) {
       let a = Math.round(med.alto * 0.6); let b = med.alto;
       for (let i = 0; i < 5 && b - a > 12; i++) {
         const mid = Math.round((a + b) / 2); const prueba = paginar(bloques, { ...med, alto: mid, letra });
-        if (prueba.length === n) { hojas = prueba; b = mid; } else a = mid;
+        if (igual(prueba)) { hojas = prueba; b = mid; } else a = mid;
       }
     }
     vista.letraHoja = letra;
@@ -1068,6 +1079,44 @@ function pintarGrado(pedido) {
 }
 
 /* ---------- Árbol ---------- */
+/* ---------- El Mundo Mágico: mapa del libro (cada unidad es un lugar del camino) ---------- */
+const ICONO_UNIDAD = { '1-2': '🌈', '3-4': '🌻', '5-6': '💬', '7-8': '🌱', '9-10': '🏡', '11-12': '📸', ce: '⭐', '13-14': '🤔', '15-16': '🤸', '17-18': '🚲', '19-20': '🏛️', '21-22': '🤝', '23-24': '👫', '25-26': '🧒', '27-28': '🐢', '29-30': '🏔️', '31-32': '🍲', '33-34': '🌙', '35-36': '🦕', '37-38': '🚀', '39-40': '🦋' };
+const UNIDAD_EN = { '1-2': 'My feelings', '3-4': 'Things I like', '5-6': 'I say what I feel', '7-8': 'I grow and change', '9-10': 'I have a family', '11-12': 'My family stories', ce: 'Two little stars join the family', '13-14': 'Why do I feel this way?', '15-16': 'My body moves and shows how I feel', '17-18': 'A ride on wheels with my friends', '19-20': 'A museum visit with my family', '21-22': 'I have friends!', '23-24': 'I belong to groups', '25-26': 'Children have rights', '27-28': 'I protect animals in danger', '29-30': 'This is my country and my region', '31-32': 'Recipes made with magic and love', '33-34': 'Where does the sun go at night?', '35-36': 'Dinosaurs are so interesting!', '37-38': 'Space trips!', '39-40': 'Garden animals!' };
+function pintarMundo() {
+  fondoTema('jardin');
+  const en = yo.idioma === 'en';
+  const unidades = secuencia.filter((x) => x.tipo === 'unidad');
+  const PASO = 132; const ALTO = 150 + unidades.length * PASO;
+  const pos = unidades.map((u, i) => ({ x: i % 2 ? 72 : 28, y: 110 + i * PASO }));
+  let d = `M 50 30 C 50 70, ${pos[0].x} 60, ${pos[0].x} ${pos[0].y}`;
+  for (let i = 1; i < pos.length; i++) { const a = pos[i - 1]; const b = pos[i]; d += ` C ${a.x} ${a.y + PASO / 2}, ${b.x} ${b.y - PASO / 2}, ${b.x} ${b.y}`; }
+  const deco = [];
+  unidades.forEach((u, i) => {
+    const t = tema(u.unidad?.tema); const h = hashStr(u.id);
+    const lado = i % 2 ? 14 : 86;
+    deco.push(motivo(t.m[h % t.m.length], t.c[h % t.c.length], lado + ((h >> 3) % 9) - 4, ((pos[i].y + 18) / ALTO) * 100, 46 + (h % 22), (h % 50) - 25));
+  });
+  const paradas = unidades.map((u, i) => {
+    const clave = u.unidad?.clave; const t = tema(u.unidad?.tema);
+    const ids = secuencia.filter((x) => x.unidad === clave && (x.tipo === 'cuento' || x.tipo === 'lectura')).map((x) => x.id);
+    const leidos = ids.filter((id) => yo.leidos[id]).length;
+    const nombre = en ? (UNIDAD_EN[clave] || u.titulo) : (u.unidad?.titulo || (clave === '1-2' ? 'Mis emociones' : u.titulo));
+    const estado = leidos && leidos === ids.length ? '🌟' : '';
+    return `<a class="parada" href="#libro/${u.id}/1" style="left:${pos[i].x}%;top:${pos[i].y}px;--c:${t.c[0]}" aria-label="${esc(`${i + 1}. ${nombre}. ${leidos} de ${ids.length} ${en ? 'stories read' : 'cuentos leídos'}`)}">
+      <span class="globo"><span class="num">${i + 1}</span><span class="ico" aria-hidden="true">${ICONO_UNIDAD[clave] || '📖'}</span>${estado ? `<span class="hecho" aria-hidden="true">${estado}</span>` : ''}</span>
+      <span class="nombre">${esc(nombre)}</span><span class="avance">${leidos}/${ids.length}</span></a>`;
+  }).join('');
+  $('#app').innerHTML = `<section class="mundo">
+    <header class="mundo-cabeza"><h2>${en ? '🗺️ The Magic World of Knowledge' : '🗺️ El Mundo Mágico del Saber'}</h2>
+      <p class="lead">${en ? 'Follow the path. Tap a place to enter its stories.' : 'Sigue el camino. Toca un lugar para entrar a sus cuentos.'}</p></header>
+    <div class="mapa" style="height:${ALTO}px">
+      <svg class="sendero" viewBox="0 0 100 ${ALTO}" preserveAspectRatio="none" aria-hidden="true">
+        <path d="${d}" class="sendero-borde"/><path d="${d}" class="sendero-camino"/></svg>
+      ${deco.join('')}${paradas}
+      <div class="meta" style="top:${ALTO - 40}px">${en ? '🏁 The end of the path!' : '🏁 ¡Fin del camino!'}</div>
+    </div></section>`;
+}
+
 /* ---------- Revisión de ilustraciones (solo con la clave de revisión) ----------
    jardin.sabicentec.com/#revisar · Los niños solo ven las ilustraciones aprobadas. */
 const CLAVE_REV = 'jardin-revision';
@@ -1099,6 +1148,7 @@ async function pintarRevision() {
   const chip = (e) => `<span class="chip ${e === 'aprobada' ? 'ok' : e === 'pendiente' ? 'rev' : ''}">${esc(e)}</span>`;
   app.innerHTML = `<section class="card revision"><h2>Revisión de ilustraciones</h2>
     <p class="hint">Compare cada imagen con lo que dice el cuento. <b>Aprobar</b> la muestra a los niños; <b>Rechazar</b> la oculta; <b>Generar otra</b> crea una nueva versión (tarda unos segundos).</p>
+    <p class="row"><button class="btn small" type="button" id="generarFaltan">✨ Generar todas las que faltan</button> <span class="hint" id="progresoRev"></span></p>
     ${datos.paginas.map((pg) => `<article class="rev-cuento"><h3>${esc(pg.titulo)}${pg.tituloEn ? ` · <i>${esc(pg.tituloEn)}</i>` : ''}</h3>
       <div class="rev-grid">${pg.ilustraciones.map((il) => `<div class="rev-slot" data-p="${esc(pg.id)}" data-n="${il.n}">
         <div class="rev-img">${il.estado === 'sin generar' ? '<span class="hint">Sin imagen todavía</span>' : '<span class="hint">Cargando imagen…</span>'}</div>
@@ -1114,6 +1164,18 @@ async function pintarRevision() {
   };
   $$('.rev-slot', app).forEach((slot) => { if (!$('.rev-img', slot).textContent.includes('Sin imagen')) verImagen(slot); });
   app.onclick = async (e) => {
+    if (e.target.id === 'generarFaltan') {
+      const faltan = $$('.rev-slot', app).filter((sl) => $('.estado', sl).textContent.trim() === 'sin generar');
+      e.target.disabled = true;
+      for (const [k, sl] of faltan.entries()) {
+        $('#progresoRev').textContent = `Dibujando ${k + 1} de ${faltan.length}…`;
+        $('.rev-img', sl).innerHTML = '<span class="hint">Dibujando…</span>';
+        try { const j = await (await apiRev(`${sl.dataset.p}/${sl.dataset.n}/generar`, 'POST')).json(); $('.estado', sl).innerHTML = chip(j.estado); await verImagen(sl); $$('button', sl).forEach((x) => { x.disabled = false; }); $('[data-acc="generar"]', sl).textContent = 'Generar otra'; }
+        catch (err) { $('.rev-img', sl).innerHTML = `<span class="hint">No se pudo (${esc(err.message)})</span>`; }
+      }
+      $('#progresoRev').textContent = faltan.length ? 'Listo. Ahora revise y apruebe.' : 'No falta ninguna.';
+      e.target.disabled = false; cachePaginas.clear(); return;
+    }
     if (e.target.id === 'salirRev') { try { localStorage.removeItem(CLAVE_REV); } catch { /* nada */ } location.hash = 'indice'; return; }
     const b = e.target.closest('[data-acc]'); if (!b) return;
     const slot = b.closest('.rev-slot'); const acc = b.dataset.acc;
