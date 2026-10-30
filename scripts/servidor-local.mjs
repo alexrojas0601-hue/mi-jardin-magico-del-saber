@@ -16,7 +16,7 @@ function codificar(obj) {
   for (let i = 0; i < d.length; i++) d[i] ^= k[i % k.length] ^ ((i * 31) & 255);
   return { n, d: d.toString('base64') };
 }
-const indice = { unidades: LIBRO.unidades, paginas: LIBRO.paginas.map(({ orden, id, unidad, tipo, titulo }) => ({ orden, id, unidad, tipo, titulo })) };
+const indice = { unidades: LIBRO.unidades, paginas: LIBRO.paginas.map(({ orden, id, unidad, tipo, titulo, en }) => ({ orden, id, unidad, tipo, titulo, ...(en?.titulo ? { tituloEn: en.titulo } : {}) })) };
 
 // Ilustraciones simuladas: clave de revisión local «revision-local-0000000000000», imagen SVG de muestra.
 const REV = 'revision-local-0000000000000';
