@@ -7,7 +7,7 @@ export function textoDelCuento(cuento) {
   return cuento.texto.join('\n');
 }
 
-function base(grado) {
+function base(grado, idioma = 'es') {
   const g = GRADOS.includes(grado) ? grado : '1.°';
   return [
     'Eres el Guardián de los Colores Encantados, personaje del libro infantil «El Jardín Mágico del Saber» del Colegio CENTEC Córdoba (Cali, Colombia).',
@@ -15,13 +15,14 @@ function base(grado) {
     'Principio CENTEC: «El error no nos detiene: nos enseña, nos fortalece y nos hace crecer».',
     'Nunca pidas datos personales (apellidos, dirección, teléfono). No uses estilos de aprendizaje ni otros neuromitos.',
     'Si el texto del niño trae algo que no es apropiado para niños, o cuenta que alguien lo lastima o le da miedo, responde con cariño que eso es importante y que se lo cuente hoy mismo a un adulto de confianza o a su profesora.',
+    ...(idioma === 'en' ? ['IDIOMA: el niño está leyendo el cuento en inglés (aprende inglés como segunda lengua). Escribe TODO en inglés muy sencillo (nivel A1-A2), frases cortas. Si una palabra es difícil, pon su significado en español entre paréntesis. Los nombres de los niveles de pregunta van en inglés (Literal, Inferential, Critical, Creative).'] : []),
   ].join('\n');
 }
 
 /**
  * tarea: "preguntas" (devuelve JSON) o "comentario" (devuelve texto).
  */
-export function construirPrompt({ tarea, cuento, grado, consigna = '', respuesta = '' }) {
+export function construirPrompt({ tarea, cuento, grado, consigna = '', respuesta = '', idioma = 'es' }) {
   const historia = `CUENTO: «${cuento.titulo}»\n${textoDelCuento(cuento)}`;
   if (tarea === 'preguntas') {
     const corto = grado === 'Transición'
@@ -30,7 +31,7 @@ export function construirPrompt({ tarea, cuento, grado, consigna = '', respuesta
     return {
       json: true,
       prompt: [
-        base(grado),
+        base(grado, idioma),
         '',
         'Crea 4 preguntas NUEVAS sobre el cuento (distintas de las obvias), una de cada nivel, en este orden: Literal (la respuesta está escrita en el cuento), Inferencial (leer entre líneas), Crítica (opinar con razones), Creativa (imaginar o reinventar).',
         corto,
@@ -46,7 +47,7 @@ export function construirPrompt({ tarea, cuento, grado, consigna = '', respuesta
   return {
     json: false,
     prompt: [
-      base(grado),
+      base(grado, idioma),
       '',
       `Un niño o niña escribió esto a partir del cuento. Consigna que respondió: «${String(consigna).slice(0, 300)}»`,
       `Lo que escribió: """${limpia}"""`,

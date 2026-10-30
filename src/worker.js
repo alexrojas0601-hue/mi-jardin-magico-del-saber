@@ -66,7 +66,7 @@ async function libro(request, env, ruta) {
   if (!m) return json({ code: 'invalid_request' }, 404);
   const p = L.paginas.get(m[1]);
   if (!p) return json({ code: 'no_existe' }, 404);
-  return json(codificar(p));
+  return json(codificar(await conIlustraciones(env, p)));
 }
 
 async function guardian(request, env) {
@@ -85,9 +85,11 @@ async function guardian(request, env) {
   let p = null;
   try { p = (await abrirLibro(env)).paginas.get(String(body.cuentoId || '')); } catch { /* sin libro */ }
   if (!p) return json({ code: 'invalid_request' }, 404);
-  const cuento = { titulo: p.titulo, texto: (p.parrafos || []).map((x) => x.replace(/\*\*/g, '')) };
+  const idioma = body.idioma === 'en' && p.en?.parrafos?.length ? 'en' : 'es';
+  const fuente = idioma === 'en' ? p.en : p;
+  const cuento = { titulo: fuente.titulo, texto: (fuente.parrafos || []).map((x) => x.replace(/\*\*/g, '')) };
 
-  const { prompt, json: esJson } = construirPrompt({ tarea, cuento, grado, consigna: String(body.consigna || ''), respuesta });
+  const { prompt, json: esJson } = construirPrompt({ tarea, cuento, grado, consigna: String(body.consigna || ''), respuesta, idioma });
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
@@ -109,6 +111,7 @@ async function guardian(request, env) {
    Aura-2 (Deepgram) en Workers AI; si no está disponible, MeloTTS. Cada oración se genera una sola vez
    y se guarda en D1 (tabla voz) y en la caché de Cloudflare. */
 const VOCES = ['celeste', 'estrella', 'diana', 'selena', 'carina', 'aquila', 'sirio', 'nestor', 'alvaro', 'javier'];
+const VOCES_EN = ['asteria', 'orion', 'luna', 'athena', 'hera', 'arcas']; // existen en aura-2-en y en aura-1 (respaldo)
 async function huella(t) {
   const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
   return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -128,10 +131,14 @@ async function aBuffer(r) {
   if (typeof r.audio === 'string') return Uint8Array.from(atob(r.audio), (c) => c.charCodeAt(0)).buffer;
   throw new Error('respuesta desconocida: ' + JSON.stringify(r).slice(0, 200));
 }
-async function generarVoz(env, ctx, texto, voz) {
+async function generarVoz(env, ctx, texto, voz, idioma = 'es') {
   if (!env.AI) throw new Error('sin binding AI');
   const fallas = [];
-  const intentos = [
+  const intentos = idioma === 'en' ? [
+    ['aura-2-en', () => env.AI.run('@cf/deepgram/aura-2-en', { text: texto, speaker: voz, encoding: 'mp3' }, { returnRawResponse: true })],
+    ['aura-1', () => env.AI.run('@cf/deepgram/aura-1', { text: texto, speaker: voz, encoding: 'mp3' }, { returnRawResponse: true })],
+    ['melotts-en', () => env.AI.run('@cf/myshell-ai/melotts', { prompt: texto, lang: 'en' })],
+  ] : [
     ['aura-2-es', () => env.AI.run('@cf/deepgram/aura-2-es', { text: texto, speaker: voz, encoding: 'mp3' }, { returnRawResponse: true })],
     ['aura-2-es-b', () => env.AI.run('@cf/deepgram/aura-2-es', { text: texto, speaker: voz })],
     ['melotts', () => env.AI.run('@cf/myshell-ai/melotts', { prompt: texto, lang: 'es' })],
@@ -157,9 +164,11 @@ async function vozGuardian(request, env, ctx) {
   }
   if (!permitido(request)) return json({ code: 'invalid_request' }, 403);
   const texto = String(url.searchParams.get('t') || '').replace(/\s+/g, ' ').trim().slice(0, 600);
-  const voz = VOCES.includes(url.searchParams.get('v')) ? url.searchParams.get('v') : 'celeste';
+  const idioma = url.searchParams.get('l') === 'en' ? 'en' : 'es';
+  const lista = idioma === 'en' ? VOCES_EN : VOCES;
+  const voz = lista.includes(url.searchParams.get('v')) ? url.searchParams.get('v') : lista[0];
   if (texto.length < 1) return json({ code: 'invalid_request' }, 400);
-  const clave = await huella(voz + '|' + texto);
+  const clave = await huella((idioma === 'en' ? 'en|' : '') + voz + '|' + texto);
   const cache = caches.default;
   const llaveCache = new Request(new URL('/__voz/' + clave, request.url).toString());
   const enCache = await cache.match(llaveCache);
@@ -173,14 +182,98 @@ async function vozGuardian(request, env, ctx) {
     }
   }
   let a;
-  try { a = await generarVoz(env, ctx, texto, voz); } catch (e) { return json({ code: 'sin_voz', detalle: String(e?.message || e).slice(0, 300) }, 503); }
+  try { a = await generarVoz(env, ctx, texto, voz, idioma); } catch (e) { return json({ code: 'sin_voz', detalle: String(e?.message || e).slice(0, 300) }, 503); }
   const r = audioResp(a.datos, a.tipo);
-  if (a.motor !== 'aura-2-es') anotar(env, ctx, 'servidor', 'audio generado con ' + a.motor);
+  if (a.motor !== 'aura-2-es' && a.motor !== 'aura-2-en') anotar(env, ctx, 'servidor', 'audio generado con ' + a.motor);
   ctx.waitUntil(Promise.all([
     cache.put(llaveCache, r.clone()),
     env.LIBRO ? env.LIBRO.prepare('INSERT OR IGNORE INTO voz (clave, audio, tipo) VALUES (?, ?, ?)').bind(clave, a.datos, a.tipo).run().catch(() => {}) : null,
   ]));
   return r;
+}
+
+/* ---------- Ilustraciones: generadas con Workers AI, visibles para los niños SOLO cuando un revisor las aprueba ----------
+   Las escenas viven en el libro cifrado (página.ilustraciones); las imágenes, en D1 (tabla ilustracion).
+   Revisor = quien envía la cabecera x-revision con meta.clave_revision. */
+const ESTILO_ILUS = "Children's picture book illustration, soft watercolor and colored pencil, warm gentle colors, simple rounded shapes, kind expressions, calm and safe for young children, soft paper texture, absolutely no text, no letters, no words, no numbers.";
+let tablaLista = false;
+async function tablaIlus(env) {
+  if (tablaLista) return;
+  await env.LIBRO.prepare('CREATE TABLE IF NOT EXISTS ilustracion (pagina TEXT NOT NULL, n INTEGER NOT NULL, estado TEXT NOT NULL, imagen BLOB, semilla INTEGER, creada TEXT DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (pagina, n))').run();
+  tablaLista = true;
+}
+async function esRevisor(request, env) {
+  const t = request.headers.get('x-revision') || '';
+  if (t.length < 24 || !env.LIBRO) return false;
+  const c = await env.LIBRO.prepare("SELECT valor FROM meta WHERE clave = 'clave_revision'").first('valor');
+  if (!c) return false;
+  const [a, b] = await Promise.all([huella(t), huella(c)]);
+  return a === b;
+}
+async function conIlustraciones(env, p) {
+  const { personajes, ...pub } = p;
+  if (!p.ilustraciones?.length) return pub;
+  let aprobadas = new Set();
+  try {
+    await tablaIlus(env);
+    const r = await env.LIBRO.prepare("SELECT n FROM ilustracion WHERE pagina = ? AND estado = 'aprobada'").bind(p.id).all();
+    aprobadas = new Set((r.results || []).map((x) => x.n));
+  } catch { /* sin tabla: ninguna aprobada */ }
+  pub.ilustraciones = p.ilustraciones.map(({ n, despues, alt }) => ({ n, despues, alt, aprobada: aprobadas.has(n) }));
+  return pub;
+}
+function promptIlus(p, il) {
+  let escena = il.escena;
+  const usados = [];
+  for (const [nombre, desc] of Object.entries(p.personajes || {})) {
+    if (escena.includes(nombre)) { usados.push(`${nombre[0]}${nombre.slice(1).toLowerCase()} is ${desc}.`); escena = escena.split(nombre).join(nombre[0] + nombre.slice(1).toLowerCase()); }
+  }
+  return [ESTILO_ILUS, 'Scene: ' + escena + '.', ...usados].join(' ').slice(0, 2000);
+}
+async function ilustracion(request, env, ruta) {
+  if (!env.LIBRO) return json({ code: 'sin_libro' }, 503);
+  const revisor = await esRevisor(request, env);
+  if (ruta === 'lista') {
+    if (!revisor) return json({ code: 'not_granted' }, 403);
+    await tablaIlus(env);
+    const L = await abrirLibro(env);
+    const estados = (await env.LIBRO.prepare('SELECT pagina, n, estado, creada FROM ilustracion').all()).results || [];
+    const est = new Map(estados.map((e) => [e.pagina + '/' + e.n, e]));
+    const paginas = [...L.paginas.values()].filter((p) => p.ilustraciones?.length).sort((a, b) => a.orden - b.orden)
+      .map((p) => ({ id: p.id, titulo: p.titulo, tituloEn: p.en?.titulo || null, ilustraciones: p.ilustraciones.map((il) => ({ n: il.n, alt: il.alt, estado: est.get(p.id + '/' + il.n)?.estado || 'sin generar' })) }));
+    return json({ paginas });
+  }
+  const m = /^([a-z0-9-]{1,80})\/(\d{1,3})(?:\/(generar|aprobar|rechazar))?$/.exec(ruta);
+  if (!m) return json({ code: 'invalid_request' }, 404);
+  const [, pagina, nTxt, accion] = m; const n = +nTxt;
+  await tablaIlus(env);
+  if (!accion) {
+    if (request.method !== 'GET') return json({ code: 'invalid_request' }, 405);
+    const fila = await env.LIBRO.prepare('SELECT estado, imagen FROM ilustracion WHERE pagina = ? AND n = ?').bind(pagina, n).first();
+    if (!fila || !fila.imagen || (fila.estado !== 'aprobada' && !revisor)) return json({ code: 'no_existe' }, 404);
+    return new Response(new Uint8Array(fila.imagen), { headers: { 'content-type': 'image/jpeg', 'cache-control': fila.estado === 'aprobada' && !revisor ? 'public, max-age=3600' : 'no-store', 'x-robots-tag': 'noindex' } });
+  }
+  if (request.method !== 'POST') return json({ code: 'invalid_request' }, 405);
+  if (!revisor) return json({ code: 'not_granted' }, 403);
+  if (accion === 'generar') {
+    if (!env.AI) return json({ code: 'sin_ia' }, 503);
+    const p = (await abrirLibro(env)).paginas.get(pagina);
+    const il = p?.ilustraciones?.find((x) => x.n === n);
+    if (!il) return json({ code: 'no_existe' }, 404);
+    const semilla = Math.floor(Math.random() * 2 ** 31);
+    let out;
+    try { out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', { prompt: promptIlus(p, il), steps: 8, seed: semilla }); }
+    catch (e) { return json({ code: 'sin_imagen', detalle: String(e?.message || e).slice(0, 300) }, 502); }
+    if (!out?.image) return json({ code: 'sin_imagen' }, 502);
+    const bytes = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0));
+    await env.LIBRO.prepare("INSERT INTO ilustracion (pagina, n, estado, imagen, semilla, creada) VALUES (?, ?, 'pendiente', ?, ?, CURRENT_TIMESTAMP) ON CONFLICT(pagina, n) DO UPDATE SET estado = 'pendiente', imagen = excluded.imagen, semilla = excluded.semilla, creada = CURRENT_TIMESTAMP")
+      .bind(pagina, n, bytes, semilla).run();
+    return json({ ok: true, estado: 'pendiente' });
+  }
+  const estado = accion === 'aprobar' ? 'aprobada' : 'rechazada';
+  const r = await env.LIBRO.prepare('UPDATE ilustracion SET estado = ? WHERE pagina = ? AND n = ? AND imagen IS NOT NULL').bind(estado, pagina, n).run();
+  if (!r.meta?.changes) return json({ code: 'no_existe' }, 404);
+  return json({ ok: true, estado });
 }
 
 export default {
@@ -189,6 +282,7 @@ export default {
     if (url.pathname === '/api/voz') return vozGuardian(request, env, ctx);
     if (url.pathname === '/api/guardian') return guardian(request, env);
     if (url.pathname.startsWith('/api/libro/')) return libro(request, env, url.pathname.slice('/api/libro/'.length));
+    if (url.pathname.startsWith('/api/ilustracion/')) return ilustracion(request, env, url.pathname.slice('/api/ilustracion/'.length));
     const r = await env.ASSETS.fetch(request);
     // Cabeceras de protección para la aplicación.
     const h = new Headers(r.headers);

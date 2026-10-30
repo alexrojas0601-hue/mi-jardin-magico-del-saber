@@ -47,6 +47,24 @@ if (existsSync(ruta)) {
       const cita = q.dondeLoDice ? plano(q.dondeLoDice).replace(/^[—\-«»"' ]+|[—\-«»"' ]+$/g, '').replace(/[.,;:!?]+$/, '') : '';
       if (cita && !texto.includes(cita.slice(0, 70))) errores.push(`${donde} P${i + 1}: «dondeLoDice» no está en el texto.`);
     }
+    // Versión en inglés (opcional): mismas reglas de preguntas y citas sobre el texto en inglés.
+    if (p.en) {
+      const en = p.en;
+      if (!en.titulo || !en.parrafos?.length) errores.push(`${donde} [en]: falta título o párrafos.`);
+      if ((en.parrafos || []).length !== p.parrafos.length) errores.push(`${donde} [en]: tiene ${en.parrafos?.length} párrafos y el original ${p.parrafos.length}.`);
+      const textoEn = plano((en.parrafos || []).join(' '));
+      for (const [i, q] of (en.preguntas || []).filter((x) => x.tipo === 'opcion').entries()) {
+        if (!(q.correcta >= 0 && q.correcta < q.opciones.length)) errores.push(`${donde} [en] P${i + 1}: «correcta» fuera de rango.`);
+        const cita = q.dondeLoDice ? plano(q.dondeLoDice).replace(/^[—\-«»"“”' ]+|[—\-«»"“”' ]+$/g, '').replace(/[.,;:!?]+$/, '') : '';
+        if (cita && !textoEn.includes(cita.slice(0, 70))) errores.push(`${donde} [en] P${i + 1}: «dondeLoDice» no está en el texto en inglés.`);
+      }
+      if (!en.estado) errores.push(`${donde} [en]: falta «estado» (nace «en revisión»).`);
+    }
+    // Ilustraciones (opcional): una escena por posición válida, con texto alternativo en ambos idiomas.
+    for (const il of p.ilustraciones || []) {
+      if (!(il.despues >= 0 && il.despues < p.parrafos.length)) errores.push(`${donde} ilustración ${il.n}: «despues» fuera de rango.`);
+      if (!il.escena || !il.alt?.es || !il.alt?.en) errores.push(`${donde} ilustración ${il.n}: falta escena o texto alternativo.`);
+    }
     for (const q of abiertas) if (!q.pista) errores.push(`${donde}: pregunta abierta sin pista.`);
     const b = p.brujula;
     if (!b?.emocion?.nombre || !b?.valor?.nombre || !b?.disciplina || !b?.innovar || !b?.conecta?.actividad) errores.push(`${donde}: Crecer incompleto.`);
