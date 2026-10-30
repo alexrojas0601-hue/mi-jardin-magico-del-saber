@@ -1401,7 +1401,8 @@ async function pintarRevision() {
   const chip = (e) => `<span class="chip ${e === 'aprobada' ? 'ok' : e === 'pendiente' ? 'rev' : ''}">${esc(e)}</span>`;
   app.innerHTML = `<section class="card revision"><h2>Revisión de ilustraciones</h2>
     <p class="hint">Compare cada imagen con lo que dice el cuento. <b>Aprobar</b> la muestra a los niños; <b>Rechazar</b> la oculta; <b>Generar otra</b> crea una nueva versión (tarda unos segundos).</p>
-    <p class="row"><button class="btn small" type="button" id="generarFaltan">✨ Generar todas las que faltan</button> <span class="hint" id="progresoRev"></span></p>
+    <p class="hint">El servidor dibuja solo las que faltan (unas 10 cada 5 minutos). Recargue esta página para ver las nuevas.</p>
+    <p class="row"><button class="btn small" type="button" id="generarFaltan">✨ Generar ya las que faltan</button> <button class="btn small navy" type="button" id="aprobarTodas">✅ Aprobar todas las pendientes</button> <span class="hint" id="progresoRev"></span></p>
     ${datos.paginas.map((pg) => `<article class="rev-cuento"><h3>${esc(pg.titulo)}${pg.tituloEn ? ` · <i>${esc(pg.tituloEn)}</i>` : ''}</h3>
       <div class="rev-grid">${pg.ilustraciones.map((il) => `<div class="rev-slot" data-p="${esc(pg.id)}" data-n="${il.n}">
         <div class="rev-img">${il.estado === 'sin generar' ? '<span class="hint">Sin imagen todavía</span>' : '<span class="hint">Cargando imagen…</span>'}</div>
@@ -1428,6 +1429,17 @@ async function pintarRevision() {
       }
       $('#progresoRev').textContent = faltan.length ? 'Listo. Ahora revise y apruebe.' : 'No falta ninguna.';
       e.target.disabled = false; cachePaginas.clear(); return;
+    }
+    if (e.target.id === 'aprobarTodas') {
+      const n = $$('.rev-slot', app).filter((sl) => $('.estado', sl).textContent.trim() === 'pendiente').length;
+      if (!n) { aviso('No hay imágenes pendientes.'); return; }
+      if (!confirm(`¿Ya miró las ${n} imágenes pendientes y todas corresponden a su cuento? Al aprobarlas, los niños las verán.`)) return;
+      try {
+        const j = await (await apiRev('aprobar-pendientes', 'POST')).json();
+        $$('.rev-slot', app).forEach((sl) => { if ($('.estado', sl).textContent.trim() === 'pendiente') $('.estado', sl).innerHTML = chip('aprobada'); });
+        $('#progresoRev').textContent = `Aprobadas: ${j.aprobadas}.`; cachePaginas.clear();
+      } catch (err) { aviso('No se pudo: ' + err.message); }
+      return;
     }
     if (e.target.id === 'salirRev') { try { localStorage.removeItem(CLAVE_REV); } catch { /* nada */ } location.hash = 'indice'; return; }
     const b = e.target.closest('[data-acc]'); if (!b) return;

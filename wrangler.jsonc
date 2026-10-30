@@ -18,7 +18,9 @@
   "ai": { "binding": "AI" },
   "vars": {
     "MODELO": "claude-haiku-5-5"
-  }
+  },
   // Secreto (no va en el repositorio): ANTHROPIC_API_KEY, se agrega en Cloudflare
   // → Workers & Pages → mi-jardin-magico-del-saber → Settings → Variables and Secrets.
+  // Dibujo automático de las ilustraciones que faltan (ver dibujarFaltantes en src/worker.js)
+  "triggers": { "crons": ["*/5 * * * *"] }
 }
