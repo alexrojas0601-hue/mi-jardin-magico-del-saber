@@ -13,8 +13,16 @@ const reducido = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- Estado por persona (solo en este navegador · Ley 1581 de 2012) ---------- */
 const CLAVE = 'jardin-magico-v1';
-const inicial = { semillas: 0, hechas: {}, respuestas: {}, versiones: [], rol: 'estudiante', grado: '1.°', leidos: {}, pos: null, letra: 1.15, vozLenta: false, vozNombre: '' };
+const inicial = { semillas: 0, hechas: {}, respuestas: {}, versiones: [], rol: 'estudiante', grado: '1.°', leidos: {}, pos: null, letra: 1.15, vozLenta: false, vozNombre: '', idioma: 'es', ilustrado: false };
 let yo = cargar();
+// Versión del libro elegida desde el portal: ?v=es | en | es-ilus | en-ilus (se recuerda en este equipo).
+(() => {
+  const v = new URLSearchParams(location.search).get('v');
+  if (!/^(es|en)(-ilus)?$/.test(v || '')) return;
+  yo.idioma = v.slice(0, 2); yo.ilustrado = v.endsWith('-ilus');
+  try { localStorage.setItem(CLAVE, JSON.stringify(yo)); } catch { /* sin almacenamiento */ }
+  history.replaceState(null, '', location.pathname + location.hash);
+})();
 function cargar() { try { return { ...inicial, ...JSON.parse(localStorage.getItem(CLAVE) || '{}') }; } catch { return { ...inicial }; } }
 function guardar() { try { localStorage.setItem(CLAVE, JSON.stringify(yo)); } catch { /* sin almacenamiento: sigue en memoria */ } }
 function sumar(n, id) {
@@ -138,6 +146,13 @@ async function api(ruta) {
   return decodificar(await r.json());
 }
 const cachePaginas = new Map();
+// Versión en inglés: si el lector eligió English y el cuento ya está traducido, se usan sus textos
+// (las guías para docentes y familias siguen en español).
+function localizar(p) {
+  if (!p) return p;
+  if (yo.idioma === 'en' && p.en?.parrafos?.length) { const { en, ...resto } = p; return { ...resto, ...en, idiomaActivo: 'en', estadoEn: en.estado || '' }; }
+  return { ...p, idiomaActivo: 'es' };
+}
 function traerPagina(id) {
   if (!cachePaginas.has(id)) cachePaginas.set(id, api('pagina/' + id).catch((e) => { cachePaginas.delete(id); throw e; }));
   return cachePaginas.get(id);
@@ -149,6 +164,11 @@ function traerPagina(id) {
 const AC = window.AudioContext || window.webkitAudioContext;
 const VOZ_NARRADORA = 'celeste'; // colombiana, clara y entusiasta
 const VOZ_GUARDIAN = 'sirio';    // barítono calmado: el Guardián de los Colores
+const VOZ_NARRADORA_EN = 'asteria'; // inglés: narradora clara (Aura-2 EN)
+const VOZ_GUARDIAN_EN = 'orion';    // inglés: el Guardián
+const VOCES_EN = [VOZ_NARRADORA_EN, VOZ_GUARDIAN_EN];
+const idiomaPagina = () => (vista?.pagina?.datos?.idiomaActivo === 'en' ? 'en' : 'es');
+const vozDe = (rol, idioma) => (idioma === 'en' ? (rol === 'guardian' ? VOZ_GUARDIAN_EN : VOZ_NARRADORA_EN) : (rol === 'guardian' ? VOZ_GUARDIAN : VOZ_NARRADORA));
 const voz = { disponible: !!AC || 'speechSynthesis' in window, motor: AC ? 'nube' : 'navegador', activa: false, gen: 0, ctx: null, salida: null, fuente: null, clips: new Map(), u: null };
 function prepararAudio() {
   // Se llama dentro del toque del usuario: así los celulares (iPhone incluido) permiten el sonido.
@@ -178,7 +198,7 @@ function bajarClip(texto, quien = VOZ_NARRADORA) {
   const llave = quien + '|' + t;
   if (!voz.clips.has(llave)) {
     if (voz.clips.size > 120) voz.clips.delete(voz.clips.keys().next().value);
-    const p = fetch(`./api/voz?v=${quien}&t=${encodeURIComponent(t)}`, { headers: { 'x-jardin': 'lector' } })
+    const p = fetch(`./api/voz?v=${quien}${VOCES_EN.includes(quien) ? '&l=en' : ''}&t=${encodeURIComponent(t)}`, { headers: { 'x-jardin': 'lector' } })
       .then(async (r) => { if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(`voz ${r.status} ${j.code || ''} ${j.detalle || ''}`); } return r.arrayBuffer(); })
       .catch((e) => { voz.clips.delete(llave); throw e; });
     voz.clips.set(llave, p);
@@ -277,7 +297,7 @@ function narrarNavegador(frases, { alFrase, alFin }, gen) {
     if (i >= frases.length) { clearInterval(latido); alFin?.(); return; }
     const f = frases[i];
     const u = new SpeechSynthesisUtterance(limpiarHabla(f.texto));
-    const v = elegirVoz(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'es-CO';
+    const v = VOCES_EN.includes(f.quien) ? null : elegirVoz(); if (v) { u.voice = v; u.lang = v.lang; } else u.lang = VOCES_EN.includes(f.quien) ? 'en-US' : 'es-CO';
     u.rate = yo.vozLenta ? 0.75 : 0.92; u.pitch = 1.1; u.volume = 1;
     let listo = false;
     const fin = () => { if (listo || gen !== voz.gen) return; listo = true; i++; setTimeout(sig, f.pausa ?? 250); };
@@ -296,7 +316,7 @@ function diag(etapa, detalle, extra = {}) {
 }
 window.addEventListener('error', (e) => diag('js', e.message + ' @' + (e.lineno || '')));
 window.addEventListener('unhandledrejection', (e) => diag('promesa', e.reason?.message || String(e.reason)));
-function decir(texto) { narrar(fragmentar(texto).map((t) => ({ texto: t, quien: VOZ_NARRADORA }))); }
+function decir(texto, idioma = 'es') { narrar(fragmentar(texto).map((t) => ({ texto: t, quien: vozDe('narradora', idioma) }))); }
 // Fragmentos de una oración, uniendo las muy cortas (Aura-2 entona mejor frases completas).
 function fragmentar(texto) {
   const out = [];
@@ -314,7 +334,7 @@ function burbuja(texto) {
   b.innerHTML = `<span class="burbuja-quien">El Guardián de los Colores</span>${esc(sinEmoji(texto))}`; b.hidden = false;
 }
 const botonVoz = (texto, etiqueta = '🔊') => `<button class="oir" type="button" data-decir="${esc(sinEmoji(texto))}" aria-label="Escuchar">${etiqueta}</button>`;
-document.addEventListener('click', (e) => { const b = e.target.closest('[data-decir]'); if (b) { e.preventDefault(); e.stopPropagation(); decir(b.dataset.decir); } }, true);
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-decir]'); if (b) { e.preventDefault(); e.stopPropagation(); decir(b.dataset.decir, b.dataset.idioma || idiomaPagina()); } }, true);
 if ('speechSynthesis' in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => {}; } catch { /* nada */ } }
 if (AC) fetch('./api/voz?estado=1').then((r) => r.json()).then((j) => { if (!j.ok) voz.motor = 'navegador'; }).catch(() => { voz.motor = 'navegador'; });
 
@@ -396,6 +416,7 @@ function rutear() {
   const g = /^grado(?:\/(.+))?$/.exec(h);
   if (g) { marcarNav('grado'); pintarGrado(g[1]); }
   else if (h === 'arbol') { marcarNav(''); pintarArbol(); }
+  else if (h === 'revisar') { marcarNav(''); pintarRevision(); }
   else if (h === 'competencias') { marcarNav('competencias'); pintarCompetencias(); }
   else if (h === 'por-que-leer') { marcarNav('por-que-leer'); pintarPorQueLeer(); }
   else { marcarNav('indice'); pintarIndice(h === 'mural' ? 'mural' : null); }
@@ -427,7 +448,9 @@ function bloquesDe(item, p) {
   };
   if (T === 'portada' || T === 'unidad' || T === 'fin') return { bloques: [{ tipo: 'especial' }], habla };
   B.push({ tipo: 'cabeza', html: cabezaPagina(item, p) });
-  (p.parrafos || []).forEach((x) => parrafo(x));
+  const ilus = yo.ilustrado ? (p.ilustraciones || []).filter((il) => il.aprobada) : [];
+  const figura = (il) => B.push({ tipo: 'html', html: `<figure class="ilus"><img src="./api/ilustracion/${encodeURIComponent(p.id)}/${il.n}" alt="${esc((il.alt || {})[p.idiomaActivo] || (il.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` });
+  (p.parrafos || []).forEach((x, i) => { parrafo(x); ilus.filter((il) => il.despues === i).forEach(figura); });
   if (p.ruta) {
     const r = p.ruta; const li = (a) => (a || []).map((x) => `<li>${conNegrita(x)} ${botonVoz(x)}</li>`).join('');
     B.push({ tipo: 'html', html: `<section class="ruta-libro"><h3>🌟 Ruta Lectora CENTEC ${p.rutaCreada ? '<span class="chip rev">nueva</span>' : ''}</h3>
@@ -446,6 +469,8 @@ function cabezaPagina(item, p) {
   return `<header class="hoja-cabeza">
     <div class="kicker">${esc([etiquetaUnidad(u), kicker].filter(Boolean).join(' · '))}</div>
     <h2 class="page-title">${conNegrita(p.titulo || item.titulo)}</h2>
+    ${yo.idioma === 'en' && narrable && p.idiomaActivo !== 'en' ? '<p class="hint centro">🌐 This story is not in English yet. Here it is in Spanish.</p>' : ''}
+    ${p.idiomaActivo === 'en' && p.estadoEn ? '<p class="hint centro"><span class="chip rev">English · en revisión</span></p>' : ''}
     ${narrable && voz.disponible ? `<div class="row centro"><button class="btn navy small" type="button" data-narrar data-etq="🔊 Escuchar ${item.tipo === 'texto' ? 'esta página' : 'el cuento'}">🔊 Escuchar ${item.tipo === 'texto' ? 'esta página' : 'el cuento'}</button></div>` : ''}
   </header>`;
 }
@@ -521,7 +546,7 @@ async function mostrarPagina(id, hoja = 0, dir = 0, rapido = false) {
   if (!$('.stage')) montarEscenario();
   let p = null;
   if (['cuento', 'lectura', 'texto'].includes(item.tipo)) {
-    try { p = await traerPagina(id); } catch { $('.stage').innerHTML = '<div class="leaf"><div class="leaf-in"><div class="empty">No pudimos traer esta página. Revisa la conexión.</div></div></div>'; return; }
+    try { p = localizar(await traerPagina(id)); } catch { $('.stage').innerHTML = '<div class="leaf"><div class="leaf-in"><div class="empty">No pudimos traer esta página. Revisa la conexión.</div></div></div>'; return; }
   }
   const { bloques, habla } = bloquesDe(item, p || {});
   let hojas;
@@ -554,8 +579,8 @@ async function mostrarPagina(id, hoja = 0, dir = 0, rapido = false) {
   history.replaceState(null, '', `#libro/${id}/${hoja + 1}`);
   pintarHoja(dir, rapido);
   if (voz.motor === 'nube' && (item.tipo === 'cuento' || item.tipo === 'lectura') && p) {
-    if (p.voz?.intro) fragmentar(p.voz.intro).slice(0, 2).forEach((t) => bajarClip(t, VOZ_GUARDIAN).catch(() => {}));
-    bajarClip((p.titulo || item.titulo).replace(/[.!?]*$/, '.')).catch(() => {});
+    if (p.voz?.intro) fragmentar(p.voz.intro).slice(0, 2).forEach((t) => bajarClip(t, vozDe('guardian', p.idiomaActivo)).catch(() => {}));
+    bajarClip((p.titulo || item.titulo).replace(/[.!?]*$/, '.'), vozDe('narradora', p.idiomaActivo)).catch(() => {});
   }
   // Adelanta la página siguiente para que pasar sea instantáneo.
   const sig = secuencia[pos + 1]; if (sig && ['cuento', 'lectura', 'texto'].includes(sig.tipo)) traerPagina(sig.id).catch(() => {});
@@ -575,6 +600,8 @@ function montarEscenario() {
     <div class="herramientas">
       <button class="btn ghost small" type="button" id="letraMenos" aria-label="Letra más pequeña">A−</button>
       <button class="btn ghost small" type="button" id="letraMas" aria-label="Letra más grande">A+</button>
+      <button class="btn ghost small" type="button" id="idioma" aria-label="${yo.idioma === 'en' ? 'Leer en español' : 'Read in English'}">${yo.idioma === 'en' ? '🌐 Español' : '🌐 English'}</button>
+      <button class="btn ghost small" type="button" id="ilustrado" aria-pressed="${yo.ilustrado}">${yo.ilustrado ? '🖼️ Con imágenes' : '📖 Solo texto'}</button>
       <button class="btn ghost small" type="button" id="ajusteVoz">${yo.vozLenta ? '🐢 Voz lenta' : '🙂 Voz normal'}</button>
       <a class="btn ghost small" href="#indice">☰ Índice</a>
     </div>
@@ -585,6 +612,8 @@ function montarEscenario() {
     const n = e.target.closest('[data-narrar]'); if (n) { if (voz.activa) callar(); else narrarPagina(); return; }
     const a = e.target.closest('[data-aprende]'); if (a) { abrirAprende(a.dataset.aprende); return; }
     if (e.target.id === 'letraMas' || e.target.id === 'letraMenos') { yo.letra = Math.max(1, Math.min(1.7, yo.letra + (e.target.id === 'letraMas' ? 0.1 : -0.1))); guardar(); mostrarPagina(vista.pagina.id, vista.hoja, 0, true); return; }
+    if (e.target.id === 'idioma') { callar(); yo.idioma = yo.idioma === 'en' ? 'es' : 'en'; guardar(); e.target.textContent = yo.idioma === 'en' ? '🌐 Español' : '🌐 English'; e.target.setAttribute('aria-label', yo.idioma === 'en' ? 'Leer en español' : 'Read in English'); mostrarPagina(vista.pagina.id, 0, 0, true); return; }
+    if (e.target.id === 'ilustrado') { yo.ilustrado = !yo.ilustrado; guardar(); e.target.textContent = yo.ilustrado ? '🖼️ Con imágenes' : '📖 Solo texto'; e.target.setAttribute('aria-pressed', String(yo.ilustrado)); mostrarPagina(vista.pagina.id, 0, 0, true); return; }
     if (e.target.id === 'ajusteVoz') { yo.vozLenta = !yo.vozLenta; guardar(); e.target.textContent = yo.vozLenta ? '🐢 Voz lenta' : '🙂 Voz normal'; decir(yo.vozLenta ? 'Voy a leer despacito.' : 'Voy a leer normal.'); return; }
     // Tocar el borde de la hoja: derecha avanza, izquierda devuelve.
     const st = e.target.closest('.stage');
@@ -609,7 +638,7 @@ function pintarHoja(dir, rapido) {
   const leaf = document.createElement('div');
   leaf.className = 'leaf' + (item.tipo === 'portada' || item.tipo === 'unidad' || item.tipo === 'fin' ? ' especial' : '');
   leaf.style.setProperty('--read', (vista.letraHoja || yo.letra) + 'rem');
-  const folio = item.tipo === 'portada' ? '' : `<div class="folio">${esc(item.titulo).slice(0, 48)} · ${vista.hoja + 1}/${vista.hojas.length}</div>`;
+  const folio = item.tipo === 'portada' ? '' : `<div class="folio">${esc(vista.pagina.datos?.titulo || item.titulo).slice(0, 48)} · ${vista.hoja + 1}/${vista.hojas.length}</div>`;
   leaf.innerHTML = `${decorHoja(temaDe(item), item.id + vista.hoja)}<div class="leaf-in${vista.hojas[vista.hoja] === '__aprende__' || /especial/.test(leaf.className) ? ' scroll' : ''}">${html}</div>${folio}`;
   const vieja = $('.leaf:not(.saliendo)', st);
   if (!vieja || rapido || !dir || reducido()) { st.innerHTML = ''; st.append(leaf); }
@@ -624,7 +653,7 @@ function pintarHoja(dir, rapido) {
   }
   setTimeout(() => { vista.ocupado = false; }, 900);
   const u = item.tipo === 'unidad' ? item.unidad : item.unidadInfo;
-  $('#donde').innerHTML = `<b>${esc(item.titulo).slice(0, 60)}</b><small>${esc(etiquetaUnidad(u))}${u ? ' · ' : ''}Hoja ${vista.hoja + 1} de ${vista.hojas.length} · ${rutaGrado?.ids.includes(item.id) ? `🎒 Cuento ${rutaGrado.ids.indexOf(item.id) + 1} de ${rutaGrado.ids.length} de ${esc(rutaGrado.grado)}` : `Página ${vista.pagina.pos} de ${secuencia.length - 1}`}</small>`;
+  $('#donde').innerHTML = `<b>${esc(vista.pagina.datos?.titulo || item.titulo).slice(0, 60)}</b><small>${esc(etiquetaUnidad(u))}${u ? ' · ' : ''}Hoja ${vista.hoja + 1} de ${vista.hojas.length} · ${rutaGrado?.ids.includes(item.id) ? `🎒 Cuento ${rutaGrado.ids.indexOf(item.id) + 1} de ${rutaGrado.ids.length} de ${esc(rutaGrado.grado)}` : `Página ${vista.pagina.pos} de ${secuencia.length - 1}`}</small>`;
   $$('[data-ir="-1"]').forEach((b) => { b.disabled = vista.pagina.pos === 0 && vista.hoja === 0; });
   $$('[data-ir="1"]').forEach((b) => { b.disabled = vista.pagina.pos === secuencia.length - 1 && vista.hoja === vista.hojas.length - 1; });
   if (vista.hojas[vista.hoja] === '__aprende__' && !yo.leidos[item.id]) { yo.leidos[item.id] = true; guardar(); sumar(1, 'leido-' + item.id); }
@@ -671,13 +700,14 @@ function narrarPagina() {
     return;
   }
   const frases = [];
-  if (datos?.voz?.intro) fragmentar(datos.voz.intro).forEach((t, n, a) => frases.push({ texto: t, guardian: true, quien: VOZ_GUARDIAN, alNino: true, pausa: n === a.length - 1 ? Math.round(900 * ritmo()) : undefined }));
-  frases.push({ texto: (datos?.titulo || item.titulo).replace(/[.!?]*$/, '.'), pausa: Math.round(1200 * ritmo()) });
+  const lg = datos?.idiomaActivo === 'en' ? 'en' : 'es';
+  if (datos?.voz?.intro) fragmentar(datos.voz.intro).forEach((t, n, a) => frases.push({ texto: t, guardian: true, quien: vozDe('guardian', lg), alNino: true, pausa: n === a.length - 1 ? Math.round(900 * ritmo()) : undefined }));
+  frases.push({ texto: (datos?.titulo || item.titulo).replace(/[.!?]*$/, '.'), quien: vozDe('narradora', lg), pausa: Math.round(1200 * ritmo()) });
   // Empieza en la hoja visible.
   const enHoja = (k) => vista.hojas.findIndex((h) => h !== '__aprende__' && h.includes(`data-k="${k}"`));
   const primero = habla.find((f) => enHoja(f.k) >= vista.hoja) || habla[0];
-  habla.filter((f) => f.k >= primero.k).forEach((f) => frases.push({ texto: f.texto, k: f.k, finParrafo: f.fin }));
-  if (datos?.voz?.cierre) { frases[frases.length - 1].pausa = Math.round(1500 * ritmo()); fragmentar(datos.voz.cierre).forEach((t) => frases.push({ texto: t, guardian: true, quien: VOZ_GUARDIAN, alNino: true })); }
+  habla.filter((f) => f.k >= primero.k).forEach((f) => frases.push({ texto: f.texto, k: f.k, finParrafo: f.fin, quien: vozDe('narradora', lg) }));
+  if (datos?.voz?.cierre) { frases[frases.length - 1].pausa = Math.round(1500 * ritmo()); fragmentar(datos.voz.cierre).forEach((t) => frases.push({ texto: t, guardian: true, quien: vozDe('guardian', lg), alNino: true })); }
   narrar(frases, {
     alFrase: (f) => {
       if (f.guardian) { quitarResaltado(); burbuja(f.texto); return; }
@@ -945,13 +975,13 @@ async function iniciarGuardian() {
 async function preguntarGuardian({ tarea, p, consigna, respuesta }, onText) {
   const grado = yo.grado;
   if (guardian.modo === 'claude') {
-    const { prompt, json } = construirPrompt({ tarea, cuento: { titulo: p.titulo, texto: (p.parrafos || []).map((x) => x.replace(/\*\*/g, '')) }, grado, consigna, respuesta });
+    const { prompt, json } = construirPrompt({ tarea, cuento: { titulo: p.titulo, texto: (p.parrafos || []).map((x) => x.replace(/\*\*/g, '')) }, grado, consigna, respuesta, idioma: p.idiomaActivo === 'en' ? 'en' : 'es' });
     if (json) return guardian.sample.json(prompt, { modelTier: 'quick', cache: false });
     const r = await guardian.sample(prompt, { modelTier: 'quick', cache: false, onText: ({ text }) => onText?.(text) });
     return r.text;
   }
   if (guardian.modo === 'web') {
-    const r = await fetch('./api/guardian', { method: 'POST', headers: { 'content-type': 'application/json', 'x-jardin': 'lector' }, body: JSON.stringify({ tarea, cuentoId: p.id, grado, consigna, respuesta }) });
+    const r = await fetch('./api/guardian', { method: 'POST', headers: { 'content-type': 'application/json', 'x-jardin': 'lector' }, body: JSON.stringify({ tarea, cuentoId: p.id, grado, consigna, respuesta, idioma: p.idiomaActivo === 'en' ? 'en' : 'es' }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw { code: j.code || 'upstream_error' };
     if (tarea === 'preguntas') return j.preguntas;
@@ -1038,6 +1068,68 @@ function pintarGrado(pedido) {
 }
 
 /* ---------- Árbol ---------- */
+/* ---------- Revisión de ilustraciones (solo con la clave de revisión) ----------
+   jardin.sabicentec.com/#revisar · Los niños solo ven las ilustraciones aprobadas. */
+const CLAVE_REV = 'jardin-revision';
+function claveRev() { try { return localStorage.getItem(CLAVE_REV) || ''; } catch { return ''; } }
+async function apiRev(ruta, metodo = 'GET') {
+  const r = await fetch('./api/ilustracion/' + ruta, { method: metodo, headers: { 'x-revision': claveRev() } });
+  if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.code || ('HTTP ' + r.status)); }
+  return r;
+}
+async function pintarRevision() {
+  fondoTema('jardin');
+  const app = $('#app');
+  if (!claveRev()) {
+    app.innerHTML = `<section class="card revision"><h2>Revisión de ilustraciones</h2>
+      <p class="hint">Solo para el equipo de CENTEC. Escriba la clave de revisión.</p>
+      <form id="fRev" class="row"><input id="claveRev" type="password" autocomplete="off" aria-label="Clave de revisión" style="flex:1;min-width:220px">
+      <button class="btn small" type="submit">Entrar</button></form></section>`;
+    $('#fRev').onsubmit = (e) => { e.preventDefault(); try { localStorage.setItem(CLAVE_REV, $('#claveRev').value.trim()); } catch { /* nada */ } pintarRevision(); };
+    return;
+  }
+  app.innerHTML = '<section class="card revision"><h2>Revisión de ilustraciones</h2><p class="hint">Cargando…</p></section>';
+  let datos;
+  try { datos = await (await apiRev('lista')).json(); }
+  catch (e) {
+    app.innerHTML = `<section class="card revision"><h2>Revisión de ilustraciones</h2><p>La clave no es válida o el servicio no responde (${esc(e.message)}).</p><button class="btn small" type="button" id="otraClave">Escribir otra clave</button></section>`;
+    $('#otraClave').onclick = () => { try { localStorage.removeItem(CLAVE_REV); } catch { /* nada */ } pintarRevision(); };
+    return;
+  }
+  const chip = (e) => `<span class="chip ${e === 'aprobada' ? 'ok' : e === 'pendiente' ? 'rev' : ''}">${esc(e)}</span>`;
+  app.innerHTML = `<section class="card revision"><h2>Revisión de ilustraciones</h2>
+    <p class="hint">Compare cada imagen con lo que dice el cuento. <b>Aprobar</b> la muestra a los niños; <b>Rechazar</b> la oculta; <b>Generar otra</b> crea una nueva versión (tarda unos segundos).</p>
+    ${datos.paginas.map((pg) => `<article class="rev-cuento"><h3>${esc(pg.titulo)}${pg.tituloEn ? ` · <i>${esc(pg.tituloEn)}</i>` : ''}</h3>
+      <div class="rev-grid">${pg.ilustraciones.map((il) => `<div class="rev-slot" data-p="${esc(pg.id)}" data-n="${il.n}">
+        <div class="rev-img">${il.estado === 'sin generar' ? '<span class="hint">Sin imagen todavía</span>' : '<span class="hint">Cargando imagen…</span>'}</div>
+        <p><b>${il.n}.</b> ${esc(il.alt?.es || '')}</p><p class="estado">${chip(il.estado)}</p>
+        <div class="row"><button class="btn small" type="button" data-acc="generar">${il.estado === 'sin generar' ? 'Generar' : 'Generar otra'}</button>
+        <button class="btn small navy" type="button" data-acc="aprobar" ${il.estado === 'sin generar' ? 'disabled' : ''}>Aprobar</button>
+        <button class="btn small ghost" type="button" data-acc="rechazar" ${il.estado === 'sin generar' ? 'disabled' : ''}>Rechazar</button></div></div>`).join('')}</div></article>`).join('')}
+    <p class="row"><button class="btn ghost small" type="button" id="salirRev">Cerrar la revisión en este equipo</button></p></section>`;
+  const verImagen = async (slot) => {
+    const caja = $('.rev-img', slot);
+    try { const b = await (await apiRev(`${slot.dataset.p}/${slot.dataset.n}?t=${Date.now()}`)).blob(); caja.innerHTML = `<img alt="" src="${URL.createObjectURL(b)}">`; }
+    catch { caja.innerHTML = '<span class="hint">Sin imagen todavía</span>'; }
+  };
+  $$('.rev-slot', app).forEach((slot) => { if (!$('.rev-img', slot).textContent.includes('Sin imagen')) verImagen(slot); });
+  app.onclick = async (e) => {
+    if (e.target.id === 'salirRev') { try { localStorage.removeItem(CLAVE_REV); } catch { /* nada */ } location.hash = 'indice'; return; }
+    const b = e.target.closest('[data-acc]'); if (!b) return;
+    const slot = b.closest('.rev-slot'); const acc = b.dataset.acc;
+    $$('button', slot).forEach((x) => { x.disabled = true; });
+    if (acc === 'generar') $('.rev-img', slot).innerHTML = '<span class="hint">Dibujando… (10 a 30 segundos)</span>';
+    try {
+      const j = await (await apiRev(`${slot.dataset.p}/${slot.dataset.n}/${acc}`, 'POST')).json();
+      $('.estado', slot).innerHTML = chip(j.estado);
+      if (acc === 'generar') await verImagen(slot);
+      cachePaginas.clear();
+    } catch (err) { aviso('No se pudo: ' + err.message); }
+    $$('button', slot).forEach((x) => { x.disabled = false; });
+    $('[data-acc="generar"]', slot).textContent = 'Generar otra';
+  };
+}
+
 function pintarArbol() {
   const e = etapa(yo.semillas); const leidos = Object.keys(yo.leidos).length; const total = secuencia.filter((x) => x.tipo === 'cuento' || x.tipo === 'lectura').length;
   $('#app').innerHTML = `

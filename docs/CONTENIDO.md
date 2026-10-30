@@ -24,3 +24,12 @@ Los Dots proponen cambios al material en un informe (`docs/informes/AAAA-MM.md`)
 
 ## Voces grabadas
 Si un docente graba un cuento, se sube el mp3 (por ejemplo a R2) y se pone en `medios.json` → `audios` con el id del cuento. Esa grabación tiene prioridad sobre la voz del navegador.
+
+## Versiones del libro: español, inglés e ilustradas (30 oct 2026)
+Autorización: los autores, dueños del libro y de Editorial Pluma de Oro S.A.S. y socios de CENTEC, autorizaron al rector traducir el libro e ilustrarlo para uso escolar no comercial en CENTEC (declaración del rector, 30-10-2026). Base legal del permiso: Ley 23 de 1982, art. 12, lit. f.
+
+- **Cuatro versiones por enlace** (las abre el portal): `?v=es` (original), `?v=en` (inglés), `?v=es-ilus` y `?v=en-ilus` (con ilustraciones). El lector también cambia con los botones «🌐 English / Español» y «🖼️ Con imágenes / 📖 Solo texto».
+- **Inglés:** cada página puede traer `en` con `titulo`, `parrafos` (mismo número que el original), `ruta`, `voz`, `preguntas` (citas `dondeLoDice` en el texto en inglés), `brujula`, `reinventar` y `estado` («en revisión» hasta que la apruebe un docente de inglés). Las guías para docentes y familias siguen en español. Si un cuento no está traducido, se muestra en español con un aviso. Voz en inglés: Aura-2 EN (`asteria` narradora, `orion` Guardián). El Guardián responde en inglés A1-A2 cuando el cuento está en inglés.
+- **Ilustraciones:** cada página puede traer `personajes` (descripción fija de cada personaje, en inglés) e `ilustraciones` (`n`, `despues` = índice del párrafo, `escena`, `alt.es`, `alt.en`). Se generan con Workers AI (`flux-1-schnell`) y se guardan en D1 (tabla `ilustracion`). **Los niños solo ven las aprobadas.**
+- **Revisión:** jardin.sabicentec.com/#revisar con la clave de revisión (D1 → `meta.clave_revision`; nunca en el repositorio). Generar, aprobar, rechazar o generar otra versión.
+- Piloto: «El Guardián de los Colores Encantados» (traducción y 5 escenas). El resto del libro se agrega por lotes con el mismo formato y `node scripts/validar.mjs` los comprueba.

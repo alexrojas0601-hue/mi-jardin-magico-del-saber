@@ -372,6 +372,19 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-betw
 @media (max-width:1240px){.band.gutter{padding-right:max(112px,env(safe-area-inset-right,0px))}}
 @media (max-width:640px){.band.gutter{padding-right:max(16px,env(safe-area-inset-right,0px))}.band .brand{padding-right:96px;min-height:50px}}
 @media (max-width:1240px){.modal{padding-top:68px}.modal-card{max-height:calc(100vh - 80px)}}
+.chip.ok{background:#e3f4e8;color:#1e6b3a}
+/* Ilustraciones del cuento (solo las aprobadas) */
+.ilus{margin:10px auto 12px;text-align:center}
+.ilus img{display:block;margin:0 auto;width:min(100%,300px);height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:18px;box-shadow:0 4px 14px rgba(26,45,122,.18);-webkit-user-drag:none;user-select:none}
+/* Revisión de ilustraciones */
+.revision{max-width:1100px;margin:16px auto}
+.rev-cuento{margin-top:18px}
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.rev-slot{border:1px solid var(--line,#ddd);border-radius:14px;padding:10px;background:var(--surface,#fff)}
+.rev-img{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:var(--surface-2,#f4f4f4);border-radius:10px;overflow:hidden}
+.rev-img img{width:100%;height:100%;object-fit:cover}
+.rev-slot p{margin:6px 0;font-size:.92rem}
+.rev-slot .row{gap:6px;flex-wrap:wrap}
 </style>
 </head>
 <body oncontextmenu="return false">
