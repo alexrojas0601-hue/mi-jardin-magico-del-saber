@@ -195,7 +195,10 @@ async function vozGuardian(request, env, ctx) {
 /* ---------- Ilustraciones: generadas con Workers AI, visibles para los niños SOLO cuando un revisor las aprueba ----------
    Las escenas viven en el libro cifrado (página.ilustraciones); las imágenes, en D1 (tabla ilustracion).
    Revisor = quien envía la cabecera x-revision con meta.clave_revision. */
-const ESTILO_ILUS = "Children's picture book illustration, soft watercolor and colored pencil, warm gentle colors, simple rounded shapes, kind expressions, calm and safe for young children, soft paper texture, absolutely no text, no letters, no words, no numbers.";
+// Estilo pedido por el rector (30-10-2026): dibujos animados con ojos grandes y boca grande.
+// Evidencia: los rasgos infantiles (ojos grandes, cara redonda) atraen la mirada de niños de 3 a 6 años
+// (Borgi et al., 2014, Frontiers in Psychology, https://doi.org/10.3389/fpsyg.2014.00411).
+const ESTILO_ILUS = "Bright cartoon illustration for a children's picture book, characters with very big round shiny eyes, big expressive smiling mouths and round friendly faces, bold clean outlines, cheerful saturated colors, simple uncluttered background, the scene shows exactly what the sentence describes, calm and safe for young children, absolutely no text, no letters, no words, no numbers.";
 let tablaLista = false;
 async function tablaIlus(env) {
   if (tablaLista) return;
