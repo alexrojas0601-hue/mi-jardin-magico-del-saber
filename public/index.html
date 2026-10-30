@@ -368,6 +368,10 @@ footer{border-top:1px solid var(--line);padding-block:22px;color:var(--muted);fo
 footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
 .loading{padding:60px 0;text-align:center;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* Espacio para el botón «Salir» de SABI Barra (fijo arriba a la derecha, ~85×44 px): no tapa el grado ni el árbol. */
+@media (max-width:1240px){.band.gutter{padding-right:max(112px,env(safe-area-inset-right,0px))}}
+@media (max-width:640px){.band.gutter{padding-right:max(16px,env(safe-area-inset-right,0px))}.band .brand{padding-right:96px;min-height:50px}}
+@media (max-width:1240px){.modal{padding-top:68px}.modal-card{max-height:calc(100vh - 80px)}}
 </style>
 </head>
 <body oncontextmenu="return false">
@@ -396,5 +400,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-betw
   </div>
 </footer>
 <script type="module" src="./js/app.js"></script>
+<!-- SABI Barra: salida rápida común del ecosistema (sin adjuntar: app de niños, Ley 1581 de 2012). -->
+<script src="https://sabicentec.com/assets/sabi-barra.js" defer data-app="jardin" data-destino="https://sabicentec.com/" data-adjuntar="no" data-posicion="arriba-derecha"></script>
 </body>
 </html>
