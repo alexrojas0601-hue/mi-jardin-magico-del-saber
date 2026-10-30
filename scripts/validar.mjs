@@ -62,8 +62,9 @@ if (existsSync(ruta)) {
     }
     // Ilustraciones (opcional): una escena por posición válida, con texto alternativo en ambos idiomas.
     for (const il of p.ilustraciones || []) {
+      if (il.original && !existsSync(new URL('../public/ilus/' + il.original, import.meta.url))) errores.push(`${donde} ilustración ${il.n}: falta el archivo cifrado ${il.original}.`);
       if (!(il.despues >= -1 && il.despues < p.parrafos.length)) errores.push(`${donde} ilustración ${il.n}: «despues» fuera de rango.`);
-      if (!il.escena || !il.alt?.es || !il.alt?.en) errores.push(`${donde} ilustración ${il.n}: falta escena o texto alternativo.`);
+      if ((!il.escena && !il.original) || !il.alt?.es || !il.alt?.en) errores.push(`${donde} ilustración ${il.n}: falta escena o texto alternativo.`);
     }
     for (const q of abiertas) if (!q.pista) errores.push(`${donde}: pregunta abierta sin pista.`);
     const b = p.brujula;
