@@ -1283,5 +1283,466 @@
    }
   },
   "notaRecomendadas": "Propuesta del equipo de Claude para que todo el libro tenga un grado y una semana: ubica cada cuento según su propósito, su extensión y el tema semanal del planeador. En revisión hasta que rectoría o coordinación académica la aprueben."
+ },
+ "en": {
+  "nota": "English version of the interface texts in this file (Competencies, Why read, Imagination dice, grade plan). Faithful translation; author names, titles of studies and DOIs are not translated. Under review like the original.",
+  "competencias": {
+   "titulo": "Competencies that The Magic Garden of Knowledge plants",
+   "nota": "These are goals for an expert reader. From Kindergarten to 3rd grade the book plants their roots: each competency has an observable seed for each grade. Content under review until the Language team approves it.",
+   "familias": {
+    "cognitivas": "Advanced cognitive abilities",
+    "linguisticas": "Language and communication skills",
+    "cultural": "Intellectual and cultural capital",
+    "personales": "Personal and psychological benefits",
+    "caracter": "Heart and character"
+   },
+   "lista": {
+    "pc": {
+     "nombre": "Deep critical thinking",
+     "meta": "Judge whether an argument is valid, spot bias, compare sources and question information with logic.",
+     "comoLoSiembra": "Critical questions in «Think»: give an opinion with reasons and go back to the text to check.",
+     "semillas": {
+      "Transición": "Says whether something seems right or wrong and gives a simple reason («because…»).",
+      "1.°": "Tells apart what the story says from what he or she imagines.",
+      "2.°": "Gives two reasons for an opinion and listens to a different opinion.",
+      "3.°": "Compares two characters or two endings and explains which one is fairer and why."
+     }
+    },
+    "cc": {
+     "nombre": "Understanding complex concepts",
+     "meta": "Understand abstract ideas, dense theories and academic or technical texts.",
+     "comoLoSiembra": "Big ideas told in simple words: hope, gratitude, love that «multiplies».",
+     "semillas": {
+      "Transición": "Recognizes a big idea in an example («waiting happily is hope»).",
+      "1.°": "Explains in his or her own words what a comparison in the story means.",
+      "2.°": "Understands simple metaphors («the family is like a tree»).",
+      "3.°": "Explains an abstract idea from the story and gives an example from his or her own life."
+     }
+    },
+    "aa": {
+     "nombre": "Analytical sharpness",
+     "meta": "Break a text into its essential parts, find the main claim and follow intricate reasoning.",
+     "comoLoSiembra": "«Play» shows the exact sentence where the answer is; the Reading Path separates literal, inferential and critical questions.",
+     "semillas": {
+      "Transición": "Tells what happened at the beginning, in the middle and at the end.",
+      "1.°": "Finds the sentence in the text that answers a question.",
+      "2.°": "Identifies the main idea of the story in one sentence.",
+      "3.°": "Explains the cause and the consequence of what a character does."
+     }
+    },
+    "lx": {
+     "nombre": "Broad and precise vocabulary",
+     "meta": "Master a large vocabulary to express complex ideas accurately, when speaking and when writing.",
+     "comoLoSiembra": "«Magic words» in every story and questions about words in context.",
+     "semillas": {
+      "Transición": "Uses a new word from the story in a spoken sentence.",
+      "1.°": "Explains what a magic word means without looking at it.",
+      "2.°": "Chooses, between two words, the more precise one for what he or she wants to say.",
+      "3.°": "Uses three new words from the book in his or her own text."
+     }
+    },
+    "re": {
+     "nombre": "Excellent writing and spelling",
+     "meta": "Write with correct grammar and a fluent style thanks to exposure to good-quality texts.",
+     "comoLoSiembra": "«Reinvent»: write one's own version of the story from a well-written model.",
+     "semillas": {
+      "Transición": "Dictates his or her story to an adult and recognizes his or her written name.",
+      "1.°": "Writes short sentences with a capital letter at the start and a period at the end.",
+      "2.°": "Writes a paragraph with a beginning, a problem and an ending.",
+      "3.°": "Writes a story of several paragraphs and checks the spelling with help."
+     }
+    },
+    "fv": {
+     "nombre": "Verbal fluency and articulation",
+     "meta": "Give speeches, argue in debates and communicate abstract ideas clearly.",
+     "comoLoSiembra": "Reading aloud, family conversation and challenges to tell the story to others.",
+     "semillas": {
+      "Transición": "Retells the story in his or her own words, with the help of the pictures.",
+      "1.°": "Reads a page aloud with rhythm and intonation.",
+      "2.°": "Explains his or her opinion to the group for one minute.",
+      "3.°": "Takes part in a small debate: listens, answers and gives reasons."
+     }
+    },
+    "cg": {
+     "nombre": "Broad general knowledge",
+     "meta": "Connect with the historical, philosophical, scientific and literary thought of humanity.",
+     "comoLoSiembra": "True facts inside the story (how long a baby grows, how plants grow) and customs of Cali and the Valle del Cauca.",
+     "semillas": {
+      "Transición": "Names something true he or she learned from the story (a baby grows for nine months).",
+      "1.°": "Relates the story to the customs of his or her family and city.",
+      "2.°": "Looks up, with an adult, a new fact about a topic of the story.",
+      "3.°": "Compares a custom of his or her family with one from another culture."
+     }
+    },
+    "pi": {
+     "nombre": "Interdisciplinary thinking",
+     "meta": "Connect concepts from different areas (history with economics, literature with psychology).",
+     "comoLoSiembra": "The «Connect with…» section of each story takes the story to math, science, art, English or finance.",
+     "semillas": {
+      "Transición": "Counts, draws or sings something from the story.",
+      "1.°": "Uses numbers from the story to count or add.",
+      "2.°": "Relates the story to science or to money (saving, gifts).",
+      "3.°": "Explains how an idea from the story is useful in another subject."
+     }
+    },
+    "au": {
+     "nombre": "Autonomy in learning",
+     "meta": "Be self-taught: master new subjects independently.",
+     "comoLoSiembra": "The Tree of Knowledge records one's own progress; each child chooses the story, the challenge and the pace.",
+     "semillas": {
+      "Transición": "Chooses a story and asks for it to be read.",
+      "1.°": "Finishes an activity of the book without being reminded.",
+      "2.°": "Sets a weekly reading goal and meets it.",
+      "3.°": "Looks for an answer on his or her own and tells where he or she found it."
+     }
+    },
+    "co": {
+     "nombre": "Strong ability to concentrate",
+     "meta": "Keep a long focus on complex intellectual tasks, without getting distracted.",
+     "comoLoSiembra": "Short, complete sessions: read, play and think without interruptions, and grow the time little by little.",
+     "semillas": {
+      "Transición": "Listens to a whole story (5 to 8 minutes).",
+      "1.°": "Reads and answers for 10 minutes in a row.",
+      "2.°": "Works on a challenge for 15 minutes without getting distracted.",
+      "3.°": "Keeps 20 minutes of reading and writing with a clear goal."
+     }
+    },
+    "em": {
+     "nombre": "Empathy and perspective",
+     "meta": "Understand the human condition, other cultures and opposite points of view through diverse stories.",
+     "comoLoSiembra": "Challenges to tell the story through the eyes of another character and questions like «how did … feel?».",
+     "semillas": {
+      "Transición": "Says how a character feels by looking at his or her face in the picture.",
+      "1.°": "Explains why a character felt that way.",
+      "2.°": "Tells a part of the story through the eyes of another character.",
+      "3.°": "Recognizes that two characters can feel differently about the same thing, and respects both."
+     }
+    },
+    "ag": {
+     "nombre": "Mental agility and flexibility",
+     "meta": "Adapt quickly to new situations and solve complex problems creatively.",
+     "comoLoSiembra": "The Imagination dice changes the character, the place and the problem: the child adapts and solves.",
+     "semillas": {
+      "Transición": "Imagines what would happen if the story took place somewhere else.",
+      "1.°": "Suggests two different solutions to a problem in the story.",
+      "2.°": "Solves a new problem that comes up on the dice.",
+      "3.°": "Changes a rule of the story and explains how everything else changes."
+     }
+    },
+    "ie": {
+     "nombre": "Emotional intelligence",
+     "meta": "Recognize, name and manage one's own emotions and understand those of others.",
+     "comoLoSiembra": "In «Grow», each story brings an emotion to name and a simple strategy to handle it.",
+     "semillas": {
+      "Transición": "Names the emotion he or she feels (joy, fear, anger, sadness, surprise).",
+      "1.°": "Says what his or her body does when feeling that emotion.",
+      "2.°": "Uses a strategy to calm down (breathing, asking for help, talking).",
+      "3.°": "Explains what makes him or her feel that way and chooses how to respond."
+     }
+    },
+    "vp": {
+     "nombre": "Values with a purpose",
+     "meta": "Live values that turn into concrete actions that improve one's own life and the lives of others.",
+     "comoLoSiembra": "Each story has a value and a concrete action to practice it this week.",
+     "semillas": {
+      "Transición": "Does a simple kind action at home or in class.",
+      "1.°": "Explains why an action in the story was good.",
+      "2.°": "Practices a value for a week and tells what happened.",
+      "3.°": "Suggests an action with a value that helps his or her group or neighborhood."
+     }
+    },
+    "di": {
+     "nombre": "Discipline",
+     "meta": "Keep habits and commitments even when it is hard, to reach one's own goals.",
+     "comoLoSiembra": "One habit per story (reading at the same time, finishing what you start, saving) and the Tree of Knowledge, which grows with perseverance.",
+     "semillas": {
+      "Transición": "Follows the reading routine with an adult.",
+      "1.°": "Finishes what he or she starts before moving on to something else.",
+      "2.°": "Keeps a simple record of his or her habit (star calendar).",
+      "3.°": "Plans his or her reading week and does what he or she set out to do."
+     }
+    },
+    "ic": {
+     "nombre": "Imagine, create and innovate",
+     "meta": "Imagine possibilities, create new things and improve what exists to solve real problems.",
+     "comoLoSiembra": "«Reinvent» and the innovation challenge of each story: invent an object, a game or a solution.",
+     "semillas": {
+      "Transición": "Draws and tells a different ending.",
+      "1.°": "Invents a new character with a name and a power.",
+      "2.°": "Designs an object that helps a character and explains how it works.",
+      "3.°": "Suggests an improvement for a real problem at home or at school and tries it out."
+     }
+    }
+   }
+  },
+  "porQueLeer": {
+   "titulo": "Reading is the best investment: the down payment starts today",
+   "intro": [
+    "The steady discipline of reading transforms a person's mind, academic and professional life and emotional well-being. It is one of the most profitable investments there is: its benefits add up and multiply over time, like savings.",
+    "Childhood is the most important time to start. Those who read as children read better, and those who read better enjoy it more and read more: it is a spiral that grows by itself. The Magic Garden of Knowledge, with true stories of CENTEC families and a little magic, is the down payment for raising students who read."
+   ],
+   "areas": {
+    "intelectual": {
+     "nombre": "Intellectual and cognitive development",
+     "beneficios": [
+      {
+       "titulo": "Mental exercise that changes the brain",
+       "adulto": "Learning to read reorganizes the brain networks for vision and language. In older adults, a life of reading and writing is associated with slower memory decline.",
+       "nino": "Every story read aloud with an adult, every magic word and every question puts those networks to work from Kindergarten on.",
+       "evidencia": "Brain imaging study of people who learned to read at different ages; and follow-up of 294 people until their death (association, not proof of cause)."
+      },
+      {
+       "titulo": "Focus and deep attention",
+       "adulto": "In the age of digital distraction, keeping attention on a text is an advantage. Reading on paper gives better comprehension than reading on a screen, especially when there is little time.",
+       "nino": "Short, complete sessions (10 to 15 minutes), without interruptions, and preferring the printed book for long reading; the app is for playing, thinking and creating.",
+       "evidencia": "Meta-analysis of 54 comparisons between paper and screen."
+      },
+      {
+       "titulo": "Memory that gets exercised",
+       "adulto": "Following plots, characters and arguments requires remembering and connecting.",
+       "nino": "Retelling the story in their own words, answering literal questions and looking for «where the story says it».",
+       "evidencia": "Teaching idea: no study cited here measures it directly."
+      }
+     ]
+    },
+    "academico": {
+     "nombre": "Academic and professional advantages",
+     "beneficios": [
+      {
+       "titulo": "An advantage that adds up",
+       "adulto": "Reading for pleasure in childhood predicts more progress between ages 10 and 16 in vocabulary, spelling and math, in vocabulary even more than the parents' level of education. Reading lets you learn in hours what took others years to discover.",
+       "nino": "Let the child choose and enjoy: reading for pleasure, not out of obligation, is what matters most.",
+       "evidencia": "British 1970 cohort, thousands of children followed for years."
+      },
+      {
+       "titulo": "Decisions with good judgment",
+       "adulto": "Knowing many perspectives and frames of reference helps solve complex problems with better judgment.",
+       "nino": "The critical questions in «Think» ask for an opinion with reasons and for listening to another opinion.",
+       "evidencia": "Teaching idea: no study cited here measures it directly."
+      },
+      {
+       "titulo": "High-level communication",
+       "adulto": "People who read more have better spoken and written language. That link grows over the years: it explains about 12 % of the differences in spoken language in preschool and about 34 % in college.",
+       "nino": "Magic words, reading aloud and writing one's own version of each story.",
+       "evidencia": "Meta-analysis of 99 studies, from preschool to college."
+      }
+     ]
+    },
+    "emocional": {
+     "nombre": "Personal and emotional growth",
+     "beneficios": [
+      {
+       "titulo": "A moment of calm",
+       "adulto": "Reading quietly can be a relaxing break. Note: the figure that goes around («6 minutes lower stress by 68 %») comes from a commercial study without peer review; we do not use it.",
+       "nino": "The bedtime story, without screens, in a soft voice and in the arms of someone who loves the child.",
+       "evidencia": "No solid evidence cited here about cortisol or stress."
+      },
+      {
+       "titulo": "Emotional intelligence and empathy",
+       "adulto": "Living the lives of other characters slightly improves the ability to understand what others think and feel. The effect is small but real, and it adds up over the years.",
+       "nino": "The «Grow» tab names one emotion per story and suggests telling the story through the eyes of another character.",
+       "evidencia": "Meta-analysis of 14 studies (small effect, g ≈ 0.15)."
+      },
+      {
+       "titulo": "Self-knowledge",
+       "adulto": "Books are mirrors: they help put into words thoughts, fears and dreams one could not express.",
+       "nino": "«When have you felt something like this?» in every story, and the Reading Path with the family.",
+       "evidencia": "Teaching idea: no study cited here measures it directly."
+      }
+     ]
+    },
+    "realidad": {
+     "nombre": "Expanding reality",
+     "beneficios": [
+      {
+       "titulo": "Trips with no borders and no budget",
+       "adulto": "Reading opens the door to other times, cultures and imaginary worlds from an armchair.",
+       "nino": "The Imagination dice takes Luciana and Paulina to the bottom of the sea, to a spaceship or to a giant library.",
+       "evidencia": "Teaching idea."
+      },
+      {
+       "titulo": "One's own judgment",
+       "adulto": "Those who read a lot and read well have more tools not to be carried away by shallow opinions and to form their own judgment.",
+       "nino": "Starting now: telling apart what the text says from what we imagine, and always asking «where does it say so?» and «why do you think that?».",
+       "evidencia": "Teaching idea: it is a learning goal, not a measured result."
+      },
+      {
+       "titulo": "An investment for life",
+       "adulto": "In adults aged 50 or older, reading books was associated with living almost two years longer than those who did not read, even when reading only half an hour a day.",
+       "nino": "Building the habit now is the down payment on that investment.",
+       "evidencia": "Study of adults aged 50 or older followed for up to 12 years (association, not proof of cause)."
+      }
+     ]
+    }
+   },
+   "habito": {
+    "titulo": "The down-payment plan: 15 minutes a day as a family",
+    "pasos": [
+     "Same time every day (for example, before bed). Consistency is worth more than length.",
+     "An adult reads aloud, even if the child can already read: listening is reading too.",
+     "When you finish, just one question: «what did you feel?» or «what would happen if…?». Listen without correcting.",
+     "Stick a star on the calendar. Seven stars: celebrate as a family, with no money prizes or screens.",
+     "Once a week, have the child read or tell the story to someone younger."
+    ]
+   },
+   "notas": {
+    "DOI por verificar": "DOI to be verified"
+   }
+  },
+  "dadoImaginacion": {
+   "personajes": [
+    "Luciana",
+    "Paulina",
+    "the Guardian of Colors",
+    "Laura the fairy",
+    "Alicia",
+    "Carlos Daniel",
+    "Mrs. Rosa",
+    "the grandparents"
+   ],
+   "lugares": [
+    "the clearing of the singing flowers",
+    "a spaceship",
+    "the bottom of the sea",
+    "CENTEC school",
+    "the top of a mountain in the Valle del Cauca",
+    "a giant library"
+   ],
+   "problemas": [
+    "the Family Tree had lost its leaves",
+    "the colors had disappeared from the Garden",
+    "the Chest of Dreams would not open",
+    "a star had fallen from the sky",
+    "nobody remembered the lullaby",
+    "a robot wanted to learn how to hug"
+   ]
+  },
+  "planGrados": {
+   "nota": "Taken from the 2027 Institutional Planners (columns «Story/Reading» and «Weekly reading»). The 2027 Primary Reading Plan schedules 60 other books and does not include stories from this book.",
+   "notaRecomendadas": "Proposal by the Claude team so that the whole book has a grade and a week: each story is placed according to its purpose, its length and the weekly topic of the planner. Under review until the principal's office or academic coordination approves it.",
+   "fuentes": {
+    "Planeador Institucional Transición CENTEC 2027": "CENTEC 2027 Institutional Planner, Kindergarten",
+    "Planeador Institucional Grado 1.° CENTEC 2027": "CENTEC 2027 Institutional Planner, Grade 1",
+    "Planeador Institucional Grado 2.° CENTEC 2027": "CENTEC 2027 Institutional Planner, Grade 2",
+    "Planeador Institucional Grado 3.° CENTEC 2027": "CENTEC 2027 Institutional Planner, Grade 3"
+   },
+   "usos": {
+    "Lectura": "Reading",
+    "Relectura": "Rereading"
+   },
+   "temas": {
+    "Cadenas tróficas y biodiversidad": "Food chains and biodiversity",
+    "Cambios físicos y químicos de la materia": "Physical and chemical changes of matter",
+    "Cierre P1 y preparación P2": "End of term 1 and getting ready for term 2",
+    "Cierre del Período 1: Preparación Período 2": "End of Term 1: getting ready for Term 2",
+    "Clausura y día de logros": "Closing ceremony and achievement day",
+    "Colombia: geografía y diversidad": "Colombia: geography and diversity",
+    "Colombia: mi país, mi orgullo": "Colombia: my country, my pride",
+    "Dinero y finanzas: ahorro y presupuesto": "Money and finance: saving and budgeting",
+    "DÍA DE LOGROS Y CLAUSURA: Fin de año Transición": "ACHIEVEMENT DAY AND CLOSING: end of the Kindergarten year",
+    "Día de Logros y Clausura": "Achievement Day and Closing",
+    "El agua: fuente de vida": "Water: source of life",
+    "El agua: recurso que debemos cuidar": "Water: a resource we must protect",
+    "El cielo: sol, luna y estrellas": "The sky: sun, moon and stars",
+    "El cielo: sol, luna, estrellas y planetas": "The sky: sun, moon, stars and planets",
+    "El cuento de ciencia ficción: imaginar el futuro": "The science fiction story: imagining the future",
+    "El cuento y sus elementos: idea principal y detalles": "The story and its elements: main idea and details",
+    "El cuerpo humano: de la célula a los sistemas": "The human body: from the cell to the systems",
+    "El cuerpo humano: sistemas integrados": "The human body: integrated systems",
+    "El cuerpo humano: sistemas que nos mantienen vivos": "The human body: systems that keep us alive",
+    "El cuerpo humano: sistemas que trabajan juntos": "The human body: systems that work together",
+    "El diccionario y el contexto: palabras nuevas": "The dictionary and context: new words",
+    "El entorno natural: explorar con los sentidos": "The natural world: exploring with the senses",
+    "El reciclaje y los residuos del colegio": "Recycling and the school's waste",
+    "El sistema solar y el universo": "The solar system and the universe",
+    "El sistema solar: nuestro hogar cósmico": "The solar system: our cosmic home",
+    "El texto argumentativo: opinar con razones": "The argumentative text: giving opinions with reasons",
+    "El texto descriptivo: describir con detalles": "The descriptive text: describing with details",
+    "El texto descriptivo: detalles que pintan": "The descriptive text: details that paint a picture",
+    "El texto informativo: aprender de la realidad": "The informative text: learning from reality",
+    "El texto instructivo: instrucciones claras": "The instructional text: clear instructions",
+    "El texto narrativo y sus elementos": "The narrative text and its elements",
+    "El texto narrativo: historias que nos enseñan": "The narrative text: stories that teach us",
+    "El texto poético: lenguaje que emociona": "The poetic text: language that moves us",
+    "El texto y la imagen: leo con los ojos y la mente": "Text and image: I read with my eyes and my mind",
+    "El tiempo y el calendario: el año en números": "Time and the calendar: the year in numbers",
+    "Electricidad y tecnología": "Electricity and technology",
+    "Estadística: leer el mundo con datos": "Statistics: reading the world with data",
+    "Feria de Ciencias Período 2": "Term 2 Science Fair",
+    "Feria del Libro P2": "Term 2 Book Fair",
+    "Fracciones: partes de un todo": "Fractions: parts of a whole",
+    "Fracciones: partes del todo": "Fractions: parts of the whole",
+    "Fábulas y leyendas: el propósito del autor": "Fables and legends: the author's purpose",
+    "Geometría: figuras, ángulos y simetría": "Geometry: shapes, angles and symmetry",
+    "La cadena alimentaria humana: qué comemos y por qué": "The human food chain: what we eat and why",
+    "La convivencia: vivir bien con los demás": "Living together: getting along well with others",
+    "La electricidad y la tecnología: inventos que cambian el mundo": "Electricity and technology: inventions that change the world",
+    "La materia: todo ocupa un lugar": "Matter: everything takes up space",
+    "La multiplicación como suma repetida": "Multiplication as repeated addition",
+    "La multiplicación: sumar grupos iguales": "Multiplication: adding equal groups",
+    "La narración: cuento mi propia historia": "Narration: I tell my own story",
+    "La poesía y el lenguaje que emociona": "Poetry and language that moves us",
+    "La resta: quitar para restar": "Subtraction: taking away",
+    "La suma: juntar es sumar": "Addition: putting together is adding",
+    "Las consonantes D R C: nuevas letras, más palabras": "The consonants D, R, C: new letters, more words",
+    "Las consonantes L T N: seguimos leyendo": "The consonants L, T, N: we keep reading",
+    "Las consonantes M P S: mi primera lectura": "The consonants M, P, S: my first reading",
+    "Las consonantes M, P, S": "The consonants M, P, S",
+    "Las decenas: el número 10 y sus amigos": "Tens: the number 10 and its friends",
+    "Las figuras mágicas": "The magic shapes",
+    "Las figuras mágicas: el mundo de las formas": "The magic shapes: the world of shapes",
+    "Las formas: geometría en nuestro entorno": "Shapes: geometry all around us",
+    "Las plantas: seres vivos que crecen": "Plants: living things that grow",
+    "Las plantas: seres vivos que crecen con amor": "Plants: living things that grow with love",
+    "Las plantas: seres vivos que nos alimentan": "Plants: living things that feed us",
+    "Las sílabas: construyendo palabras": "Syllables: building words",
+    "Las vocales y el nombre propio": "Vowels and my own name",
+    "Las vocales y el nombre propio: mis primeras letras": "Vowels and my own name: my first letters",
+    "Los animales: amigos del planeta": "Animals: friends of the planet",
+    "Los animales: compañeros en la Tierra": "Animals: companions on Earth",
+    "Los colores: el arcoíris de la vida": "Colors: the rainbow of life",
+    "Los ecosistemas de Colombia": "The ecosystems of Colombia",
+    "Los ecosistemas de Colombia y su cuidado": "The ecosystems of Colombia and how to care for them",
+    "Los ecosistemas: comunidades de vida": "Ecosystems: communities of life",
+    "Los números 1 al 10: contamos el mundo": "Numbers 1 to 10: we count the world",
+    "Los números del 1 al 10": "Numbers from 1 to 10",
+    "Los números del 11 al 20": "Numbers from 11 to 20",
+    "Los números del 11 al 20: contamos más": "Numbers from 11 to 20: we count more",
+    "Los números: lenguaje universal": "Numbers: a universal language",
+    "Los seres vivos y su clasificación": "Living things and how they are classified",
+    "Luz, sonido y energía": "Light, sound and energy",
+    "Matemática financiera: el dinero y yo": "Financial math: money and me",
+    "Medidas de masa, capacidad y tiempo": "Measuring mass, capacity and time",
+    "Mi cuerpo: lo conozco y lo cuido": "My body: I know it and I take care of it",
+    "Mi cuerpo: mi primera casa": "My body: my first home",
+    "Mi familia y mi comunidad": "My family and my community",
+    "Mi familia: mi primera escuela": "My family: my first school",
+    "Mi proyecto de vida: metas y valores": "My life plan: goals and values",
+    "Mis metas para el Período 2": "My goals for Term 2",
+    "Nivelación P1": "Catch-up, term 1",
+    "Nivelación P2": "Catch-up, term 2",
+    "Nivelación Período 2": "Catch-up, Term 2",
+    "Nivelación final y preparación para grado 1°": "Final catch-up and getting ready for Grade 1",
+    "Nivelación final y preparación siguiente grado": "Final catch-up and getting ready for the next grade",
+    "Nivelación período 1": "Catch-up, term 1",
+    "Nivelación y Consolidación Período 1": "Catch-up and consolidation, Term 1",
+    "Oraciones: expreso ideas completas": "Sentences: I express complete ideas",
+    "Perímetro y medidas de longitud": "Perimeter and length measurements",
+    "Proyecto \"Feria del Libro\": celebramos la lectura": "\"Book Fair\" project: we celebrate reading",
+    "Proyecto Final del Año: Transformando mi mundo": "End-of-year project: transforming my world",
+    "Proyecto STEAM final: Transformando mi jardín": "Final STEAM project: transforming my garden",
+    "Proyecto del Período: Feria del Saber": "Term project: Knowledge Fair",
+    "STEAM Final: Transformando mi mundo": "Final STEAM: transforming my world",
+    "Somos un equipo de aprendizaje": "We are a learning team",
+    "Suma y resta con reagrupación": "Addition and subtraction with regrouping",
+    "Suma y resta: operaciones de la vida": "Addition and subtraction: operations for life",
+    "TRANSICIÓN P1→P2: Mis metas para el Período 2": "KINDERGARTEN T1→T2: my goals for Term 2",
+    "Texto descriptivo: describir con detalles": "Descriptive text: describing with details",
+    "Tiempo y dinero: economía para la vida": "Time and money: economics for life",
+    "Tiempo y medida: calendario y reloj": "Time and measurement: calendar and clock",
+    "¡Bienvenido a mi jardín! Me conozco": "Welcome to my garden! I get to know myself",
+    "¡Bienvenido a mi jardín!: Me conozco y conozco mi espacio": "Welcome to my garden! I get to know myself and my space"
+   }
+  }
  }
 }
