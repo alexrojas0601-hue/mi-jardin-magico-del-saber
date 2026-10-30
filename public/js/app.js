@@ -689,13 +689,13 @@ function bloquesDe(item, p) {
   if (T === 'portada' || T === 'unidad' || T === 'fin') return { bloques: [{ tipo: 'especial' }], habla };
   const ilus0 = yo.ilustrado ? (p.ilustraciones || []).filter((il) => il.aprobada) : [];
   const ancha = matchMedia('(min-width: 760px) and (orientation: landscape)').matches;
-  const ladoPortada = ancha ? Math.max(150, Math.min(260, Math.round(medidas().alto * 0.42))) : Math.max(150, Math.min(300, Math.round(medidas().alto * 0.36)));
+  const ladoPortada = ancha ? Math.max(180, Math.min(420, Math.round(medidas().alto * 0.58))) : Math.max(180, Math.min(380, Math.round(medidas().alto * 0.44)));
   const portada = ilus0.find((il) => il.despues < 0);
-  const figPortada = portada ? `<figure class="ilus portada-ilus"><img style="width:min(100%,${ladoPortada}px)" src="./api/ilustracion/${encodeURIComponent(p.id)}/${portada.n}" alt="${esc((portada.alt || {})[p.idiomaActivo] || (portada.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` : '';
+  const figPortada = portada ? `<figure class="ilus portada-ilus"><img class="${portada.original ? 'orig' : ''}" style="width:min(100%,${ladoPortada}px)" src="./api/ilustracion/${encodeURIComponent(p.id)}/${portada.n}" alt="${esc((portada.alt || {})[p.idiomaActivo] || (portada.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` : '';
   B.push({ tipo: 'cabeza', html: cabezaPagina(item, p, figPortada, ancha) });
   const ilus = yo.ilustrado ? (p.ilustraciones || []).filter((il) => il.aprobada) : [];
-  const ladoIlus = Math.max(140, Math.min(300, Math.round(medidas().alto * 0.33)));
-  const figura = (il) => B.push({ tipo: 'html', html: `<figure class="ilus"><img style="width:min(100%,${ladoIlus}px)" src="./api/ilustracion/${encodeURIComponent(p.id)}/${il.n}" alt="${esc((il.alt || {})[p.idiomaActivo] || (il.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` });
+  const ladoIlus = Math.max(180, Math.min(420, Math.round(medidas().alto * 0.5)));
+  const figura = (il) => B.push({ tipo: 'html', html: `<figure class="ilus"><img class="${il.original ? 'orig' : ''}" style="width:min(100%,${ladoIlus}px)" src="./api/ilustracion/${encodeURIComponent(p.id)}/${il.n}" alt="${esc((il.alt || {})[p.idiomaActivo] || (il.alt || {}).es || '')}" width="1024" height="1024" decoding="async" draggable="false"></figure>` });
   (p.parrafos || []).forEach((x, i) => { parrafo(x); ilus.filter((il) => il.despues === i).forEach(figura); });
   if (p.ruta) {
     const r = p.ruta; const li = (a) => (a || []).map((x) => `<li>${conNegrita(x)} ${botonVoz(x)}</li>`).join('');
@@ -1398,16 +1398,16 @@ async function pintarRevision() {
     $('#otraClave').onclick = () => { try { localStorage.removeItem(CLAVE_REV); } catch { /* nada */ } pintarRevision(); };
     return;
   }
-  const chip = (e) => `<span class="chip ${e === 'aprobada' ? 'ok' : e === 'pendiente' ? 'rev' : ''}">${esc(e)}</span>`;
+  const chip = (e) => `<span class="chip ${e === 'aprobada' || e === 'original' ? 'ok' : e === 'pendiente' ? 'rev' : ''}">${esc(e === 'original' ? 'original del libro' : e)}</span>`;
   app.innerHTML = `<section class="card revision"><h2>Revisión de ilustraciones</h2>
-    <p class="hint">Compare cada imagen con lo que dice el cuento. <b>Aprobar</b> la muestra a los niños; <b>Rechazar</b> la oculta; <b>Generar otra</b> crea una nueva versión (tarda unos segundos).</p>
+    <p class="hint">Las <b>originales del libro</b> ya se muestran a los niños (puede <b>Rechazar</b> alguna). Los dibujos generados solo cubren los cuentos sin imagen original. Compare cada imagen con lo que dice el cuento. <b>Aprobar</b> la muestra a los niños; <b>Rechazar</b> la oculta; <b>Generar otra</b> crea una nueva versión (tarda unos segundos).</p>
     <p class="hint">El servidor dibuja solo las que faltan (unas 10 cada 5 minutos). Recargue esta página para ver las nuevas.</p>
     <p class="row"><button class="btn small" type="button" id="generarFaltan">✨ Generar ya las que faltan</button> <button class="btn small navy" type="button" id="aprobarTodas">✅ Aprobar todas las pendientes</button> <span class="hint" id="progresoRev"></span></p>
     ${datos.paginas.map((pg) => `<article class="rev-cuento"><h3>${esc(pg.titulo)}${pg.tituloEn ? ` · <i>${esc(pg.tituloEn)}</i>` : ''}</h3>
       <div class="rev-grid">${pg.ilustraciones.map((il) => `<div class="rev-slot" data-p="${esc(pg.id)}" data-n="${il.n}">
         <div class="rev-img">${il.estado === 'sin generar' ? '<span class="hint">Sin imagen todavía</span>' : '<span class="hint">Cargando imagen…</span>'}</div>
         <p><b>${il.n}.</b> ${esc(il.alt?.es || '')}</p><p class="estado">${chip(il.estado)}</p>
-        <div class="row"><button class="btn small" type="button" data-acc="generar">${il.estado === 'sin generar' ? 'Generar' : 'Generar otra'}</button>
+        <div class="row">${il.original ? '' : `<button class="btn small" type="button" data-acc="generar">${il.estado === 'sin generar' ? 'Generar' : 'Generar otra'}</button>`}
         <button class="btn small navy" type="button" data-acc="aprobar" ${il.estado === 'sin generar' ? 'disabled' : ''}>Aprobar</button>
         <button class="btn small ghost" type="button" data-acc="rechazar" ${il.estado === 'sin generar' ? 'disabled' : ''}>Rechazar</button></div></div>`).join('')}</div></article>`).join('')}
     <p class="row"><button class="btn ghost small" type="button" id="salirRev">Cerrar la revisión en este equipo</button></p></section>`;
@@ -1453,7 +1453,7 @@ async function pintarRevision() {
       cachePaginas.clear();
     } catch (err) { aviso('No se pudo: ' + err.message); }
     $$('button', slot).forEach((x) => { x.disabled = false; });
-    $('[data-acc="generar"]', slot).textContent = 'Generar otra';
+    if ($('[data-acc="generar"]', slot)) $('[data-acc="generar"]', slot).textContent = 'Generar otra';
   };
 }
 

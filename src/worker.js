@@ -216,13 +216,15 @@ async function esRevisor(request, env) {
 async function conIlustraciones(env, p) {
   const { personajes, ...pub } = p;
   if (!p.ilustraciones?.length) return pub;
-  let aprobadas = new Set();
+  const estados = new Map();
   try {
     await tablaIlus(env);
-    const r = await env.LIBRO.prepare("SELECT n FROM ilustracion WHERE pagina = ? AND estado = 'aprobada'").bind(p.id).all();
-    aprobadas = new Set((r.results || []).map((x) => x.n));
-  } catch { /* sin tabla: ninguna aprobada */ }
-  pub.ilustraciones = p.ilustraciones.map(({ n, despues, alt }) => ({ n, despues, alt, aprobada: aprobadas.has(n) }));
+    const r = await env.LIBRO.prepare('SELECT n, estado FROM ilustracion WHERE pagina = ?').bind(p.id).all();
+    for (const x of r.results || []) estados.set(x.n, x.estado);
+  } catch { /* sin tabla: solo originales */ }
+  // Original del libro (editorial): visible salvo que un revisor la rechace. Dibujo generado: solo si se aprobó.
+  pub.ilustraciones = p.ilustraciones.map(({ n, despues, alt, original }) => ({ n, despues, alt, ...(original ? { original: true } : {}),
+    aprobada: original ? estados.get(n) !== 'rechazada' : estados.get(n) === 'aprobada' }));
   return pub;
 }
 function promptIlus(p, il) {
@@ -235,6 +237,14 @@ function promptIlus(p, il) {
   // El dibujo debe contar ESTE cuento: título + momento exacto + cómo son sus personajes (pedido del rector, 30-10-2026).
   const cuento = p.en?.titulo ? `This picture illustrates the children's story "${p.en.titulo}".` : '';
   return [ESTILO_ILUS, cuento, 'Scene from the story: ' + escena + '.', ...usados, 'Only characters and objects from this scene, nothing unrelated to the story.'].filter(Boolean).join(' ').slice(0, 2000);
+}
+async function imagenOriginal(env, request, archivo) {
+  const res = await env.ASSETS.fetch(new Request(new URL('/ilus/' + archivo, request.url)));
+  if (!res.ok) return null;
+  const todo = new Uint8Array(await res.arrayBuffer());
+  const clave = await env.LIBRO.prepare("SELECT valor FROM meta WHERE clave = 'clave_libro'").first('valor');
+  const llave = await crypto.subtle.importKey('raw', Uint8Array.from(atob(clave), (c) => c.charCodeAt(0)), 'AES-GCM', false, ['decrypt']);
+  return crypto.subtle.decrypt({ name: 'AES-GCM', iv: todo.slice(0, 12), additionalData: new TextEncoder().encode('jardin-magico-ilustracion') }, llave, todo.slice(12));
 }
 async function generarUna(env, p, il) {
   const semilla = Math.floor(Math.random() * 2 ** 31);
@@ -252,7 +262,7 @@ async function dibujarFaltantes(env, maximo = 10) {
   const hechas = new Set(((await env.LIBRO.prepare('SELECT pagina, n FROM ilustracion').all()).results || []).map((x) => x.pagina + '/' + x.n));
   const L = await abrirLibro(env);
   const faltan = [];
-  for (const p of [...L.paginas.values()].sort((a, b) => a.orden - b.orden)) for (const il of p.ilustraciones || []) if (!hechas.has(p.id + '/' + il.n)) faltan.push([p, il]);
+  for (const p of [...L.paginas.values()].sort((a, b) => a.orden - b.orden)) for (const il of p.ilustraciones || []) if (!il.original && !hechas.has(p.id + '/' + il.n)) faltan.push([p, il]);
   let hechasAhora = 0;
   for (const [p, il] of faltan.slice(0, maximo)) {
     try { await generarUna(env, p, il); hechasAhora++; } catch (e) { await env.LIBRO.prepare('INSERT INTO voz_log (origen, detalle) VALUES (?, ?)').bind('ilustracion', `${p.id}/${il.n}: ${String(e?.message || e).slice(0, 200)}`).run().catch(() => {}); }
@@ -276,13 +286,30 @@ async function ilustracion(request, env, ruta) {
     const estados = (await env.LIBRO.prepare('SELECT pagina, n, estado, creada FROM ilustracion').all()).results || [];
     const est = new Map(estados.map((e) => [e.pagina + '/' + e.n, e]));
     const paginas = [...L.paginas.values()].filter((p) => p.ilustraciones?.length).sort((a, b) => a.orden - b.orden)
-      .map((p) => ({ id: p.id, titulo: p.titulo, tituloEn: p.en?.titulo || null, ilustraciones: p.ilustraciones.map((il) => ({ n: il.n, alt: il.alt, estado: est.get(p.id + '/' + il.n)?.estado || 'sin generar' })) }));
+      .map((p) => ({ id: p.id, titulo: p.titulo, tituloEn: p.en?.titulo || null, ilustraciones: p.ilustraciones.map((il) => ({ n: il.n, alt: il.alt, original: Boolean(il.original), estado: il.original ? (est.get(p.id + '/' + il.n)?.estado === 'rechazada' ? 'rechazada' : 'original') : (est.get(p.id + '/' + il.n)?.estado || 'sin generar') })) }));
     return json({ paginas });
   }
   const m = /^([a-z0-9-]{1,80})\/(\d{1,3})(?:\/(generar|aprobar|rechazar))?$/.exec(ruta);
   if (!m) return json({ code: 'invalid_request' }, 404);
   const [, pagina, nTxt, accion] = m; const n = +nTxt;
   await tablaIlus(env);
+  const pag = (await abrirLibro(env)).paginas.get(pagina);
+  const orig = pag?.ilustraciones?.find((x) => x.n === n && x.original);
+  if (orig) {
+    const fila = await env.LIBRO.prepare('SELECT estado FROM ilustracion WHERE pagina = ? AND n = ?').bind(pagina, n).first();
+    const rechazada = fila?.estado === 'rechazada';
+    if (!accion) {
+      if (request.method !== 'GET' || (rechazada && !revisor)) return json({ code: 'no_existe' }, 404);
+      const img = await imagenOriginal(env, request, orig.original);
+      if (!img) return json({ code: 'no_existe' }, 404);
+      return new Response(img, { headers: { 'content-type': 'image/webp', 'cache-control': revisor ? 'no-store' : 'public, max-age=86400', 'x-robots-tag': 'noindex' } });
+    }
+    if (request.method !== 'POST' || !revisor) return json({ code: 'not_granted' }, 403);
+    if (accion === 'generar') return json({ code: 'es_original' }, 409);
+    if (accion === 'aprobar') await env.LIBRO.prepare('DELETE FROM ilustracion WHERE pagina = ? AND n = ?').bind(pagina, n).run();
+    else await env.LIBRO.prepare("INSERT INTO ilustracion (pagina, n, estado) VALUES (?, ?, 'rechazada') ON CONFLICT(pagina, n) DO UPDATE SET estado = 'rechazada'").bind(pagina, n).run();
+    return json({ ok: true, estado: accion === 'aprobar' ? 'original' : 'rechazada' });
+  }
   if (!accion) {
     if (request.method !== 'GET') return json({ code: 'invalid_request' }, 405);
     const fila = await env.LIBRO.prepare('SELECT estado, imagen FROM ilustracion WHERE pagina = ? AND n = ?').bind(pagina, n).first();
