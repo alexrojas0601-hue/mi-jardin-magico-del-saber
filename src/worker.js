@@ -232,11 +232,43 @@ function promptIlus(p, il) {
     const legible = nombre.split(/[_ ]/).map((w) => w[0] + w.slice(1).toLowerCase()).join(' ');
     if (escena.includes(nombre)) { usados.push(`${legible} is ${desc}.`); escena = escena.split(nombre).join(legible); }
   }
-  return [ESTILO_ILUS, 'Scene: ' + escena + '.', ...usados].join(' ').slice(0, 2000);
+  // El dibujo debe contar ESTE cuento: título + momento exacto + cómo son sus personajes (pedido del rector, 30-10-2026).
+  const cuento = p.en?.titulo ? `This picture illustrates the children's story "${p.en.titulo}".` : '';
+  return [ESTILO_ILUS, cuento, 'Scene from the story: ' + escena + '.', ...usados, 'Only characters and objects from this scene, nothing unrelated to the story.'].filter(Boolean).join(' ').slice(0, 2000);
 }
+async function generarUna(env, p, il) {
+  const semilla = Math.floor(Math.random() * 2 ** 31);
+  const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', { prompt: promptIlus(p, il), steps: 8, seed: semilla });
+  if (!out?.image) throw new Error('sin imagen');
+  const bytes = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0));
+  await env.LIBRO.prepare("INSERT INTO ilustracion (pagina, n, estado, imagen, semilla, creada) VALUES (?, ?, 'pendiente', ?, ?, CURRENT_TIMESTAMP) ON CONFLICT(pagina, n) DO UPDATE SET estado = 'pendiente', imagen = excluded.imagen, semilla = excluded.semilla, creada = CURRENT_TIMESTAMP")
+    .bind(p.id, il.n, bytes, semilla).run();
+}
+// Dibujo automático (cron cada 5 min): genera las que faltan, de a 10, hasta completar el libro.
+// Nacen «pendientes»: los niños solo las ven cuando un revisor las aprueba en #revisar.
+async function dibujarFaltantes(env, maximo = 10) {
+  if (!env.AI || !env.LIBRO) return 0;
+  await tablaIlus(env);
+  const hechas = new Set(((await env.LIBRO.prepare('SELECT pagina, n FROM ilustracion').all()).results || []).map((x) => x.pagina + '/' + x.n));
+  const L = await abrirLibro(env);
+  const faltan = [];
+  for (const p of [...L.paginas.values()].sort((a, b) => a.orden - b.orden)) for (const il of p.ilustraciones || []) if (!hechas.has(p.id + '/' + il.n)) faltan.push([p, il]);
+  let hechasAhora = 0;
+  for (const [p, il] of faltan.slice(0, maximo)) {
+    try { await generarUna(env, p, il); hechasAhora++; } catch (e) { await env.LIBRO.prepare('INSERT INTO voz_log (origen, detalle) VALUES (?, ?)').bind('ilustracion', `${p.id}/${il.n}: ${String(e?.message || e).slice(0, 200)}`).run().catch(() => {}); }
+  }
+  return hechasAhora;
+}
+
 async function ilustracion(request, env, ruta) {
   if (!env.LIBRO) return json({ code: 'sin_libro' }, 503);
   const revisor = await esRevisor(request, env);
+  if (ruta === 'aprobar-pendientes') {
+    if (request.method !== 'POST' || !revisor) return json({ code: 'not_granted' }, 403);
+    await tablaIlus(env);
+    const r = await env.LIBRO.prepare("UPDATE ilustracion SET estado = 'aprobada' WHERE estado = 'pendiente' AND imagen IS NOT NULL").run();
+    return json({ ok: true, aprobadas: r.meta?.changes || 0 });
+  }
   if (ruta === 'lista') {
     if (!revisor) return json({ code: 'not_granted' }, 403);
     await tablaIlus(env);
@@ -264,14 +296,8 @@ async function ilustracion(request, env, ruta) {
     const p = (await abrirLibro(env)).paginas.get(pagina);
     const il = p?.ilustraciones?.find((x) => x.n === n);
     if (!il) return json({ code: 'no_existe' }, 404);
-    const semilla = Math.floor(Math.random() * 2 ** 31);
-    let out;
-    try { out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', { prompt: promptIlus(p, il), steps: 8, seed: semilla }); }
+    try { await generarUna(env, p, il); }
     catch (e) { return json({ code: 'sin_imagen', detalle: String(e?.message || e).slice(0, 300) }, 502); }
-    if (!out?.image) return json({ code: 'sin_imagen' }, 502);
-    const bytes = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0));
-    await env.LIBRO.prepare("INSERT INTO ilustracion (pagina, n, estado, imagen, semilla, creada) VALUES (?, ?, 'pendiente', ?, ?, CURRENT_TIMESTAMP) ON CONFLICT(pagina, n) DO UPDATE SET estado = 'pendiente', imagen = excluded.imagen, semilla = excluded.semilla, creada = CURRENT_TIMESTAMP")
-      .bind(pagina, n, bytes, semilla).run();
     return json({ ok: true, estado: 'pendiente' });
   }
   const estado = accion === 'aprobar' ? 'aprobada' : 'rechazada';
@@ -281,6 +307,9 @@ async function ilustracion(request, env, ruta) {
 }
 
 export default {
+  async scheduled(controller, env, ctx) {
+    ctx.waitUntil(dibujarFaltantes(env, 10));
+  },
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/voz') return vozGuardian(request, env, ctx);

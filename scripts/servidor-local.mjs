@@ -39,6 +39,11 @@ createServer(async (req, res) => {
   }
   if (url.pathname.startsWith('/api/ilustracion/')) {
     const ruta = url.pathname.slice(17); const rev = req.headers['x-revision'] === REV;
+    if (ruta === 'aprobar-pendientes') {
+      if (!rev || req.method !== 'POST') return enviar(403, { code: 'not_granted' });
+      let c = 0; for (const [k, v] of ILUS) if (v === 'pendiente') { ILUS.set(k, 'aprobada'); c++; }
+      return enviar(200, { ok: true, aprobadas: c });
+    }
     if (ruta === 'lista') {
       if (!rev) return enviar(403, { code: 'not_granted' });
       return enviar(200, { paginas: LIBRO.paginas.filter((p) => p.ilustraciones?.length).map((p) => ({ id: p.id, titulo: p.titulo, tituloEn: p.en?.titulo || null, ilustraciones: p.ilustraciones.map((il) => ({ n: il.n, alt: il.alt, estado: ILUS.get(p.id + '/' + il.n) || 'sin generar' })) })) });
