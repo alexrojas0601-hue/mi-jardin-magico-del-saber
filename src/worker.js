@@ -228,8 +228,9 @@ async function conIlustraciones(env, p) {
 function promptIlus(p, il) {
   let escena = il.escena;
   const usados = [];
-  for (const [nombre, desc] of Object.entries(p.personajes || {})) {
-    if (escena.includes(nombre)) { usados.push(`${nombre[0]}${nombre.slice(1).toLowerCase()} is ${desc}.`); escena = escena.split(nombre).join(nombre[0] + nombre.slice(1).toLowerCase()); }
+  for (const [nombre, desc] of Object.entries(p.personajes || {}).sort((x, y) => y[0].length - x[0].length)) { // MAX_DOG antes que MAX
+    const legible = nombre.split(/[_ ]/).map((w) => w[0] + w.slice(1).toLowerCase()).join(' ');
+    if (escena.includes(nombre)) { usados.push(`${legible} is ${desc}.`); escena = escena.split(nombre).join(legible); }
   }
   return [ESTILO_ILUS, 'Scene: ' + escena + '.', ...usados].join(' ').slice(0, 2000);
 }
