@@ -48,7 +48,7 @@ async function abrirLibro(env) {
       const texto = await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
       const libro = JSON.parse(texto);
       return {
-        indice: { unidades: libro.unidades, paginas: libro.paginas.map(({ orden, id, unidad, tipo, titulo }) => ({ orden, id, unidad, tipo, titulo })) },
+        indice: { unidades: libro.unidades, paginas: libro.paginas.map(({ orden, id, unidad, tipo, titulo, en }) => ({ orden, id, unidad, tipo, titulo, ...(en?.titulo ? { tituloEn: en.titulo } : {}) })) },
         paginas: new Map(libro.paginas.map((p) => [p.id, p])),
       };
     })().catch((e) => { cargando = null; throw e; });

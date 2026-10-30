@@ -549,6 +549,7 @@ async function iniciar() {
       fetch('./data/medios.json').then((r) => r.json()).catch(() => ({ videos: {}, mural: [], audios: {} })),
     ]);
     indice = await api('indice');
+    (indice.paginas || []).forEach((x) => { if (x.tituloEn) titulosEn.set(x.id, x.tituloEn); });
   } catch {
     $('#app').innerHTML = `<div class="empty">${esc(t('noAbrir'))}</div>`;
     return;
