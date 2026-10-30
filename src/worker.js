@@ -238,7 +238,7 @@ function promptIlus(p, il) {
 }
 async function generarUna(env, p, il) {
   const semilla = Math.floor(Math.random() * 2 ** 31);
-  const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', { prompt: promptIlus(p, il), steps: 8, seed: semilla });
+  const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', { prompt: promptIlus(p, il), steps: 8 });
   if (!out?.image) throw new Error('sin imagen');
   const bytes = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0));
   await env.LIBRO.prepare("INSERT INTO ilustracion (pagina, n, estado, imagen, semilla, creada) VALUES (?, ?, 'pendiente', ?, ?, CURRENT_TIMESTAMP) ON CONFLICT(pagina, n) DO UPDATE SET estado = 'pendiente', imagen = excluded.imagen, semilla = excluded.semilla, creada = CURRENT_TIMESTAMP")
